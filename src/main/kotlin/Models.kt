@@ -49,11 +49,6 @@ data class TargetDirectory(val file: File){
     val path: Path = file.toPath()
 }
 
-data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>, val keyColumn: Int) {
-
-    val rowWithFirstTranslation = rowInDocument+1
-}
-
 data class ImportEvaluation(val projectType: ProjectType, val matchedSourcesAndTargets: MatchedSourcesAndTargets)
 interface TranslationFileWriter: Closeable {
     fun write(key: String, value: String)

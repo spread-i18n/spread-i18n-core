@@ -17,6 +17,7 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
     testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation("io.mockk:mockk:1.10.5")
 }
 
 

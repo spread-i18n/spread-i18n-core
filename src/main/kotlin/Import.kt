@@ -1,57 +1,9 @@
-import Locales.Companion.allLocales
-import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 import java.nio.file.Path
 
-class ConfigRowIdentifier {
-    private var projectKeys = mutableSetOf<IndexedValue<ProjectKey>>()
-    var locales = mutableSetOf<SourceColumn>()
-    val unknownPurposeColumns = mutableListOf<IndexedValue<Cell>>()
-
-    fun analyseCell(indexedCell: IndexedValue<Cell>) {
-        if (indexedCell.value.cellType == CellType.STRING) {
-            if (!storeIfLocale(indexedCell)) {
-                if(!storeIfProjectKey(indexedCell)) {
-                    storeUnknownPurposeColumn(indexedCell)
-                }
-            }
-        }
-    }
-
-    private fun storeIfLocale(localeCellCandidate: IndexedValue<Cell>): Boolean {
-        val locale = allLocales.findLocale(localeCellCandidate.value.stringCellValue)
-        if (locale != null) {
-            locales.add(SourceColumn(localeCellCandidate.value.stringCellValue, localeCellCandidate.index))
-            return true
-        }
-        return false
-    }
-
-    private fun storeIfProjectKey(projectCellCandidate: IndexedValue<Cell>): Boolean {
-        val tokens = projectCellCandidate.value.stringCellValue.split(" ").map { it.toLowerCase() }
-        for (project in ProjectKey.values()) {
-            val id = project.identifiers.find { tokens.contains(it) }
-            if (id != null) {
-                projectKeys.add(IndexedCellValue(projectCellCandidate.index, project))
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun storeUnknownPurposeColumn(indexedCell: IndexedValue<Cell>) {
-        unknownPurposeColumns.add(indexedCell)
-    }
-
-    val isConfigRow: Boolean
-        get() {
-            return projectKeys.isNotEmpty() && locales.isNotEmpty()
-        }
-}
 
 class Import(private val sourceFilePath: Path, private val targetProjectPath: Path) {
 
@@ -73,19 +25,7 @@ class Import(private val sourceFilePath: Path, private val targetProjectPath: Pa
     }
 
     private val configRow: ConfigRow by lazy {
-        fun findConfigRow(): ConfigRow? {
-            sheet.rowIterator().withIndex().forEach { indexedRow ->
-                val configRowIdentifier = ConfigRowIdentifier()
-                indexedRow.value.cellIterator().withIndex().forEach { indexedCell ->
-                    configRowIdentifier.analyseCell(indexedCell)
-                }
-                if (configRowIdentifier.isConfigRow) {
-                    return ConfigRow(indexedRow.index, configRowIdentifier.locales, 0)
-                }
-            }
-            return null
-        }
-        findConfigRow() ?: throw ImportException("Given file does not contain config row")
+        ConfigRowFinder.findConfigRowIn(sheet) ?: throw ImportException("Given file does not contain config row")
     }
 
     fun perform() {
@@ -116,4 +56,3 @@ class Importer {
         }
     }
 }
-
