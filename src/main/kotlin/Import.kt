@@ -1,6 +1,7 @@
 import Locales.Companion.allLocales
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
@@ -77,7 +78,6 @@ class Import(private val sourceFilePath: Path, private val targetProjectPath: Pa
                 val configRowIdentifier = ConfigRowIdentifier()
                 indexedRow.value.cellIterator().withIndex().forEach { indexedCell ->
                     configRowIdentifier.analyseCell(indexedCell)
-                    println("${indexedCell.value.cellType}: ${indexedCell.value.stringCellValue}")
                 }
                 if (configRowIdentifier.isConfigRow) {
                     return ConfigRow(indexedRow.index, configRowIdentifier.locales, 0)
@@ -89,25 +89,30 @@ class Import(private val sourceFilePath: Path, private val targetProjectPath: Pa
     }
 
     fun perform() {
-        ImportManager(sheet).import(configuration)
+        Importer.import(sheet, configuration)
     }
 }
 
-class ImportManager (private val sheet: Sheet) {
+val Sheet.rows: Sequence<Row>
+    get() = rowIterator().asSequence()
 
-    fun import(config: ImportConfiguration) {
-        config.matchedSourcesAndTargets.forEach { importAddress ->
-            val fileWriter = config.projectType.fileWriter(importAddress.targetDirectory.file.toPath())
-            sheet.rowIterator().asSequence().skipTo(config.firstTranslationRow).forEach {
-                val keyCell = it.getCell(config.keyColumn)
-                val valueCell = it.getCell(importAddress.sourceColumn.column)
-                if ((keyCell!=null) && (valueCell!=null)) {
-                    fileWriter.write(key = keyCell.stringCellValue, value = valueCell.stringCellValue)
-                } else {
-//                    add warning that file contains null cells
+class Importer {
+
+    private constructor()
+
+    companion object {
+        fun import(sheet: Sheet, config: ImportConfiguration) {
+            config.matchedSourcesAndTargets.forEach { match ->
+                config.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
+                    sheet.rows.skipTo(config.firstTranslationRow).forEach { row ->
+                        val keyCell = row.getCell(config.keyColumn)
+                        val valueCell = row.getCell(match.sourceColumn.column)
+                        if ((keyCell != null) && (valueCell != null)) {
+                            fileWriter.write(key = keyCell.stringCellValue, value = valueCell.stringCellValue)
+                        }
+                    }
                 }
             }
-            fileWriter.close()
         }
     }
 }

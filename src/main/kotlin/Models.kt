@@ -5,8 +5,7 @@ import java.nio.file.Path
 import java.text.DateFormat
 import java.util.*
 
-
-public fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
+fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
 
 fun Locale.identifiedBy(localeDataCandidate: String): Boolean {
     return when (localeDataCandidate.toLowerCase()) {
@@ -46,8 +45,8 @@ data class SourceColumn(val title: String, val column: Int) {//source point
     }
 }
 
-data class TargetDirectory(val file: File)//target directory
-{
+data class TargetDirectory(val file: File){
+    val path: Path = file.toPath()
 }
 
 data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>, val keyColumn: Int) {
