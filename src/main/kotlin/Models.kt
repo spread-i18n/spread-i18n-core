@@ -56,23 +56,29 @@ interface TranslationFileWriter: Closeable {
 
 enum class ProjectType {
     iOS {
-        override val matcher: SourceTargetMatcher
+        override val sourceTargetMatcher: SourceTargetMatcher
             get() = iOSSourceTargetMatcher()
 
         override fun fileWriter(path: Path): TranslationFileWriter {
             return iOSFileWriter(path)
         }
 
+        override val directoryFinder: LocalizationDirFinder
+            get() = iOSLocalizationDirFinder()
     },
     Android {
-        override val matcher: SourceTargetMatcher
+        override val sourceTargetMatcher: SourceTargetMatcher
             get() = TODO("Not yet implemented")
 
         override fun fileWriter(path: Path): TranslationFileWriter {
             TODO("Not yet implemented")
         }
+
+        override val directoryFinder: LocalizationDirFinder
+            get() = AndroidLocalizationDirFinder()
     };
-    abstract val matcher: SourceTargetMatcher
+    abstract val sourceTargetMatcher: SourceTargetMatcher
+    abstract val directoryFinder: LocalizationDirFinder
     abstract fun fileWriter(path: Path): TranslationFileWriter
 }
 

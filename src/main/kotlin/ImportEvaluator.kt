@@ -16,8 +16,8 @@ class ImportEvaluator {
 
     fun evaluate(configRow: ConfigRow, targetProjectFile: File): ImportEvaluation {
         val projectType = establishProjectType(targetProjectFile)
-        val targetDirectories = listTargetDirectories(inFile = targetProjectFile, projectType = projectType)
-        val matchResult = projectType.matcher.match(configRow.sourceColumns, targetDirectories)
+        val targetDirectories = projectType.directoryFinder.findLocalizationDirsIn(targetProjectFile)
+        val matchResult = projectType.sourceTargetMatcher.match(configRow.sourceColumns, targetDirectories)
         return ImportEvaluation(projectType, matchResult)
     }
 
@@ -29,25 +29,5 @@ class ImportEvaluator {
             return ProjectType.iOS
         }
         throw IllegalArgumentException("Unknown project type")
-    }
-
-    private fun listTargetDirectories(inFile: File, projectType: ProjectType): List<TargetDirectory> {
-        return when (projectType) {
-            ProjectType.iOS -> iOSListLocalizationDirs(inFile)
-            ProjectType.Android -> androidListLocalizationDirs(inFile)
-        }
-    }
-
-    private fun androidListLocalizationDirs(inFile: File): List<TargetDirectory> {
-        TODO("Not yet implemented")
-    }
-
-    private fun iOSListLocalizationDirs(inFile: File): List<TargetDirectory> {
-        fun allDirsRecursively(rootFile: File): List<File> {
-            return rootFile.listFiles { file -> file.isDirectory }
-                    .map { file -> listOf(file) + allDirsRecursively(file) }
-                    .flatten()
-        }
-        return allDirsRecursively(inFile).filter { dir -> dir.name.endsWith(".lproj") }.map { TargetDirectory(it) }
     }
 }
