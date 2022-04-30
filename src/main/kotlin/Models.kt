@@ -35,9 +35,6 @@ class Locales {
     }
 }
 
-typealias IndexedCellValue<T> = IndexedValue<T>
-
-
 open class ImportException(message: String): Exception(message)
 
 data class SourceColumn(val title: String, val column: Int) {//source point
@@ -51,9 +48,6 @@ data class TargetDirectory(val file: File){
 }
 
 data class ImportEvaluation(val projectType: ProjectType, val matchedSourcesAndTargets: MatchedSourcesAndTargets)
-interface TranslationFileWriter: Closeable {
-    fun write(key: String, value: String)
-}
 
 enum class ProjectType {
     iOS {
@@ -86,7 +80,7 @@ enum class ProjectType {
     };
     abstract val sourceTargetMatcher: SourceTargetMatcher
     abstract val directoryFinder: LocalizationDirFinder
-    abstract fun fileWriter(path: Path): TranslationFileWriter
+    internal abstract fun fileWriter(path: Path): TranslationFileWriter
     //TODO: propose better name
     abstract val translationKeyType: TranslationKeyType
 }

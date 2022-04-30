@@ -1,8 +1,3 @@
-import java.io.BufferedWriter
-import java.nio.file.Files
-import java.nio.file.Path
-
-
 @Suppress("ClassName")
 class iOSSourceTargetMatcher: SourceTargetMatcher {
 
@@ -55,50 +50,3 @@ class iOSSourceTargetMatcher: SourceTargetMatcher {
     }
 }
 
-@Suppress("ClassName")
-class iOSFileWriter(private val targetDirectoryPath: Path): TranslationFileWriter {
-
-    private val filePath: Path by lazy {
-        targetDirectoryPath.resolve("Localizable.strings")
-    }
-
-    private val writer: BufferedWriter by lazy {
-        Files.newBufferedWriter(filePath)
-    }
-
-    init {
-        Files.newBufferedReader(filePath).use { reader ->
-            reader.lineSequence().withIndex().find { it.value.contains("*/") }?.let {
-                copyHeaderToNewFile(endPositionOfHeader = it.index)
-            }
-        }
-    }
-
-    private fun copyHeaderToNewFile(endPositionOfHeader: Int) {
-        try {
-            Files.newBufferedReader(filePath).use { reader ->
-                reader.lineSequence().withIndex().take(endPositionOfHeader+1).forEach { line ->
-                    writer.write(line.value+"\n")
-                }
-            }
-        } catch (e: Exception) {
-            val foo = 1
-            val bar = foo
-        }
-    }
-
-    override fun write(key: String, value: String) {
-        if (key.startsWith("//")) {
-            writer.write("$key\n")
-        } else if (key.isNotBlank()) {
-            writer.write("$key = \"$value\";\n")
-        }
-        println("$key = $value")
-    }
-
-    override fun close() {
-        writer.flush()
-        writer.close()
-    }
-
-}
