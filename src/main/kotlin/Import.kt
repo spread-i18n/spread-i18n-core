@@ -18,7 +18,7 @@ class Import(private val sourceFilePath: Path, private val targetProjectPath: Pa
     }
 
     private val configuration: ImportConfiguration by lazy {
-        ImportConfiguration(configRow.keyColumn,
+        ImportConfiguration(configRow.keyColumnForProjectType(evaluation.projectType),
                 configRow.rowWithFirstTranslation,
                 evaluation.matchedSourcesAndTargets,
                 evaluation.projectType)

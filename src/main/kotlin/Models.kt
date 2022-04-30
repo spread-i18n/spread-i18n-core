@@ -37,7 +37,8 @@ class Locales {
 
 typealias IndexedCellValue<T> = IndexedValue<T>
 
-class ImportException(message: String): Exception(message)
+
+open class ImportException(message: String): Exception(message)
 
 data class SourceColumn(val title: String, val column: Int) {//source point
     val locales: List<Locale> by lazy {
@@ -63,6 +64,9 @@ enum class ProjectType {
             return iOSFileWriter(path)
         }
 
+        override val translationKeyType: TranslationKeyType
+            get() = TranslationKeyType.iOS
+
         override val directoryFinder: LocalizationDirFinder
             get() = iOSLocalizationDirFinder()
     },
@@ -74,28 +78,17 @@ enum class ProjectType {
             TODO("Not yet implemented")
         }
 
+        override val translationKeyType: TranslationKeyType
+            get() = TranslationKeyType.Android
+
         override val directoryFinder: LocalizationDirFinder
             get() = AndroidLocalizationDirFinder()
     };
     abstract val sourceTargetMatcher: SourceTargetMatcher
     abstract val directoryFinder: LocalizationDirFinder
     abstract fun fileWriter(path: Path): TranslationFileWriter
-}
-
-enum class ProjectKey {
-    iOS {
-        override val identifiers: List<String>
-            get() = listOf("ios")
-    },
-    Android {
-        override val identifiers: List<String>
-            get() = listOf("android")
-    },
-    general {
-        override val identifiers: List<String>
-            get() = listOf("key", "identifier", "id")
-    };
-    abstract val identifiers: List<String>
+    //TODO: propose better name
+    abstract val translationKeyType: TranslationKeyType
 }
 
 data class MatchedSourceAndTarget(val sourceColumn: SourceColumn, val targetDirectory: TargetDirectory)//TransactionAddress, TransferAddress

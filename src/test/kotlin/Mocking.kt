@@ -13,7 +13,7 @@ fun mockSheet(sheetContent: String): Sheet {
                         .filter { it.startsWith("│") }
                         .map {
                             val row = mockk<Row>()
-                            every { row.cellIterator() } returns it.split("│").map { cellContent ->
+                            every { row.cellIterator() } returns it.split("│").asSequence().skipTo(1).map { cellContent ->
                                 val cell = mockk<Cell>()
                                 every { cell.stringCellValue } returns cellContent
                                 every { cell.cellType } returns CellType.STRING
