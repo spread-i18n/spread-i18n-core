@@ -129,3 +129,8 @@ internal class ConfigRowIdentifier {
             return projectKeyColumns.isNotEmpty() && locales.isNotEmpty()
         }
 }
+
+internal data class ImportConfiguration(val keyColumn: Int,
+                                        val firstTranslationRow: Int,
+                                        val matchedSourcesAndTargets: MatchedSourcesAndTargets,
+                                        val projectType: ProjectType)

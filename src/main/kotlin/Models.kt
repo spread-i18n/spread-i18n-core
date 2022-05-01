@@ -41,8 +41,3 @@ internal enum class ProjectType {
     //TODO: propose better name
     abstract val translationKeyType: TranslationKeyType
 }
-
-internal data class ImportConfiguration(val keyColumn: Int,
-                                        val firstTranslationRow: Int,
-                                        val matchedSourcesAndTargets: MatchedSourcesAndTargets,
-                                        val projectType: ProjectType)
