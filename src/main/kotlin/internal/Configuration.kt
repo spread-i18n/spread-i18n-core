@@ -23,38 +23,38 @@ internal enum class TranslationKeyType {
 
 internal class ColumnNotFound(): ImportException("")
 
-internal data class ProjectKeyColumn(val column: Int, val translationKeyType: TranslationKeyType)
+internal data class TranslationKeyColumn(val columnIndex: Int, val translationKeyType: TranslationKeyType)
 
-internal class ProjectKeyColumns() {
-    private val projectKeyColumns = mutableSetOf<ProjectKeyColumn>()
-    fun add(projectKeyColumn: ProjectKeyColumn) {
-        projectKeyColumns.add(projectKeyColumn)
+internal class TranslationKeyColumns() {
+    private val translationKeyColumns = mutableSetOf<TranslationKeyColumn>()
+    fun add(translationKeyColumn: TranslationKeyColumn) {
+        translationKeyColumns.add(translationKeyColumn)
     }
-    fun isNotEmpty() = projectKeyColumns.isNotEmpty()
+    fun isNotEmpty() = translationKeyColumns.isNotEmpty()
 
-    private fun findColumn(translationKeyType: TranslationKeyType): ProjectKeyColumn? {
-        return projectKeyColumns.find { translationKeyType == it.translationKeyType }
-    }
-
-    fun containsColumnFor(translationKeyType: TranslationKeyType): Boolean {
-        return findColumn(translationKeyType)!=null
+    private fun findTranslationKeyColumn(translationKeyType: TranslationKeyType): TranslationKeyColumn? {
+        return translationKeyColumns.find { translationKeyType == it.translationKeyType }
     }
 
-    fun getColumn(translationKeyType: TranslationKeyType): Int {
-        return findColumn(translationKeyType)?.let { it.column } ?: throw ColumnNotFound()
+    fun containsTranslationKeyColumnFor(translationKeyType: TranslationKeyType): Boolean {
+        return findTranslationKeyColumn(translationKeyType)!=null
+    }
+
+    fun getTranslationKeyColumn(translationKeyType: TranslationKeyType): TranslationKeyColumn {
+        return findTranslationKeyColumn(translationKeyType) ?: throw ColumnNotFound()
     }
 }
 
 internal class ConfigRowNotFound(): ImportException("Config row not found in the source file.")
 
 internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
-                              private val projectKeyColumns: ProjectKeyColumns) {
+                              private val translationKeyColumns: TranslationKeyColumns) {
 
-    fun keyColumnForProjectType(projectType: ProjectType): Int {
-        if (projectKeyColumns.containsColumnFor(projectType.translationKeyType)) {
-            return projectKeyColumns.getColumn(projectType.translationKeyType)
+    fun indexOfTranslationKeyColumnForProjectType(projectType: ProjectType): Int {
+        if (translationKeyColumns.containsTranslationKeyColumnFor(projectType.translationKeyType)) {
+            return translationKeyColumns.getTranslationKeyColumn(projectType.translationKeyType).columnIndex
         }
-        return projectKeyColumns.getColumn(TranslationKeyType.General)
+        return translationKeyColumns.getTranslationKeyColumn(TranslationKeyType.General).columnIndex
     }
 
     val rowWithFirstTranslation = rowInDocument+1
@@ -81,7 +81,7 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
 }
 
 internal class ConfigRowIdentifier {
-    val projectKeyColumns = ProjectKeyColumns()
+    val projectKeyColumns = TranslationKeyColumns()
     val locales = mutableSetOf<SourceColumn>()
     val unknownPurposeColumns = mutableListOf<IndexedValue<Cell>>()
 
@@ -117,7 +117,7 @@ internal class ConfigRowIdentifier {
         for (translationKeyType in TranslationKeyType.values()) {
             val id = translationKeyType.cellText.find { tokens.contains(it) }
             if (id != null) {
-                projectKeyColumns.add(ProjectKeyColumn(projectCellCandidate.index, translationKeyType))
+                projectKeyColumns.add(TranslationKeyColumn(projectCellCandidate.index, translationKeyType))
                 return true
             }
         }

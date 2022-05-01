@@ -7,7 +7,7 @@ import java.nio.file.Path
 
 class Import(private val sourceFilePath: Path, private val targetProjectPath: Path) {
 
-    private val sheet: Sheet by lazy {
+    private val sheet: Sheet by lazy(LazyThreadSafetyMode.NONE) {
         val file = FileInputStream(sourceFilePath.toFile())
         val workbook = XSSFWorkbook(file)
         workbook.getSheetAt(0)
@@ -18,7 +18,7 @@ class Import(private val sourceFilePath: Path, private val targetProjectPath: Pa
     }
 
     private val configuration: ImportConfiguration by lazy {
-        ImportConfiguration(configRow.keyColumnForProjectType(evaluation.projectType),
+        ImportConfiguration(configRow.indexOfTranslationKeyColumnForProjectType(evaluation.projectType),
                 configRow.rowWithFirstTranslation,
                 evaluation.matchedSourcesAndTargets,
                 evaluation.projectType)

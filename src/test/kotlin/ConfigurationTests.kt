@@ -38,7 +38,7 @@ class ConfigurationTests {
     }
 
     @Test
-    fun finding_project_key_column_when_project_columns_are_specified_explicitly() {
+    fun finding_translation_key_column_when_columns_are_specified_explicitly() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │Android Key│iOS Key   │English  │Polish   │
@@ -47,14 +47,14 @@ class ConfigurationTests {
             └──────────────────────────────────────────┘
         """
         val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
-        val androidKeyColumn = configRow.keyColumnForProjectType(ProjectType.Android)
-        assertThat(androidKeyColumn).isEqualTo(0)
-        val iOSKeyColumn = configRow.keyColumnForProjectType(ProjectType.iOS)
-        assertThat(iOSKeyColumn).isEqualTo(1)
+        val androidKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
+        assertThat(androidKeyColumnIndex).isEqualTo(0)
+        val iOSKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
+        assertThat(iOSKeyColumnIndex).isEqualTo(1)
     }
 
     @Test
-    fun finding_key_column_when_project_column_is_specified_generally() {
+    fun finding_translation_key_column_when_column_is_specified_generally() {
         val sheetContent = """
             ┌───────────────────────────────┐
             │Identifier │English  │Polish   │
@@ -63,14 +63,14 @@ class ConfigurationTests {
             └───────────────────────────────┘
         """
         val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
-        val androidKeyColumn = configRow.keyColumnForProjectType(ProjectType.Android)
-        assertThat(androidKeyColumn).isEqualTo(0)
-        val iOSKeyColumn = configRow.keyColumnForProjectType(ProjectType.iOS)
-        assertThat(iOSKeyColumn).isEqualTo(0)
+        val androidKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
+        assertThat(androidKeyColumnIndex).isEqualTo(0)
+        val iOSKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
+        assertThat(iOSKeyColumnIndex).isEqualTo(0)
     }
 
     @Test
-    fun throwing_exception_when_getting_column_for_not_existing_project() {
+    fun throwing_exception_when_getting_translation_column_for_not_existing_project() {
         val sheetContent = """
             ┌────────────────────────────┐
             │iOS Key │English  │Polish   │
@@ -81,7 +81,7 @@ class ConfigurationTests {
         assertThatExceptionOfType(ImportException::class.java)
                 .isThrownBy{
                     val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
-                    configRow.keyColumnForProjectType(ProjectType.Android)
+                    configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
                 }
     }
 }
