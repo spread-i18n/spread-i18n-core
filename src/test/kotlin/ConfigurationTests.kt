@@ -2,7 +2,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
 
-class ConfigRowTests {
+class ConfigurationTests {
 
     @Test
     fun does_not_find_a_configRow_when_any_row_does_not_have_localisation_and_project_column() {
