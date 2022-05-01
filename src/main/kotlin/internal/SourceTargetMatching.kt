@@ -1,4 +1,6 @@
-import Locales.Companion.allLocales
+package internal
+
+import internal.Locales.Companion.allLocales
 import java.io.File
 import java.nio.file.Path
 import java.text.DateFormat

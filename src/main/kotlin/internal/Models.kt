@@ -1,3 +1,5 @@
+package internal
+
 import java.nio.file.Path
 
 fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)

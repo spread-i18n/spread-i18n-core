@@ -1,3 +1,5 @@
+import internal.dirs
+import internal.skipTo
 import io.mockk.every
 import io.mockk.mockk
 import org.apache.poi.ss.usermodel.Cell

@@ -1,3 +1,5 @@
+package internal
+
 import java.io.File
 
 val File.dirs: Array<File>

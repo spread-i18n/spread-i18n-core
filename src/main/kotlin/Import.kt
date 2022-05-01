@@ -1,3 +1,9 @@
+import internal.*
+import internal.ConfigRow
+import internal.ConfigRowFinder
+import internal.ImportConfiguration
+import internal.ImportEvaluation
+import internal.ImportEvaluator
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -25,7 +31,8 @@ class Import(private val sourceFilePath: Path, private val targetProjectPath: Pa
     }
 
     private val configRow: ConfigRow by lazy {
-        ConfigRowFinder.findConfigRowIn(sheet) ?: throw ImportException("Given file does not contain config row")
+        ConfigRowFinder.findConfigRowIn(sheet)
+                ?: throw ImportException("Given file does not contain config row")
     }
 
     fun perform() {

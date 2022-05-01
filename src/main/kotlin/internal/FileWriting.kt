@@ -1,3 +1,5 @@
+package internal
+
 import java.io.BufferedWriter
 import java.io.Closeable
 import java.io.IOException

@@ -1,3 +1,5 @@
+package internal
+
 import java.io.File
 import java.lang.IllegalArgumentException
 

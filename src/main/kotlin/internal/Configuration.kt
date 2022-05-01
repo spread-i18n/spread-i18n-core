@@ -1,4 +1,6 @@
-import Locales.Companion.allLocales
+package internal
+
+import internal.Locales.Companion.allLocales
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Sheet
