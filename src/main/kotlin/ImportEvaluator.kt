@@ -2,7 +2,7 @@ import java.io.File
 import java.lang.IllegalArgumentException
 
 
-interface SourceTargetMatcher {
+internal interface SourceTargetMatcher {
     fun match(sourceLocalizations: Collection<SourceColumn>, targetLocalizations: Collection<TargetDirectory>):
             MatchedSourcesAndTargets
 }
@@ -12,7 +12,7 @@ val String.normalizedTag: String
         return toLowerCase().replace("_", "-")
     }
 
-class ImportEvaluator {
+internal class ImportEvaluator {
 
     fun evaluate(configRow: ConfigRow, targetProjectFile: File): ImportEvaluation {
         val projectType = establishProjectType(targetProjectFile)

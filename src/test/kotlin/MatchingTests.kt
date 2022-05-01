@@ -79,13 +79,13 @@ class MatchingTests {
     }
 }
 
-val MatchedSourceAndTarget.path: String
+internal val MatchedSourceAndTarget.path: String
     get() { return targetDirectory.file.path }
 
-fun MatchedSourcesAndTargets.findWithTitle(title: String): MatchedSourceAndTarget? {
+internal fun MatchedSourcesAndTargets.findWithTitle(title: String): MatchedSourceAndTarget? {
     return matches.find { match -> match.sourceColumn.title == title }
 }
 
-fun MatchedSourcesAndTargets.getWithTitle(title: String): MatchedSourceAndTarget {
+internal fun MatchedSourcesAndTargets.getWithTitle(title: String): MatchedSourceAndTarget {
     return findWithTitle(title)!!
 }

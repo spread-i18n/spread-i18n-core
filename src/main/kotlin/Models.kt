@@ -2,13 +2,11 @@ import java.nio.file.Path
 
 fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
 
-
 open class ImportException(message: String): Exception(message)
 
+internal data class ImportEvaluation(val projectType: ProjectType, val matchedSourcesAndTargets: MatchedSourcesAndTargets)
 
-data class ImportEvaluation(val projectType: ProjectType, val matchedSourcesAndTargets: MatchedSourcesAndTargets)
-
-enum class ProjectType {
+internal enum class ProjectType {
     iOS {
         override val sourceTargetMatcher: SourceTargetMatcher
             get() = iOSSourceTargetMatcher()
@@ -44,7 +42,7 @@ enum class ProjectType {
     abstract val translationKeyType: TranslationKeyType
 }
 
-data class ImportConfiguration(val keyColumn: Int,
-                               val firstTranslationRow: Int,
-                               val matchedSourcesAndTargets: MatchedSourcesAndTargets,
-                               val projectType: ProjectType)
+internal data class ImportConfiguration(val keyColumn: Int,
+                                        val firstTranslationRow: Int,
+                                        val matchedSourcesAndTargets: MatchedSourcesAndTargets,
+                                        val projectType: ProjectType)

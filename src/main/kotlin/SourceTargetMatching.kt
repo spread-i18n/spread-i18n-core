@@ -4,7 +4,7 @@ import java.nio.file.Path
 import java.text.DateFormat
 import java.util.*
 
-fun Locale.identifiedBy(localeDataCandidate: String): Boolean {
+internal fun Locale.identifiedBy(localeDataCandidate: String): Boolean {
     return when (localeDataCandidate.toLowerCase()) {
         this.country.toLowerCase() -> true
         this.displayCountry.toLowerCase() -> true
@@ -15,7 +15,7 @@ fun Locale.identifiedBy(localeDataCandidate: String): Boolean {
     }
 }
 
-class Locales {
+internal class Locales {
 
     fun findLocale(localeDataCandidate: String): Locale? {
         return items.find { locale -> locale.identifiedBy(localeDataCandidate) }
@@ -32,18 +32,18 @@ class Locales {
     }
 }
 
-data class SourceColumn(val title: String, val column: Int) {//source point
+internal data class SourceColumn(val title: String, val column: Int) {//source point
     val locales: List<Locale> by lazy {
         allLocales.items.filter { locale -> locale.identifiedBy(title) }
     }
 }
 
-data class TargetDirectory(val file: File){
+internal data class TargetDirectory(val file: File){
     val path: Path = file.toPath()
 }
 
-data class MatchedSourceAndTarget(val sourceColumn: SourceColumn, val targetDirectory: TargetDirectory)//TransactionAddress, TransferAddress
-class MatchedSourcesAndTargets(private val _matches: MutableList<MatchedSourceAndTarget> = mutableListOf())
+internal data class MatchedSourceAndTarget(val sourceColumn: SourceColumn, val targetDirectory: TargetDirectory)//TransactionAddress, TransferAddress
+internal class MatchedSourcesAndTargets(private val _matches: MutableList<MatchedSourceAndTarget> = mutableListOf())
     : Iterable<MatchedSourceAndTarget> by _matches {
 
     val matches: List<MatchedSourceAndTarget> = _matches
@@ -75,7 +75,7 @@ class MatchedSourcesAndTargets(private val _matches: MutableList<MatchedSourceAn
 }
 
 @Suppress("ClassName")
-class iOSSourceTargetMatcher: SourceTargetMatcher {
+internal class iOSSourceTargetMatcher: SourceTargetMatcher {
 
     private fun matchesStrongly(source: SourceColumn, target: TargetDirectory): Boolean {
         val sourceTag = source.title.normalizedTag

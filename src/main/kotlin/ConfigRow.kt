@@ -3,7 +3,7 @@ import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Sheet
 
-enum class TranslationKeyType {
+internal enum class TranslationKeyType {
     iOS {
         override val cellText: List<String>
             get() = listOf("ios")
@@ -19,10 +19,11 @@ enum class TranslationKeyType {
     abstract val cellText: List<String>
 }
 
-class ColumnKeyNotFound(): ImportException("")
+internal class ColumnKeyNotFound(): ImportException("")
 
-data class ProjectKeyColumn(val column: Int, val translationKeyType: TranslationKeyType)
-class ProjectKeyColumns() {
+internal data class ProjectKeyColumn(val column: Int, val translationKeyType: TranslationKeyType)
+
+internal class ProjectKeyColumns() {
     private val projectKeyColumns = mutableSetOf<ProjectKeyColumn>()
     fun add(projectKeyColumn: ProjectKeyColumn) {
         projectKeyColumns.add(projectKeyColumn)
@@ -42,8 +43,8 @@ class ProjectKeyColumns() {
     }
 }
 
-data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
-                     private val projectKeyColumns: ProjectKeyColumns) {
+internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
+                              private val projectKeyColumns: ProjectKeyColumns) {
 
     fun keyColumnForProjectType(projectType: ProjectType): Int {
         if (projectKeyColumns.containsColumnFor(projectType.translationKeyType)) {

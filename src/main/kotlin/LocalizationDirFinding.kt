@@ -3,12 +3,12 @@ import java.io.File
 val File.dirs: Array<File>
     get() = this.listFiles { file -> file.isDirectory }
 
-interface LocalizationDirFinder {
+internal interface LocalizationDirFinder {
     fun findLocalizationDirsIn(rootFile: File): List<TargetDirectory>
 }
 
 @Suppress("ClassName")
-class iOSLocalizationDirFinder: LocalizationDirFinder {
+internal class iOSLocalizationDirFinder: LocalizationDirFinder {
     override fun findLocalizationDirsIn(rootFile: File): List<TargetDirectory> {
         fun allDirsRecursively(rootFile: File): List<File> {
             return rootFile.dirs
@@ -20,6 +20,6 @@ class iOSLocalizationDirFinder: LocalizationDirFinder {
     }
 }
 
-class AndroidLocalizationDirFinder: LocalizationDirFinder {
+internal class AndroidLocalizationDirFinder: LocalizationDirFinder {
     override fun findLocalizationDirsIn(rootFile: File): List<TargetDirectory> = emptyList()
 }

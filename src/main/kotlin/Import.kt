@@ -36,7 +36,7 @@ class Import(private val sourceFilePath: Path, private val targetProjectPath: Pa
 val Sheet.rows: Sequence<Row>
     get() = rowIterator().asSequence()
 
-class Importer {
+internal class Importer {
 
     private constructor()
 
