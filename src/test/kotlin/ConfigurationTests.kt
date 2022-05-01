@@ -1,4 +1,4 @@
-import internal.ConfigRowFinder
+import internal.ConfigRow
 import internal.ImportException
 import internal.ProjectType
 import org.assertj.core.api.Assertions.assertThat
@@ -16,7 +16,7 @@ class ConfigurationTests {
             │Android Key│iOS Key   │         │         │
             └──────────────────────────────────────────┘
         """
-        val configRow = ConfigRowFinder.findConfigRowIn(mockSheet(sheetContent))
+        val configRow = ConfigRow.findIn(mockSheet(sheetContent))
         assertThat(configRow).isNull()
     }
 
@@ -32,7 +32,7 @@ class ConfigurationTests {
             └──────────────────────────────────────────┘
         """
 
-        val configRow = ConfigRowFinder.findConfigRowIn(mockSheet(sheetContent))!!
+        val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
         assertThat(configRow.rowInDocument).isEqualTo(1)
         assertThat(configRow.sourceColumns.map { it.title }).hasSameElementsAs(listOf("English", "Polish"))
     }
@@ -46,7 +46,7 @@ class ConfigurationTests {
             │           │          │         │         │
             └──────────────────────────────────────────┘
         """
-        val configRow = ConfigRowFinder.findConfigRowIn(mockSheet(sheetContent))!!
+        val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
         val androidKeyColumn = configRow.keyColumnForProjectType(ProjectType.Android)
         assertThat(androidKeyColumn).isEqualTo(0)
         val iOSKeyColumn = configRow.keyColumnForProjectType(ProjectType.iOS)
@@ -62,7 +62,7 @@ class ConfigurationTests {
             │           │         │         │
             └───────────────────────────────┘
         """
-        val configRow = ConfigRowFinder.findConfigRowIn(mockSheet(sheetContent))!!
+        val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
         val androidKeyColumn = configRow.keyColumnForProjectType(ProjectType.Android)
         assertThat(androidKeyColumn).isEqualTo(0)
         val iOSKeyColumn = configRow.keyColumnForProjectType(ProjectType.iOS)
@@ -80,7 +80,7 @@ class ConfigurationTests {
         """
         assertThatExceptionOfType(ImportException::class.java)
                 .isThrownBy{
-                    val configRow = ConfigRowFinder.findConfigRowIn(mockSheet(sheetContent))!!
+                    val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
                     configRow.keyColumnForProjectType(ProjectType.Android)
                 }
     }

@@ -1,7 +1,6 @@
 package internal
 
 import java.io.File
-import java.lang.IllegalArgumentException
 
 
 internal interface SourceTargetMatcher {
@@ -14,6 +13,8 @@ val String.normalizedTag: String
         return toLowerCase().replace("_", "-")
     }
 
+internal class UnknownProjectType: ImportException("Unknown project type.")
+
 internal class ImportEvaluator {
 
     fun evaluate(configRow: ConfigRow, targetProjectFile: File): ImportEvaluation {
@@ -25,11 +26,9 @@ internal class ImportEvaluator {
 
     private fun establishProjectType(targetProjectFile: File): ProjectType {
         val iOSProjectFileCandidates = targetProjectFile.listFiles { file -> file.name.endsWith(".xcodeproj") }
-        if (iOSProjectFileCandidates.size > 1) {
-            throw ImportException("More than one .xcodeproj directories found.")
-        } else if (iOSProjectFileCandidates.size == 1) {
+        if (iOSProjectFileCandidates.size == 1) {
             return ProjectType.iOS
         }
-        throw IllegalArgumentException("Unknown project type")
+        throw UnknownProjectType()
     }
 }

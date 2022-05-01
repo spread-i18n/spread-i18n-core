@@ -21,7 +21,7 @@ internal enum class TranslationKeyType {
     abstract val cellText: List<String>
 }
 
-internal class ColumnKeyNotFound(): ImportException("")
+internal class ColumnNotFound(): ImportException("")
 
 internal data class ProjectKeyColumn(val column: Int, val translationKeyType: TranslationKeyType)
 
@@ -41,9 +41,11 @@ internal class ProjectKeyColumns() {
     }
 
     fun getColumn(translationKeyType: TranslationKeyType): Int {
-        return findColumn(translationKeyType)?.let { it.column } ?: throw ColumnKeyNotFound()
+        return findColumn(translationKeyType)?.let { it.column } ?: throw ColumnNotFound()
     }
 }
+
+internal class ConfigRowNotFound(): ImportException("Config row not found in the source file.")
 
 internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
                               private val projectKeyColumns: ProjectKeyColumns) {
@@ -56,13 +58,14 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
     }
 
     val rowWithFirstTranslation = rowInDocument+1
-}
-
-internal class ConfigRowFinder {
 
     companion object {
 
-        fun findConfigRowIn(sheet: Sheet): ConfigRow? {
+        fun getFrom(sheet: Sheet): ConfigRow {
+            return findIn(sheet) ?: throw ConfigRowNotFound()
+        }
+
+        fun findIn(sheet: Sheet): ConfigRow? {
             sheet.rowIterator().withIndex().forEach { indexedRow ->
                 val configRowIdentifier = ConfigRowIdentifier()
                 indexedRow.value.cellIterator().withIndex().forEach { indexedCell ->
