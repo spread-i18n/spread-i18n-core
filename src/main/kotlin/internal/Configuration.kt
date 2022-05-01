@@ -14,7 +14,7 @@ internal enum class TranslationKeyType {
         override val cellText: List<String>
             get() = listOf("android")
     },
-    general {
+    General {
         override val cellText: List<String>
             get() = listOf("key", "identifier", "id")
     };
@@ -52,7 +52,7 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
         if (projectKeyColumns.containsColumnFor(projectType.translationKeyType)) {
             return projectKeyColumns.getColumn(projectType.translationKeyType)
         }
-        return projectKeyColumns.getColumn(TranslationKeyType.general)
+        return projectKeyColumns.getColumn(TranslationKeyType.General)
     }
 
     val rowWithFirstTranslation = rowInDocument+1
