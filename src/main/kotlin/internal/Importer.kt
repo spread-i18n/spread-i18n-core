@@ -3,8 +3,12 @@ package internal
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
+open class ImportException(message: String? = null, cause: Throwable? = null): Exception(message, cause)
+
 val Sheet.rows: Sequence<Row>
     get() = rowIterator().asSequence()
+
+fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
 
 internal class Importer(private val sourceSheet: Sheet, private val targetProject: TargetProject) {
 

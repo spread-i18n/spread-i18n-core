@@ -6,6 +6,16 @@ import java.nio.file.Path
 import java.text.DateFormat
 import java.util.*
 
+internal interface SourceTargetMatcher {
+    fun match(sourceLocalizations: Collection<SourceColumn>, targetLocalizations: Collection<TargetDirectory>):
+            MatchedSourcesAndTargets
+}
+
+val String.normalizedTag: String
+    get() {
+        return toLowerCase().replace("_", "-")
+    }
+
 internal fun Locale.identifiedBy(localeDataCandidate: String): Boolean {
     return when (localeDataCandidate.toLowerCase()) {
         this.country.toLowerCase() -> true

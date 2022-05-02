@@ -1,15 +1,6 @@
 package internal
 
-
-internal interface SourceTargetMatcher {
-    fun match(sourceLocalizations: Collection<SourceColumn>, targetLocalizations: Collection<TargetDirectory>):
-            MatchedSourcesAndTargets
-}
-
-val String.normalizedTag: String
-    get() {
-        return toLowerCase().replace("_", "-")
-    }
+internal data class ImportEvaluation(val projectType: ProjectType, val matchedSourcesAndTargets: MatchedSourcesAndTargets)
 
 internal class ImportEvaluator {
 
