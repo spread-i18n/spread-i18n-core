@@ -1,5 +1,6 @@
 import internal.ImportException
 import internal.Importer
+import internal.TargetProject
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 import java.nio.file.Path
@@ -10,7 +11,7 @@ class Import() {
     fun perform(sourceFilePath: Path, targetProjectPath: Path) {
         try {
             workbook(sourceFilePath).use {
-                val importer = Importer(it.getSheetAt(0), targetProjectPath)
+                val importer = Importer(it.getSheetAt(0), project(targetProjectPath))
                 importer.import()
             }
         } catch (exc: ImportException) {
@@ -27,6 +28,10 @@ class Import() {
         } catch (exc: Exception) {
             throw WorkbookOpeningError(exc)
         }
+    }
+
+    private fun project(targetProjectPath: Path): TargetProject {
+        return TargetProject(targetProjectPath)
     }
 }
 

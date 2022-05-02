@@ -15,7 +15,7 @@ class LocalizationDirFinderTests {
                 dir("fr.lproj") { file("Localizable.strings") }
             }
         }
-        val res = iOSLocalizationDirFinder().findLocalizationDirsIn(rootDir)
+        val res = iOSLocalizationDirFinder().findLocalizationDirectoriesIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("Base.lproj", "fr.lproj"))
     }
 }

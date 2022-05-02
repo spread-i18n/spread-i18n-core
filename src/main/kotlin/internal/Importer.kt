@@ -2,17 +2,16 @@ package internal
 
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
-import java.nio.file.Path
 
 val Sheet.rows: Sequence<Row>
     get() = rowIterator().asSequence()
 
-internal class Importer(private val sheet: Sheet, private val targetProjectPath: Path) {
+internal class Importer(private val sourceSheet: Sheet, private val targetProject: TargetProject) {
 
     fun import() {
         config.matchedSourcesAndTargets.forEach { match ->
             config.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
-                sheet.rows.skipTo(config.firstTranslationRow).forEach { row ->
+                sourceSheet.rows.skipTo(config.firstTranslationRow).forEach { row ->
                     val keyCell = row.getCell(config.keyColumn)
                     val valueCell = row.getCell(match.sourceColumn.column)
                     if ((keyCell != null) && (valueCell != null)) {
@@ -24,7 +23,7 @@ internal class Importer(private val sheet: Sheet, private val targetProjectPath:
     }
 
     private val evaluation: ImportEvaluation by lazy {
-        ImportEvaluator().evaluate(configRow, targetProjectPath.toFile())
+        ImportEvaluator().evaluate(configRow, targetProject)
     }
 
     private val config: ImportConfiguration by lazy {
@@ -35,6 +34,6 @@ internal class Importer(private val sheet: Sheet, private val targetProjectPath:
     }
 
     private val configRow: ConfigRow by lazy {
-        ConfigRow.getFrom(sheet)
+        ConfigRow.getFrom(sourceSheet)
     }
 }
