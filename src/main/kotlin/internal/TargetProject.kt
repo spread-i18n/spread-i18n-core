@@ -11,7 +11,7 @@ internal class TargetProject(private val projectPath: Path) {
             ?: throw SupportedProjectTypeNotFound(projectPath)
 
     val localizationDirectories: List<TargetDirectory> by lazy {
-        type.directoryFinder.findLocalizationDirectoriesIn(projectPath.toFile())
+        type.localizationDirectoriesFinder.findLocalizationDirectoriesIn(projectPath.toFile())
     }
 }
 
@@ -29,8 +29,8 @@ internal enum class ProjectType {
 
         override fun existsInPath(path: Path) = xcodeprojDirectory.existsInDirectory(directory = path.toFile())
 
-        override val directoryFinder: LocalizationDirFinder
-            get() = iOSLocalizationDirFinder()
+        override val localizationDirectoriesFinder: LocalizationDirectoriesFinder
+            get() = iOSLocalizationDirectoriesFinder()
     },
     Android {
         override val sourceTargetMatcher: SourceTargetMatcher
@@ -45,11 +45,11 @@ internal enum class ProjectType {
 
         override fun existsInPath(path: Path) = false
 
-        override val directoryFinder: LocalizationDirFinder
-            get() = AndroidLocalizationDirFinder()
+        override val localizationDirectoriesFinder: LocalizationDirectoriesFinder
+            get() = AndroidLocalizationDirectoriesFinder()
     };
     abstract val sourceTargetMatcher: SourceTargetMatcher
-    abstract val directoryFinder: LocalizationDirFinder
+    abstract val localizationDirectoriesFinder: LocalizationDirectoriesFinder
     abstract fun fileWriter(path: Path): TranslationFileWriter
     //TODO: propose better name
     abstract val translationKeyType: TranslationKeyType

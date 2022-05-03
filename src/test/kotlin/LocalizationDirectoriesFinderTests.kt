@@ -1,8 +1,8 @@
-import internal.iOSLocalizationDirFinder
+import internal.iOSLocalizationDirectoriesFinder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class LocalizationDirFinderTests {
+class LocalizationDirectoriesFinderTests {
 
     @Test
     fun finds_localization_directories_of_iOS_project() {
@@ -15,7 +15,7 @@ class LocalizationDirFinderTests {
                 dir("fr.lproj") { file("Localizable.strings") }
             }
         }
-        val res = iOSLocalizationDirFinder().findLocalizationDirectoriesIn(rootDir)
+        val res = iOSLocalizationDirectoriesFinder().findLocalizationDirectoriesIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("Base.lproj", "fr.lproj"))
     }
 }
