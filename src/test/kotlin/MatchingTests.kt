@@ -4,7 +4,49 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class MatchingTests {
+class AndroidMatchingTests {
+
+    @Test
+    fun matching_by_simple_tag_without_region() {
+        val sources = listOf(
+                SourceColumn("Polish", 0),
+                SourceColumn("French", 1),
+                SourceColumn("English", 2))
+        val targets = listOf(
+                "res/values-fr".asTargetDir(),
+                "res/values-pl".asTargetDir(),
+                "res/values".asTargetDir())
+
+        val result = AndroidSourceTargetMatcher().match(sources, targets)
+
+        assertThat(result.count).isEqualTo(3)
+        assertThat(result.getMatchWithTitle("Polish").path).isEqualTo("res/values-pl")
+        assertThat(result.getMatchWithTitle("French").path).isEqualTo("res/values-fr")
+        assertThat(result.getMatchWithTitle("English").path).isEqualTo("res/values")
+    }
+
+    @Test
+    fun matching_by_tag_with_region() {
+        val sources = listOf(
+                SourceColumn("pl", 0),
+                SourceColumn("French", 1),
+                SourceColumn("en_US", 2))
+        val targets = listOf(
+                "res/values-fr-rFR".asTargetDir(),
+                "res/values-pl".asTargetDir(),
+                "res/values-en-rUS".asTargetDir())
+
+        val result = AndroidSourceTargetMatcher().match(sources, targets)
+
+        assertThat(result.count).isEqualTo(3)
+        assertThat(result.getMatchWithTitle("pl").path).isEqualTo("res/values-pl")
+        assertThat(result.getMatchWithTitle("French").path).isEqualTo("res/values-fr-rFR")
+        assertThat(result.getMatchWithTitle("en_US").path).isEqualTo("res/values-en-rUS")
+    }
+}
+
+@Suppress("ClassName")
+class iOSMatchingTests {
 
     @Test
     fun matches_by_tag_translations_existing_in_source_and_target() {
@@ -26,12 +68,12 @@ class MatchingTests {
         val result = iOSSourceTargetMatcher().match(sources, targets)
 
         assertThat(result.count).isEqualTo(6)
-        assertThat(result.getWithTitle("fr_DZ").path).isEqualTo("project/fr-DZ.lproj")
-        assertThat(result.getWithTitle("fr_ML").path).isEqualTo("project/fr-ML.lproj")
-        assertThat(result.getWithTitle("fr_PM").path).isEqualTo("project/fr-PM.lproj")
-        assertThat(result.getWithTitle("fr_MG").path).isEqualTo("project/fr-MG.lproj")
-        assertThat(result.getWithTitle("english").path).isEqualTo("project/en.lproj")
-        assertThat(result.getWithTitle("fr_MF").path).isEqualTo("project/fr-MF.lproj")
+        assertThat(result.getMatchWithTitle("fr_DZ").path).isEqualTo("project/fr-DZ.lproj")
+        assertThat(result.getMatchWithTitle("fr_ML").path).isEqualTo("project/fr-ML.lproj")
+        assertThat(result.getMatchWithTitle("fr_PM").path).isEqualTo("project/fr-PM.lproj")
+        assertThat(result.getMatchWithTitle("fr_MG").path).isEqualTo("project/fr-MG.lproj")
+        assertThat(result.getMatchWithTitle("english").path).isEqualTo("project/en.lproj")
+        assertThat(result.getMatchWithTitle("fr_MF").path).isEqualTo("project/fr-MF.lproj")
     }
 
     @Test
@@ -75,8 +117,8 @@ class MatchingTests {
         val result = iOSSourceTargetMatcher().match(sources, targets)
 
         assertThat(result.count).isEqualTo(2)
-        assertThat(result.getWithTitle("French").path).isEqualTo("project/fr-CA.lproj")
-        assertThat(result.getWithTitle("English").path).isEqualTo("project/Base.lproj")
+        assertThat(result.getMatchWithTitle("French").path).isEqualTo("project/fr-CA.lproj")
+        assertThat(result.getMatchWithTitle("English").path).isEqualTo("project/Base.lproj")
     }
 }
 
@@ -87,6 +129,6 @@ internal fun MatchedSourcesAndTargets.findWithTitle(title: String): MatchedSourc
     return matches.find { match -> match.sourceColumn.title == title }
 }
 
-internal fun MatchedSourcesAndTargets.getWithTitle(title: String): MatchedSourceAndTarget {
+internal fun MatchedSourcesAndTargets.getMatchWithTitle(title: String): MatchedSourceAndTarget {
     return findWithTitle(title)!!
 }

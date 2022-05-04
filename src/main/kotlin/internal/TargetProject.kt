@@ -34,7 +34,7 @@ internal enum class ProjectType {
     },
     Android {
         override val sourceTargetMatcher: SourceTargetMatcher
-            get() = TODO("Not yet implemented")
+            get() = AndroidSourceTargetMatcher()
 
         override fun fileWriter(path: Path): TranslationFileWriter {
             TODO("Not yet implemented")

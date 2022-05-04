@@ -55,6 +55,7 @@ internal data class TargetDirectory(val file: File){
 }
 
 internal data class MatchedSourceAndTarget(val sourceColumn: SourceColumn, val targetDirectory: TargetDirectory)//TransactionAddress, TransferAddress
+
 internal class MatchedSourcesAndTargets(private val _matches: MutableList<MatchedSourceAndTarget> = mutableListOf())
     : Iterable<MatchedSourceAndTarget> by _matches {
 
@@ -138,3 +139,70 @@ internal class iOSSourceTargetMatcher: SourceTargetMatcher {
     }
 }
 
+//https://stackoverflow.com/questions/13693209/android-localization-values-folder-names
+//https://developer.android.com/reference/java/util/Locale
+//https://datatracker.ietf.org/doc/html/rfc4647#section-3.4.1
+internal class AndroidSourceTargetMatcher: SourceTargetMatcher {
+
+    private val String.extractedTag: String?
+        get() {
+            val directoryNameRegex = Regex(""".*values-?(\w{2})?-?r?(\w{2,3})?""")
+            return directoryNameRegex.matchEntire(this)?.groups?.filterNotNull()?.let {
+                when (it.size) {
+                    3 -> "${it[1]!!.value}-${it[2]!!.value}"
+                    2 -> "${it[1]!!.value}"
+                    else -> null
+                }
+            }
+        }
+
+    private fun matchesStrongly(source: SourceColumn, target: TargetDirectory): Boolean {
+        return target.file.name.extractedTag?.normalizedTag?.let { targetTag ->
+            val sourceTag = source.title.normalizedTag
+            sourceTag == targetTag
+        } ?: false
+    }
+
+    private fun matchesWeakly(source: SourceColumn, target: TargetDirectory): Boolean {
+        return target.file.name.extractedTag?.normalizedTag?.let { targetTag ->
+            val locale = source.locales.find { locale -> locale.toLanguageTag().normalizedTag == targetTag }
+            locale != null
+        } ?: false
+    }
+
+    private val TargetDirectory.isBaseDir: Boolean
+        get() = this.file.name == "values"
+
+
+    override fun match(sources: Collection<SourceColumn>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
+        val matchedSourcesAndTargets = MatchedSourcesAndTargets()
+        for (source in sources) {
+            for (target in targets) {
+                if (matchesStrongly(source, target)) {
+                    matchedSourcesAndTargets.add(MatchedSourceAndTarget(source, target))
+                    break
+                }
+            }
+        }
+
+        var remainingSources = sources.filter { source -> matchedSourcesAndTargets.notContainsSource(source) }
+        var remainingTargets = targets.filter { target -> matchedSourcesAndTargets.notContainsTarget(target) }
+
+        for (source in remainingSources) {
+            for (target in remainingTargets) {
+                if (matchesWeakly(source, target)) {
+                    matchedSourcesAndTargets.add(MatchedSourceAndTarget(source, target))
+                    break
+                }
+            }
+        }
+
+        remainingSources = sources.filter { source -> matchedSourcesAndTargets.notContainsSource(source) }
+        remainingTargets = targets.filter { target -> matchedSourcesAndTargets.notContainsTarget(target) }
+
+        if ((remainingSources.size==1) && (remainingTargets.size==1) && remainingTargets[0].isBaseDir) {
+            matchedSourcesAndTargets.add(MatchedSourceAndTarget(remainingSources[0], remainingTargets[0]))
+        }
+        return matchedSourcesAndTargets
+    }
+}
