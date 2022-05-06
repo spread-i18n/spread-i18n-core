@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 class LocalizationDirectoriesFinderTests {
 
     @Test
-    fun finds_localization_directories_of_iOS_project() {
+    fun finding_localization_directories_of_iOS_project() {
         val rootDir = dir("ProjectRoot") {
             dir("Assets.xcassets") {
                 dir("AppIcon.appiconset"){ file("Contents.json") }
