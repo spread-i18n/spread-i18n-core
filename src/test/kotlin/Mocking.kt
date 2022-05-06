@@ -2,7 +2,6 @@ import internal.TargetDirectory
 import internal.dirs
 import internal.files
 import internal.skipTo
-import io.mockk.MockKSettings.relaxed
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -78,5 +77,11 @@ class Dir(dirBlock: Dir.()->Unit) {
 }
 
 fun dir(name: String, block: Dir.()->Unit): File = Dir(){}.dir(name, block)
+val File.mockkedPath: Path
+   get() {
+       val path = mockk<Path>()
+       every { path.toFile() } returns this
+       return path
+   }
 
 internal fun String.asTargetDir() = TargetDirectory(File(this))
