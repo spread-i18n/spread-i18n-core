@@ -72,7 +72,7 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
                     configRowIdentifier.analyseCell(indexedCell)
                 }
                 if (configRowIdentifier.isConfigRow) {
-                    return ConfigRow(indexedRow.index, configRowIdentifier.locales, configRowIdentifier.projectKeyColumns)
+                    return ConfigRow(indexedRow.index, configRowIdentifier.localeColumns, configRowIdentifier.translationKeyColumns)
                 }
             }
             return null
@@ -81,13 +81,13 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
 }
 
 internal class ConfigRowIdentifier {
-    val projectKeyColumns = TranslationKeyColumns()
-    val locales = mutableSetOf<SourceColumn>()
+    val translationKeyColumns = TranslationKeyColumns()
+    val localeColumns = mutableSetOf<SourceColumn>()
     val unknownPurposeColumns = mutableListOf<IndexedValue<Cell>>()
 
     fun analyseCell(indexedCell: IndexedValue<Cell>) {
         if (indexedCell.value.cellType == CellType.STRING) {
-            listOf(::storeIfLocale, ::storeIfProjectKey, ::storeUnknownPurposeColumn).forEach { store ->
+            listOf(::storeIfLocale, ::storeIfTranslationKey, ::storeUnknownPurposeColumn).forEach { store ->
                 if( store(indexedCell) ) {
                     return
                 }
@@ -102,14 +102,14 @@ internal class ConfigRowIdentifier {
         }
         val locale = allLocales.findLocale(localeCandidate)
         if (locale != null) {
-            locales.add(SourceColumn(localeCandidate, localeCellCandidate.index))
+            localeColumns.add(SourceColumn(localeCandidate, localeCellCandidate.index))
             return true
         }
         return false
     }
 
-    private fun storeIfProjectKey(projectCellCandidate: IndexedValue<Cell>): Boolean {
-        val tokens = projectCellCandidate.value.stringCellValue.trim()
+    private fun storeIfTranslationKey(translationKeyCellCandidate: IndexedValue<Cell>): Boolean {
+        val tokens = translationKeyCellCandidate.value.stringCellValue.trim()
                 .split(" ").filter { it.isNotBlank() }.map { it.toLowerCase() }
         if (tokens.isEmpty()) {
             return false
@@ -117,7 +117,7 @@ internal class ConfigRowIdentifier {
         for (translationKeyType in TranslationKeyType.values()) {
             val id = translationKeyType.cellText.find { tokens.contains(it) }
             if (id != null) {
-                projectKeyColumns.add(TranslationKeyColumn(projectCellCandidate.index, translationKeyType))
+                translationKeyColumns.add(TranslationKeyColumn(translationKeyCellCandidate.index, translationKeyType))
                 return true
             }
         }
@@ -131,7 +131,7 @@ internal class ConfigRowIdentifier {
 
     val isConfigRow: Boolean
         get() {
-            return projectKeyColumns.isNotEmpty() && locales.isNotEmpty()
+            return translationKeyColumns.isNotEmpty() && localeColumns.isNotEmpty()
         }
 }
 
