@@ -1,5 +1,6 @@
 import internal.TargetDirectory
 import internal.dirs
+import internal.files
 import internal.skipTo
 import io.mockk.MockKSettings.relaxed
 import io.mockk.every
@@ -67,11 +68,13 @@ class Dir(dirBlock: Dir.()->Unit) {
         every { dir.toPath() } returns Path.of(name)
         every { dir.isDirectory } returns true
         every { dir.dirs } returns Dir(dirBlock).allDirs()
+        every { dir.files } returns Dir(dirBlock).allFiles()
         dirs.add(dir)
         return dir
     }
 
     private fun allDirs() = dirs.toTypedArray()
+    private fun allFiles() = files.toTypedArray()
 }
 
 fun dir(name: String, block: Dir.()->Unit): File = Dir(){}.dir(name, block)
