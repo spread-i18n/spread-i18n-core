@@ -1,5 +1,7 @@
 package internal
 
+import internal.filewriting.TranslationFileWriter
+import internal.filewriting.iOSTranslationFileWriter
 import java.nio.file.Path
 
 internal class SupportedProjectTypeNotFound(projectPath: Path) :
@@ -20,7 +22,7 @@ internal enum class ProjectType {
             get() = iOSSourceTargetMatcher()
 
         override fun fileWriter(path: Path): TranslationFileWriter {
-            return iOSFileWriter(path)
+            return iOSTranslationFileWriter(path)
         }
 
         override val translationKeyType: TranslationKeyType

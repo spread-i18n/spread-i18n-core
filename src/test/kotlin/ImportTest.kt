@@ -1,6 +1,6 @@
 import internal.*
+import internal.filewriting.TranslationFileWriter
 import io.mockk.*
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 

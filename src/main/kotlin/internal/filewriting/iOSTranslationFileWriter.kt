@@ -1,17 +1,10 @@
-package internal
+package internal.filewriting
 
 import java.io.BufferedWriter
-import java.io.Closeable
 import java.io.IOException
 import java.lang.StringBuilder
 import java.nio.file.Files
 import java.nio.file.Path
-
-internal class CanNotAccessLocalizationFile(exc: IOException) : ImportException(cause = exc)
-
-internal interface TranslationFileWriter: Closeable {
-    fun write(key: String, value: String)
-}
 
 @Suppress("ClassName")
 internal class iOSHeaderCopying {
@@ -42,7 +35,7 @@ internal class iOSHeaderCopying {
 }
 
 @Suppress("ClassName")
-internal class iOSFileWriter(private val targetDirectoryPath: Path) : TranslationFileWriter {
+internal class iOSTranslationFileWriter(private val targetDirectoryPath: Path) : TranslationFileWriter {
 
     private val localizableFilePath: Path by lazy {
         targetDirectoryPath.resolve("Localizable.strings")
