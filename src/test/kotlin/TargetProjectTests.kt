@@ -7,11 +7,8 @@ class TargetProjectTests {
 
     @Test
     fun `xcodeproj is discovered in directory hierarchy`() {
-        val iOSProjRootDir = dir("app") {
-            dir("ProjectA") {
-                dir("ProjectA.xcodeproj"){
-                }
-            }
+        val iOSProjRootDir = dir("ProjectA") {
+            dir("ProjectA.xcodeproj"){}
         }
         assertThat(xcodeprojDirectory.existsIn(iOSProjRootDir.mockkedPath)).isTrue
     }

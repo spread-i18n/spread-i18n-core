@@ -2,6 +2,7 @@ package internal
 
 import internal.filewriting.TranslationFileWriter
 import internal.filewriting.iOSTranslationFileWriter
+import java.io.File
 import java.nio.file.Path
 
 internal class SupportedProjectTypeNotFound(projectPath: Path) :
@@ -61,8 +62,11 @@ internal enum class ProjectType {
 @Suppress("ClassName")
 object xcodeprojDirectory {
     fun existsIn(path: Path): Boolean {
-        return allDirsRecursively(path.toFile())
-                .any { dir -> dir.dirs.any { it.name.endsWith(".xcodeproj") }  }
+        var isXcodeDir: (File)->Boolean = {
+            it.name.endsWith(".xcodeproj")
+        }
+        return (path.toFile().dirs.any{isXcodeDir(it)}) ||
+                allDirsRecursively(path.toFile()).any { dir -> dir.dirs.any {isXcodeDir(it) }}
     }
 }
 
