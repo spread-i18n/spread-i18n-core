@@ -18,7 +18,7 @@ internal class Importer(private val sourceSheet: Sheet, private val targetProjec
                 sourceSheet.rows.skipTo(config.firstTranslationRow).forEach { row ->
                     val keyCell = row.getCell(config.keyColumn)
                     val valueCell = row.getCell(match.sourceColumn.column)
-                    if ((keyCell != null) && (valueCell != null)) {
+                    if ((keyCell != null) && (keyCell.stringCellValue.isNotBlank()) && (valueCell != null)) {
                         fileWriter.write(key = keyCell.stringCellValue, value = valueCell.stringCellValue)
                     }
                 }
