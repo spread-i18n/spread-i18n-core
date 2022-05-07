@@ -1,7 +1,6 @@
 package com.andro.spreadi18ncore.importing
 
 import com.andro.spreadi18ncore.sourcesheet.ConfigRow
-import com.andro.spreadi18ncore.sourcesheet.ImportConfiguration
 import com.andro.spreadi18ncore.targetproject.TargetProject
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
