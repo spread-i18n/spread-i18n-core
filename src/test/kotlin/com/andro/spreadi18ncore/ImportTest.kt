@@ -1,5 +1,5 @@
-import internal.*
-import internal.filewriting.TranslationFileWriter
+package com.andro.spreadi18ncore
+
 import io.mockk.*
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
@@ -10,7 +10,7 @@ class ImportTest {
     fun performs_import() {
         val sourceFilePath = Path.of("sample.xlsx")
         val targetProjectPath = Path.of("/Users/zebul/Projects/sandbox/iOS/AProject")
-        Import().perform(sourceFilePath = sourceFilePath, targetProjectPath = targetProjectPath)
+        Import.perform(sourceFilePath = sourceFilePath, targetProjectPath = targetProjectPath)
     }
 
     @Test

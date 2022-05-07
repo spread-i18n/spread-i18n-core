@@ -1,12 +1,8 @@
-package internal.filewriting
+package com.andro.spreadi18ncore
 
-import internal.ImportException
-import java.io.BufferedWriter
+import com.andro.spreadi18ncore.ImportException
 import java.io.Closeable
 import java.io.IOException
-import java.lang.StringBuilder
-import java.nio.file.Files
-import java.nio.file.Path
 
 internal class CanNotAccessLocalizationFile(exc: IOException) : ImportException(cause = exc)
 

@@ -1,5 +1,5 @@
-import internal.AndroidLocalizationDirectoriesFinder
-import internal.iOSLocalizationDirectoriesFinder
+package com.andro.spreadi18ncore
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -9,7 +9,7 @@ class LocalizationDirectoriesFinderTests {
     fun `finding localization directories in iOS project`() {
         val rootDir = dir("ProjectRoot") {
             dir("Assets.xcassets") {
-                dir("AppIcon.appiconset"){ file("Contents.json") }
+                dir("AppIcon.appiconset") { file("Contents.json") }
             }
             dir("Base.lproj") { file("Localizable.strings") }
             dir("Resources") {
@@ -24,7 +24,7 @@ class LocalizationDirectoriesFinderTests {
     fun `finding localization directories in Android project`() {
         val rootDir = dir("app") {
             dir("src") {
-                dir("main"){
+                dir("main") {
                     dir("java") {
                     }
                     dir("res") {

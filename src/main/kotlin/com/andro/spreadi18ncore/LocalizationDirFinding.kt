@@ -1,4 +1,4 @@
-package internal
+package com.andro.spreadi18ncore
 
 import java.io.File
 
@@ -16,7 +16,8 @@ internal interface LocalizationDirectoriesFinder {
 fun allDirsRecursively(parentFile: File): List<File> {
     return parentFile.dirs
             .map { file ->
-                listOf(file) + allDirsRecursively(file) }
+                listOf(file) + allDirsRecursively(file)
+            }
             .flatten()
 }
 

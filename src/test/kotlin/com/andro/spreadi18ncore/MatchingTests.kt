@@ -1,4 +1,5 @@
-import internal.*
+package com.andro.spreadi18ncore
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

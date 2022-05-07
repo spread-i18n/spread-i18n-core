@@ -1,4 +1,4 @@
-package internal
+package com.andro.spreadi18ncore
 
 internal data class ImportEvaluation(val projectType: ProjectType, val matchedSourcesAndTargets: MatchedSourcesAndTargets)
 

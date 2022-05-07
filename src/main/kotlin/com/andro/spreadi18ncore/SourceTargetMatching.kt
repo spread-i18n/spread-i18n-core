@@ -1,6 +1,6 @@
-package internal
+package com.andro.spreadi18ncore
 
-import internal.Locales.Companion.allLocales
+import com.andro.spreadi18ncore.Locales.Companion.allLocales
 import java.io.File
 import java.nio.file.Path
 import java.text.DateFormat

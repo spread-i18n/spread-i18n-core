@@ -1,7 +1,5 @@
-import internal.TargetDirectory
-import internal.dirs
-import internal.files
-import internal.skipTo
+package com.andro.spreadi18ncore
+
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -76,7 +74,7 @@ class Dir(dirBlock: Dir.()->Unit) {
     private fun allFiles() = files.toTypedArray()
 }
 
-fun dir(name: String, block: Dir.()->Unit): File = Dir(){}.dir(name, block)
+fun dir(name: String, block: Dir.()->Unit): File = Dir() {}.dir(name, block)
 val File.mockkedPath: Path
    get() {
        val path = mockk<Path>()

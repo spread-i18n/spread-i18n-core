@@ -1,4 +1,4 @@
-package internal.filewriting
+package com.andro.spreadi18ncore
 
 import java.io.BufferedWriter
 import java.io.IOException

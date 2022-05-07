@@ -1,12 +1,11 @@
-import internal.ImportException
-import internal.Importer
-import internal.TargetProject
+package com.andro.spreadi18ncore
+
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 import java.nio.file.Path
 
 
-class Import() {
+object Import {
 
     fun perform(sourceFilePath: Path, targetProjectPath: Path) {
         try {

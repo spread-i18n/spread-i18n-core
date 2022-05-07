@@ -1,6 +1,6 @@
-package internal
+package com.andro.spreadi18ncore
 
-import internal.Locales.Companion.allLocales
+import com.andro.spreadi18ncore.Locales.Companion.allLocales
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Sheet
@@ -62,7 +62,8 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
     companion object {
 
         fun getFrom(sheet: Sheet): ConfigRow {
-            return findIn(sheet) ?: throw ConfigRowNotFound()
+            return findIn(sheet)
+                    ?: throw ConfigRowNotFound()
         }
 
         fun findIn(sheet: Sheet): ConfigRow? {

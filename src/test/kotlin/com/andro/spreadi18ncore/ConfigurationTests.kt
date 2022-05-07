@@ -1,6 +1,5 @@
-import internal.ConfigRow
-import internal.ImportException
-import internal.ProjectType
+package com.andro.spreadi18ncore
+
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test

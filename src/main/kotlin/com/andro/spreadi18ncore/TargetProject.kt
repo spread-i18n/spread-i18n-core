@@ -1,7 +1,5 @@
-package internal
+package com.andro.spreadi18ncore
 
-import internal.filewriting.TranslationFileWriter
-import internal.filewriting.iOSTranslationFileWriter
 import java.io.File
 import java.nio.file.Path
 
