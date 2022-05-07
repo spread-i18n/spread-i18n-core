@@ -1,8 +1,14 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.targetproject
 
+import com.andro.spreadi18ncore.sourcetargetmatching.AndroidSourceTargetMatcher
+import com.andro.spreadi18ncore.sourcetargetmatching.SourceTargetMatcher
+import com.andro.spreadi18ncore.sourcetargetmatching.TargetDirectory
+import com.andro.spreadi18ncore.sourcesheet.TranslationKeyType
 import com.andro.spreadi18ncore.filewriting.AndroidTranslationFileWriter
 import com.andro.spreadi18ncore.filewriting.TranslationFileWriter
 import com.andro.spreadi18ncore.filewriting.iOSTranslationFileWriter
+import com.andro.spreadi18ncore.importing.ImportException
+import com.andro.spreadi18ncore.sourcetargetmatching.iOSSourceTargetMatcher
 import java.io.File
 import java.nio.file.Path
 
@@ -20,26 +26,32 @@ internal class TargetProject(private val projectPath: Path) {
 
 internal enum class ProjectType {
     iOS {
-        override val sourceTargetMatcher = iOSSourceTargetMatcher()
+        override val sourceTargetMatcher =
+            iOSSourceTargetMatcher()
 
         override fun fileWriter(path: Path) = iOSTranslationFileWriter(path)
 
         override val translationKeyType = TranslationKeyType.iOS
 
-        override fun existsIn(path: Path) = xcodeprojDirectory.existsIn(path)
+        override fun existsIn(path: Path) =
+            xcodeprojDirectory.existsIn(path)
 
-        override val localizationDirectoriesFinder = iOSLocalizationDirectoriesFinder()
+        override val localizationDirectoriesFinder =
+            iOSLocalizationDirectoriesFinder()
     },
     Android {
-        override val sourceTargetMatcher = AndroidSourceTargetMatcher()
+        override val sourceTargetMatcher =
+            AndroidSourceTargetMatcher()
 
         override fun fileWriter(path: Path) = AndroidTranslationFileWriter(path)
 
         override val translationKeyType = TranslationKeyType.Android
 
-        override fun existsIn(path: Path) = AndroidManifest.existsIn(path)
+        override fun existsIn(path: Path) =
+            AndroidManifest.existsIn(path)
 
-        override val localizationDirectoriesFinder = AndroidLocalizationDirectoriesFinder()
+        override val localizationDirectoriesFinder =
+            AndroidLocalizationDirectoriesFinder()
     };
     abstract val sourceTargetMatcher: SourceTargetMatcher
     abstract val localizationDirectoriesFinder: LocalizationDirectoriesFinder

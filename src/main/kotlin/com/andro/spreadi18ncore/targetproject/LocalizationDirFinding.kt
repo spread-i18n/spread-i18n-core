@@ -1,5 +1,6 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.targetproject
 
+import com.andro.spreadi18ncore.sourcetargetmatching.TargetDirectory
 import java.io.File
 
 val File.dirs: Array<File>
@@ -22,7 +23,8 @@ fun allDirsRecursively(parentFile: File): List<File> {
 }
 
 @Suppress("ClassName")
-internal class iOSLocalizationDirectoriesFinder: LocalizationDirectoriesFinder {
+internal class iOSLocalizationDirectoriesFinder:
+    LocalizationDirectoriesFinder {
     override fun findLocalizationDirectoriesIn(rootFile: File): List<TargetDirectory> {
         return allDirsRecursively(rootFile)
                 .filter { dir -> dir.name.endsWith(".lproj") }
@@ -30,7 +32,8 @@ internal class iOSLocalizationDirectoriesFinder: LocalizationDirectoriesFinder {
     }
 }
 
-internal class AndroidLocalizationDirectoriesFinder: LocalizationDirectoriesFinder {
+internal class AndroidLocalizationDirectoriesFinder:
+    LocalizationDirectoriesFinder {
     override fun findLocalizationDirectoriesIn(rootFile: File): List<TargetDirectory> {
         return allDirsRecursively(rootFile)
                 .filter { dir -> dir.name.startsWith("values") && dir.files.any { it.name == "strings.xml"} }

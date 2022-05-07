@@ -1,5 +1,8 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.importing
 
+import com.andro.spreadi18ncore.sourcesheet.ConfigRow
+import com.andro.spreadi18ncore.sourcesheet.ImportConfiguration
+import com.andro.spreadi18ncore.targetproject.TargetProject
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
@@ -31,10 +34,12 @@ internal class Importer(private val sourceSheet: Sheet, private val targetProjec
     }
 
     private val config: ImportConfiguration by lazy {
-        ImportConfiguration(configRow.indexOfTranslationKeyColumnForProjectType(evaluation.projectType),
-                configRow.rowWithFirstTranslation,
-                evaluation.matchedSourcesAndTargets,
-                evaluation.projectType)
+        ImportConfiguration(
+            configRow.indexOfTranslationKeyColumnForProjectType(evaluation.projectType),
+            configRow.rowWithFirstTranslation,
+            evaluation.matchedSourcesAndTargets,
+            evaluation.projectType
+        )
     }
 
     private val configRow: ConfigRow by lazy {

@@ -1,5 +1,9 @@
 package com.andro.spreadi18ncore
 
+import com.andro.spreadi18ncore.importing.skipTo
+import com.andro.spreadi18ncore.sourcetargetmatching.TargetDirectory
+import com.andro.spreadi18ncore.targetproject.dirs
+import com.andro.spreadi18ncore.targetproject.files
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -82,4 +86,5 @@ val File.mockkedPath: Path
        return path
    }
 
-internal fun String.asTargetDir() = TargetDirectory(File(this))
+internal fun String.asTargetDir() =
+    TargetDirectory(File(this))

@@ -1,6 +1,6 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.sourcetargetmatching
 
-import com.andro.spreadi18ncore.Locales.Companion.allLocales
+import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
 import java.io.File
 import java.nio.file.Path
 import java.text.DateFormat
@@ -88,7 +88,8 @@ internal class MatchedSourcesAndTargets(private val _matches: MutableList<Matche
 }
 
 @Suppress("ClassName")
-internal class iOSSourceTargetMatcher: SourceTargetMatcher {
+internal class iOSSourceTargetMatcher:
+    SourceTargetMatcher {
 
     private fun matchesStrongly(source: SourceColumn, target: TargetDirectory): Boolean {
         val sourceTag = source.title.normalizedTag
@@ -107,11 +108,17 @@ internal class iOSSourceTargetMatcher: SourceTargetMatcher {
 
 
     override fun match(sources: Collection<SourceColumn>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
-        val matchedSourcesAndTargets = MatchedSourcesAndTargets()
+        val matchedSourcesAndTargets =
+            MatchedSourcesAndTargets()
         for (source in sources) {
             for (target in targets) {
                 if (matchesStrongly(source, target)) {
-                    matchedSourcesAndTargets.add(MatchedSourceAndTarget(source, target))
+                    matchedSourcesAndTargets.add(
+                        MatchedSourceAndTarget(
+                            source,
+                            target
+                        )
+                    )
                     break
                 }
             }
@@ -123,7 +130,12 @@ internal class iOSSourceTargetMatcher: SourceTargetMatcher {
         for (source in remainingSources) {
             for (target in remainingTargets) {
                 if (matchesWeakly(source, target)) {
-                    matchedSourcesAndTargets.add(MatchedSourceAndTarget(source, target))
+                    matchedSourcesAndTargets.add(
+                        MatchedSourceAndTarget(
+                            source,
+                            target
+                        )
+                    )
                     break
                 }
             }
@@ -133,7 +145,12 @@ internal class iOSSourceTargetMatcher: SourceTargetMatcher {
         remainingTargets = targets.filter { target -> matchedSourcesAndTargets.notContainsTarget(target) }
 
         if ((remainingSources.size==1) && (remainingTargets.size==1) && remainingTargets[0].isBaseDir) {
-            matchedSourcesAndTargets.add(MatchedSourceAndTarget(remainingSources[0], remainingTargets[0]))
+            matchedSourcesAndTargets.add(
+                MatchedSourceAndTarget(
+                    remainingSources[0],
+                    remainingTargets[0]
+                )
+            )
         }
         return matchedSourcesAndTargets
     }
@@ -142,7 +159,8 @@ internal class iOSSourceTargetMatcher: SourceTargetMatcher {
 //https://stackoverflow.com/questions/13693209/android-localization-values-folder-names
 //https://developer.android.com/reference/java/util/Locale
 //https://datatracker.ietf.org/doc/html/rfc4647#section-3.4.1
-internal class AndroidSourceTargetMatcher: SourceTargetMatcher {
+internal class AndroidSourceTargetMatcher:
+    SourceTargetMatcher {
 
     private val String.extractedTag: String?
         get() {
@@ -175,11 +193,17 @@ internal class AndroidSourceTargetMatcher: SourceTargetMatcher {
 
 
     override fun match(sources: Collection<SourceColumn>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
-        val matchedSourcesAndTargets = MatchedSourcesAndTargets()
+        val matchedSourcesAndTargets =
+            MatchedSourcesAndTargets()
         for (source in sources) {
             for (target in targets) {
                 if (matchesStrongly(source, target)) {
-                    matchedSourcesAndTargets.add(MatchedSourceAndTarget(source, target))
+                    matchedSourcesAndTargets.add(
+                        MatchedSourceAndTarget(
+                            source,
+                            target
+                        )
+                    )
                     break
                 }
             }
@@ -191,7 +215,12 @@ internal class AndroidSourceTargetMatcher: SourceTargetMatcher {
         for (source in remainingSources) {
             for (target in remainingTargets) {
                 if (matchesWeakly(source, target)) {
-                    matchedSourcesAndTargets.add(MatchedSourceAndTarget(source, target))
+                    matchedSourcesAndTargets.add(
+                        MatchedSourceAndTarget(
+                            source,
+                            target
+                        )
+                    )
                     break
                 }
             }
@@ -201,7 +230,12 @@ internal class AndroidSourceTargetMatcher: SourceTargetMatcher {
         remainingTargets = targets.filter { target -> matchedSourcesAndTargets.notContainsTarget(target) }
 
         if ((remainingSources.size==1) && (remainingTargets.size==1) && remainingTargets[0].isBaseDir) {
-            matchedSourcesAndTargets.add(MatchedSourceAndTarget(remainingSources[0], remainingTargets[0]))
+            matchedSourcesAndTargets.add(
+                MatchedSourceAndTarget(
+                    remainingSources[0],
+                    remainingTargets[0]
+                )
+            )
         }
         return matchedSourcesAndTargets
     }

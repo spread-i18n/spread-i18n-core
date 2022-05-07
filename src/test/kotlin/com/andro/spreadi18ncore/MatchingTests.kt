@@ -1,5 +1,6 @@
 package com.andro.spreadi18ncore
 
+import com.andro.spreadi18ncore.sourcetargetmatching.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -10,15 +11,17 @@ class AndroidMatchingTests {
     @Test
     fun matching_by_simple_tag_without_region() {
         val sources = listOf(
-                SourceColumn("Polish", 0),
-                SourceColumn("French", 1),
-                SourceColumn("English", 2))
+            SourceColumn("Polish", 0),
+            SourceColumn("French", 1),
+            SourceColumn("English", 2)
+        )
         val targets = listOf(
                 "res/values-fr".asTargetDir(),
                 "res/values-pl".asTargetDir(),
                 "res/values".asTargetDir())
 
-        val result = AndroidSourceTargetMatcher().match(sources, targets)
+        val result = AndroidSourceTargetMatcher()
+            .match(sources, targets)
 
         assertThat(result.count).isEqualTo(3)
         assertThat(result.getMatchWithTitle("Polish").path).isEqualTo("res/values-pl")
@@ -29,15 +32,17 @@ class AndroidMatchingTests {
     @Test
     fun matching_by_tag_with_region() {
         val sources = listOf(
-                SourceColumn("pl", 0),
-                SourceColumn("French", 1),
-                SourceColumn("en_US", 2))
+            SourceColumn("pl", 0),
+            SourceColumn("French", 1),
+            SourceColumn("en_US", 2)
+        )
         val targets = listOf(
                 "res/values-fr-rFR".asTargetDir(),
                 "res/values-pl".asTargetDir(),
                 "res/values-en-rUS".asTargetDir())
 
-        val result = AndroidSourceTargetMatcher().match(sources, targets)
+        val result = AndroidSourceTargetMatcher()
+            .match(sources, targets)
 
         assertThat(result.count).isEqualTo(3)
         assertThat(result.getMatchWithTitle("pl").path).isEqualTo("res/values-pl")
@@ -52,21 +57,24 @@ class iOSMatchingTests {
     @Test
     fun matches_by_tag_translations_existing_in_source_and_target() {
         val sources = listOf(
-                SourceColumn("fr_DZ", 0),
-                SourceColumn("fr_ML", 1),
-                SourceColumn("fr_PM", 2),
-                SourceColumn("fr_MG", 3),
-                SourceColumn("english", 4),
-                SourceColumn("fr_MF", 5))
+            SourceColumn("fr_DZ", 0),
+            SourceColumn("fr_ML", 1),
+            SourceColumn("fr_PM", 2),
+            SourceColumn("fr_MG", 3),
+            SourceColumn("english", 4),
+            SourceColumn("fr_MF", 5)
+        )
         val targets = listOf(
-                TargetDirectory(File("project/fr-PM.lproj")),
-                TargetDirectory(File("project/fr-ML.lproj")),
-                TargetDirectory(File("project/fr-DZ.lproj")),
-                TargetDirectory(File("project/fr-MG.lproj")),
-                TargetDirectory(File("project/en.lproj")),
-                TargetDirectory(File("project/fr-MF.lproj")))
+            TargetDirectory(File("project/fr-PM.lproj")),
+            TargetDirectory(File("project/fr-ML.lproj")),
+            TargetDirectory(File("project/fr-DZ.lproj")),
+            TargetDirectory(File("project/fr-MG.lproj")),
+            TargetDirectory(File("project/en.lproj")),
+            TargetDirectory(File("project/fr-MF.lproj"))
+        )
 
-        val result = iOSSourceTargetMatcher().match(sources, targets)
+        val result = iOSSourceTargetMatcher()
+            .match(sources, targets)
 
         assertThat(result.count).isEqualTo(6)
         assertThat(result.getMatchWithTitle("fr_DZ").path).isEqualTo("project/fr-DZ.lproj")
@@ -80,13 +88,16 @@ class iOSMatchingTests {
     @Test
     fun matches_only_translations_existing_in_source_and_target() {
         val sources = listOf(
-                SourceColumn("Polish", 0),
-                SourceColumn("French", 1))
+            SourceColumn("Polish", 0),
+            SourceColumn("French", 1)
+        )
         val targets = listOf(
-                TargetDirectory(File("project/fr-CA.lproj")),
-                TargetDirectory(File("project/en.lproj")))
+            TargetDirectory(File("project/fr-CA.lproj")),
+            TargetDirectory(File("project/en.lproj"))
+        )
 
-        val result = iOSSourceTargetMatcher().match(sources, targets)
+        val result = iOSSourceTargetMatcher()
+            .match(sources, targets)
 
         assertEquals(1, result.count)
         assertEquals("French", result.getAt(0).sourceColumn.title)
@@ -95,13 +106,16 @@ class iOSMatchingTests {
     @Test
     fun matches_all_source_columns_with_target_dirs() {
         val sources = listOf(
-                SourceColumn("English", 0),
-                SourceColumn("French", 1))
+            SourceColumn("English", 0),
+            SourceColumn("French", 1)
+        )
         val targets = listOf(
-                TargetDirectory(File("project/fr-CA.lproj")),
-                TargetDirectory(File("project/en.lproj")))
+            TargetDirectory(File("project/fr-CA.lproj")),
+            TargetDirectory(File("project/en.lproj"))
+        )
 
-        val result = iOSSourceTargetMatcher().match(sources, targets)
+        val result = iOSSourceTargetMatcher()
+            .match(sources, targets)
 
         assertEquals(2, result.count)
     }
@@ -109,13 +123,16 @@ class iOSMatchingTests {
     @Test
     fun matches_base_directory_with_single_unmatched_column() {
         val sources = listOf(
-                SourceColumn("English", 0),
-                SourceColumn("French", 1))
+            SourceColumn("English", 0),
+            SourceColumn("French", 1)
+        )
         val targets = listOf(
-                TargetDirectory(File("project/fr-CA.lproj")),
-                TargetDirectory(File("project/Base.lproj")))
+            TargetDirectory(File("project/fr-CA.lproj")),
+            TargetDirectory(File("project/Base.lproj"))
+        )
 
-        val result = iOSSourceTargetMatcher().match(sources, targets)
+        val result = iOSSourceTargetMatcher()
+            .match(sources, targets)
 
         assertThat(result.count).isEqualTo(2)
         assertThat(result.getMatchWithTitle("French").path).isEqualTo("project/fr-CA.lproj")

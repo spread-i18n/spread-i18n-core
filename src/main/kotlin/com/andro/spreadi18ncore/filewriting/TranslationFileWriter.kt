@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.filewriting
 
-import com.andro.spreadi18ncore.ImportException
+import com.andro.spreadi18ncore.importing.ImportException
 import java.io.Closeable
 import java.io.IOException
 

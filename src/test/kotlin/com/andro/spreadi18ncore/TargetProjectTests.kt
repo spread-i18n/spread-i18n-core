@@ -1,5 +1,7 @@
 package com.andro.spreadi18ncore
 
+import com.andro.spreadi18ncore.targetproject.AndroidManifest
+import com.andro.spreadi18ncore.targetproject.xcodeprojDirectory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

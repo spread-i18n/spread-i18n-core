@@ -1,6 +1,10 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.sourcesheet
 
-import com.andro.spreadi18ncore.Locales.Companion.allLocales
+import com.andro.spreadi18ncore.importing.ImportException
+import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
+import com.andro.spreadi18ncore.sourcetargetmatching.MatchedSourcesAndTargets
+import com.andro.spreadi18ncore.sourcetargetmatching.SourceColumn
+import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Sheet
@@ -48,7 +52,8 @@ internal class TranslationKeyColumns() {
 internal class ConfigRowNotFound(): ImportException("Config row not found in the source file.")
 
 internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
-                              private val translationKeyColumns: TranslationKeyColumns) {
+                              private val translationKeyColumns: TranslationKeyColumns
+) {
 
     fun indexOfTranslationKeyColumnForProjectType(projectType: ProjectType): Int {
         if (translationKeyColumns.containsTranslationKeyColumnFor(projectType.translationKeyType)) {
@@ -68,12 +73,17 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
 
         fun findIn(sheet: Sheet): ConfigRow? {
             sheet.rowIterator().withIndex().forEach { indexedRow ->
-                val configRowIdentifier = ConfigRowIdentifier()
+                val configRowIdentifier =
+                    ConfigRowIdentifier()
                 indexedRow.value.cellIterator().withIndex().forEach { indexedCell ->
                     configRowIdentifier.analyseCell(indexedCell)
                 }
                 if (configRowIdentifier.isConfigRow) {
-                    return ConfigRow(indexedRow.index, configRowIdentifier.localeColumns, configRowIdentifier.translationKeyColumns)
+                    return ConfigRow(
+                        indexedRow.index,
+                        configRowIdentifier.localeColumns,
+                        configRowIdentifier.translationKeyColumns
+                    )
                 }
             }
             return null
@@ -103,7 +113,12 @@ internal class ConfigRowIdentifier {
         }
         val locale = allLocales.findLocale(localeCandidate)
         if (locale != null) {
-            localeColumns.add(SourceColumn(localeCandidate, localeCellCandidate.index))
+            localeColumns.add(
+                SourceColumn(
+                    localeCandidate,
+                    localeCellCandidate.index
+                )
+            )
             return true
         }
         return false
@@ -118,7 +133,12 @@ internal class ConfigRowIdentifier {
         for (translationKeyType in TranslationKeyType.values()) {
             val id = translationKeyType.cellText.find { tokens.contains(it) }
             if (id != null) {
-                translationKeyColumns.add(TranslationKeyColumn(translationKeyCellCandidate.index, translationKeyType))
+                translationKeyColumns.add(
+                    TranslationKeyColumn(
+                        translationKeyCellCandidate.index,
+                        translationKeyType
+                    )
+                )
                 return true
             }
         }
@@ -135,8 +155,3 @@ internal class ConfigRowIdentifier {
             return translationKeyColumns.isNotEmpty() && localeColumns.isNotEmpty()
         }
 }
-
-internal data class ImportConfiguration(val keyColumn: Int,
-                                        val firstTranslationRow: Int,
-                                        val matchedSourcesAndTargets: MatchedSourcesAndTargets,
-                                        val projectType: ProjectType)
