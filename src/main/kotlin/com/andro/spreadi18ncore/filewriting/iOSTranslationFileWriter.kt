@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.filewriting
 
 import java.io.BufferedWriter
 import java.io.IOException
@@ -11,8 +11,13 @@ internal class iOSHeaderCopying {
     companion object {
 
         fun copyHeaderFromFileWith(path: Path): String? {
-            return findEndPositionOfHeaderInFileWith(path)?.let { endPositionOfHeader ->
-                copyHeaderFromFileWith(path, endPositionOfHeader)
+            return findEndPositionOfHeaderInFileWith(
+                path
+            )?.let { endPositionOfHeader ->
+                copyHeaderFromFileWith(
+                    path,
+                    endPositionOfHeader
+                )
             }
         }
 
@@ -35,7 +40,8 @@ internal class iOSHeaderCopying {
 }
 
 @Suppress("ClassName")
-internal class iOSTranslationFileWriter(private val targetDirectoryPath: Path) : TranslationFileWriter {
+internal class iOSTranslationFileWriter(private val targetDirectoryPath: Path) :
+    TranslationFileWriter {
 
     private val localizableFilePath: Path by lazy {
         targetDirectoryPath.resolve("Localizable.strings")
@@ -54,14 +60,18 @@ internal class iOSTranslationFileWriter(private val targetDirectoryPath: Path) :
         //https://stackoverflow.com/questions/25736700/how-to-localise-a-string-inside-the-ios-info-plist-file
         try {
             if (Files.exists(localizableFilePath)) {
-                iOSHeaderCopying.copyHeaderFromFileWith(localizableFilePath)?.let { header ->
+                iOSHeaderCopying.copyHeaderFromFileWith(
+                    localizableFilePath
+                )?.let { header ->
                     localizableWriter.write(header)
                 }
             } else {
                 Files.createFile(localizableFilePath)
             }
             if (Files.exists(infoPlistFilePath)) {
-                iOSHeaderCopying.copyHeaderFromFileWith(infoPlistFilePath)?.let { header ->
+                iOSHeaderCopying.copyHeaderFromFileWith(
+                    infoPlistFilePath
+                )?.let { header ->
                     infoPlistWriter.write(header)
                 }
             } else {

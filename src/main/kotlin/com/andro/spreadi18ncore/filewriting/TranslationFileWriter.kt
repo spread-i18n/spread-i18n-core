@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.filewriting
 
 import com.andro.spreadi18ncore.ImportException
 import java.io.Closeable

@@ -1,5 +1,6 @@
 package com.andro.spreadi18ncore
 
+import com.andro.spreadi18ncore.filewriting.TranslationFileWriter
 import io.mockk.*
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
