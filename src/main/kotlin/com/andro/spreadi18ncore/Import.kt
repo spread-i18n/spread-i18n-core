@@ -10,6 +10,7 @@ import java.nio.file.Path
 
 object Import {
 
+    @JvmStatic
     fun perform(sourceFilePath: Path, targetProjectPath: Path) {
         try {
             workbook(sourceFilePath).use {
