@@ -86,18 +86,20 @@ internal class iOSTranslationFileWriter(private val targetDirectoryPath: Path) :
         val isSystemTranslation = listOf("NS", "CF").firstOrNull { key.startsWith(it) } != null
         val fixedValue = fixValue(value)
         if (isSystemTranslation) {
-            infoPlistWriter.write("$key = \"$fixedValue\";\n")
+            infoPlistWriter.write("\"$key\" = \"$fixedValue\";\n")
         } else {
             if (key.startsWith("//")) {
                 localizableWriter.write("$key\n")
             } else if (key.isNotBlank()) {
-                localizableWriter.write("$key = \"$fixedValue\";\n")
+                localizableWriter.write("\"$key\" = \"$fixedValue\";\n")
             }
         }
     }
 
     private fun fixValue(value: String): String {
-        return value.replace("\"", "\\\"")
+        return value.replace("%s", "%@")
+            .replace("\"", "\\\"")
+            .trim()
     }
 
     override fun close() {
