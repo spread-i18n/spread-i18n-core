@@ -7,7 +7,7 @@ import java.text.DateFormat
 import java.util.*
 
 internal interface SourceTargetMatcher {
-    fun match(sourceLocalizations: Collection<SourceColumn>, targetLocalizations: Collection<TargetDirectory>):
+    fun match(sources: Collection<SourceColumn>, targets: Collection<TargetDirectory>):
             MatchedSourcesAndTargets
 }
 
@@ -167,8 +167,8 @@ internal class AndroidSourceTargetMatcher:
             val directoryNameRegex = Regex(""".*values-?(\w{2})?-?r?(\w{2,3})?""")
             return directoryNameRegex.matchEntire(this)?.groups?.filterNotNull()?.let {
                 when (it.size) {
-                    3 -> "${it[1]!!.value}-${it[2]!!.value}"
-                    2 -> "${it[1]!!.value}"
+                    3 -> "${it[1].value}-${it[2].value}"
+                    2 -> "${it[1].value}"
                     else -> null
                 }
             }
