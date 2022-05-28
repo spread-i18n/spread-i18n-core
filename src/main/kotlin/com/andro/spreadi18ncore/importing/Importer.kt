@@ -15,10 +15,10 @@ fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
 internal class Importer(private val sourceSheet: Sheet, private val targetProject: TargetProject) {
 
     fun import() {
-        config.matchedSourcesAndTargets.forEach { match ->
-            config.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
-                sourceSheet.rows.skipTo(config.firstTranslationRow).forEach { row ->
-                    val keyCell = row.getCell(config.keyColumn)
+        declaration.matchedSourcesAndTargets.forEach { match ->
+            declaration.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
+                sourceSheet.rows.skipTo(declaration.firstTranslationRow).forEach { row ->
+                    val keyCell = row.getCell(declaration.keyColumn)
                     val valueCell = row.getCell(match.sourceColumn.column)
                     if ((keyCell != null) && (keyCell.stringCellValue.isNotBlank()) && (valueCell != null)) {
                         fileWriter.write(key = keyCell.stringCellValue, value = valueCell.stringCellValue)
@@ -32,8 +32,8 @@ internal class Importer(private val sourceSheet: Sheet, private val targetProjec
         ImportEvaluator().evaluate(headerRow, targetProject)
     }
 
-    private val config: ImportConfiguration by lazy {
-        ImportConfiguration(
+    private val declaration: ImportDeclaration by lazy {
+        ImportDeclaration(
             headerRow.indexOfTranslationKeyColumnForProjectType(evaluation.projectType),
             headerRow.rowWithFirstTranslation,
             evaluation.matchedSourcesAndTargets,
