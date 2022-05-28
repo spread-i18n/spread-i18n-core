@@ -2,6 +2,8 @@ package com.andro.spreadi18ncore.importing
 
 import com.andro.spreadi18ncore.sourcesheet.HeaderRow
 import com.andro.spreadi18ncore.targetproject.TargetProject
+import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
+import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
@@ -12,7 +14,14 @@ val Sheet.rows: Sequence<Row>
 
 fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
 
-internal class Importer(private val sourceSheet: Sheet, private val targetProject: TargetProject) {
+internal class Importer(private val sourceSheet: Sheet,
+                        private val targetProject: TargetProject,
+                        private val valueTransformationMap: Map<String, String>? = null) {
+
+    private val valueTransformation: ValueTransformation by lazy {
+        valueTransformationMap?.let { CustomValueTransformation(valueTransformationMap) }
+                ?: declaration.projectType.valueTransformation
+    }
 
     fun import() {
         declaration.matchedSourcesAndTargets.forEach { match ->
@@ -21,7 +30,8 @@ internal class Importer(private val sourceSheet: Sheet, private val targetProjec
                     val keyCell = row.getCell(declaration.keyColumn)
                     val valueCell = row.getCell(match.sourceColumn.column)
                     if ((keyCell != null) && (keyCell.stringCellValue.isNotBlank()) && (valueCell != null)) {
-                        fileWriter.write(key = keyCell.stringCellValue, value = valueCell.stringCellValue)
+                        val value = valueTransformation.transform(valueCell.stringCellValue)
+                        fileWriter.write(key = keyCell.stringCellValue, value = value)
                     }
                 }
             }

@@ -9,6 +9,9 @@ import com.andro.spreadi18ncore.filewriting.TranslationFileWriter
 import com.andro.spreadi18ncore.filewriting.iOSTranslationFileWriter
 import com.andro.spreadi18ncore.importing.ImportException
 import com.andro.spreadi18ncore.sourcetargetmatching.iOSSourceTargetMatcher
+import com.andro.spreadi18ncore.valuetransformation.AndroidDefaultValueTransformation
+import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
+import com.andro.spreadi18ncore.valuetransformation.iOSDefaultValueTransformation
 import java.io.File
 import java.nio.file.Path
 
@@ -38,6 +41,8 @@ internal enum class ProjectType {
 
         override val localizationDirectoriesFinder =
             iOSLocalizationDirectoriesFinder()
+
+        override val valueTransformation = iOSDefaultValueTransformation()
     },
     Android {
         override val sourceTargetMatcher =
@@ -52,9 +57,12 @@ internal enum class ProjectType {
 
         override val localizationDirectoriesFinder =
             AndroidLocalizationDirectoriesFinder()
+
+        override val valueTransformation = AndroidDefaultValueTransformation()
     };
     abstract val sourceTargetMatcher: SourceTargetMatcher
     abstract val localizationDirectoriesFinder: LocalizationDirectoriesFinder
+    abstract val valueTransformation: ValueTransformation
     abstract fun fileWriter(path: Path): TranslationFileWriter
     abstract val translationKeyType: TranslationKeyType
     abstract fun existsIn(path: Path): Boolean

@@ -6,6 +6,7 @@ import com.andro.spreadi18ncore.importing.Importer
 import com.andro.spreadi18ncore.sourcetargetmatching.AndroidSourceTargetMatcher
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import com.andro.spreadi18ncore.targetproject.TargetProject
+import com.andro.spreadi18ncore.valuetransformation.AndroidDefaultValueTransformation
 import io.mockk.*
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
@@ -29,6 +30,7 @@ class ImportTest {
         val projectType = mockk<ProjectType>()
         every { projectType.sourceTargetMatcher } returns AndroidSourceTargetMatcher()
         every { projectType.translationKeyType } returns TranslationKeyType.Android
+        every { projectType.valueTransformation } returns AndroidDefaultValueTransformation()
 
         val enFileWriter = spyk(mockk<TranslationFileWriter>(relaxed = true))
         val plFileWriter = spyk(mockk<TranslationFileWriter>(relaxed = true))
