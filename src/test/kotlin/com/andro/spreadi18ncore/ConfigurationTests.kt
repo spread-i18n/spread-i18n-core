@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore
 
-import com.andro.spreadi18ncore.sourcesheet.ConfigRow
+import com.andro.spreadi18ncore.sourcesheet.HeaderRow
 import com.andro.spreadi18ncore.importing.ImportException
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class ConfigurationTests {
 
     @Test
-    fun does_not_find_a_configRow_when_any_row_does_not_have_localisation_and_project_column() {
+    fun does_not_find_a_headerRow_when_any_row_does_not_have_localisation_and_project_column() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │           │          │English  │Polish   │
@@ -18,12 +18,12 @@ class ConfigurationTests {
             │Android Key│iOS Key   │         │         │
             └──────────────────────────────────────────┘
         """
-        val configRow = ConfigRow.findIn(mockSheet(sheetContent))
-        assertThat(configRow).isNull()
+        val headerRow = HeaderRow.findIn(mockSheet(sheetContent))
+        assertThat(headerRow).isNull()
     }
 
     @Test
-    fun finding_configRow_with_expected_translation_source_columns() {
+    fun finding_headerRow_with_expected_translation_source_columns() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │           │          │         │         │
@@ -34,9 +34,9 @@ class ConfigurationTests {
             └──────────────────────────────────────────┘
         """
 
-        val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
-        assertThat(configRow.rowInDocument).isEqualTo(1)
-        assertThat(configRow.sourceColumns.map { it.title }).hasSameElementsAs(listOf("English", "Polish"))
+        val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
+        assertThat(headerRow.rowInDocument).isEqualTo(1)
+        assertThat(headerRow.sourceColumns.map { it.title }).hasSameElementsAs(listOf("English", "Polish"))
     }
 
     @Test
@@ -48,10 +48,10 @@ class ConfigurationTests {
             │           │          │         │         │
             └──────────────────────────────────────────┘
         """
-        val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
-        val androidKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
+        val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
+        val androidKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
         assertThat(androidKeyColumnIndex).isEqualTo(0)
-        val iOSKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
+        val iOSKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
         assertThat(iOSKeyColumnIndex).isEqualTo(1)
     }
 
@@ -64,10 +64,10 @@ class ConfigurationTests {
             │           │         │         │
             └───────────────────────────────┘
         """
-        val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
-        val androidKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
+        val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
+        val androidKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
         assertThat(androidKeyColumnIndex).isEqualTo(0)
-        val iOSKeyColumnIndex = configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
+        val iOSKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
         assertThat(iOSKeyColumnIndex).isEqualTo(0)
     }
 
@@ -82,8 +82,8 @@ class ConfigurationTests {
         """
         assertThatExceptionOfType(ImportException::class.java)
                 .isThrownBy{
-                    val configRow = ConfigRow.findIn(mockSheet(sheetContent))!!
-                    configRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
+                    val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
+                    headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
                 }
     }
 }
