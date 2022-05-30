@@ -20,16 +20,8 @@ class AndroidTranslationFileWriter(private val targetDirectoryPath: Path) :
         if (key.startsWith("//")) {
             localizableWriter.write("    <!-- ${key.replace("// *".toRegex(), "")} -->\n")
         } else if (key.isNotBlank()) {
-            localizableWriter.write("    <string name=\"$key\">${fixValue(value)}</string>\n")
+            localizableWriter.write("    <string name=\"$key\">$value</string>\n")
         }
-    }
-
-    private fun fixValue(value: String): String {
-        return value
-            .replace("\"", "\\\"")
-            .replace("\'", "\\\'")
-            .replace("&", "&amp;")
-            .trim()
     }
 
     override fun close() {

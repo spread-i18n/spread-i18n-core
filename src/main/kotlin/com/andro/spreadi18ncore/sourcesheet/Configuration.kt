@@ -2,7 +2,6 @@ package com.andro.spreadi18ncore.sourcesheet
 
 import com.andro.spreadi18ncore.importing.ImportException
 import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
-import com.andro.spreadi18ncore.sourcetargetmatching.MatchedSourcesAndTargets
 import com.andro.spreadi18ncore.sourcetargetmatching.SourceColumn
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.apache.poi.ss.usermodel.Cell
@@ -49,9 +48,9 @@ internal class TranslationKeyColumns() {
     }
 }
 
-internal class ConfigRowNotFound(): ImportException("Config row not found in the source file.")
+internal class HeaderRowNotFound(): ImportException("Header row not found in the source file.")
 
-internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
+internal data class HeaderRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
                               private val translationKeyColumns: TranslationKeyColumns
 ) {
 
@@ -66,23 +65,23 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
 
     companion object {
 
-        fun getFrom(sheet: Sheet): ConfigRow {
+        fun getFrom(sheet: Sheet): HeaderRow {
             return findIn(sheet)
-                    ?: throw ConfigRowNotFound()
+                    ?: throw HeaderRowNotFound()
         }
 
-        fun findIn(sheet: Sheet): ConfigRow? {
+        fun findIn(sheet: Sheet): HeaderRow? {
             sheet.rowIterator().withIndex().forEach { indexedRow ->
-                val configRowIdentifier =
-                    ConfigRowIdentifier()
+                val headerRowIdentifier =
+                    HeaderRowIdentifier()
                 indexedRow.value.cellIterator().withIndex().forEach { indexedCell ->
-                    configRowIdentifier.analyseCell(indexedCell)
+                    headerRowIdentifier.analyseCell(indexedCell)
                 }
-                if (configRowIdentifier.isConfigRow) {
-                    return ConfigRow(
+                if (headerRowIdentifier.isHeaderRow) {
+                    return HeaderRow(
                         indexedRow.index,
-                        configRowIdentifier.localeColumns,
-                        configRowIdentifier.translationKeyColumns
+                        headerRowIdentifier.localeColumns,
+                        headerRowIdentifier.translationKeyColumns
                     )
                 }
             }
@@ -91,7 +90,7 @@ internal data class ConfigRow(val rowInDocument: Int, val sourceColumns: Set<Sou
     }
 }
 
-internal class ConfigRowIdentifier {
+internal class HeaderRowIdentifier {
     val translationKeyColumns = TranslationKeyColumns()
     val localeColumns = mutableSetOf<SourceColumn>()
     val unknownPurposeColumns = mutableListOf<IndexedValue<Cell>>()
@@ -150,7 +149,7 @@ internal class ConfigRowIdentifier {
         return true
     }
 
-    val isConfigRow: Boolean
+    val isHeaderRow: Boolean
         get() {
             return translationKeyColumns.isNotEmpty() && localeColumns.isNotEmpty()
         }

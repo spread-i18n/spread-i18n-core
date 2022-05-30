@@ -1,7 +1,9 @@
 package com.andro.spreadi18ncore.importing
 
-import com.andro.spreadi18ncore.sourcesheet.ConfigRow
+import com.andro.spreadi18ncore.sourcesheet.HeaderRow
 import com.andro.spreadi18ncore.targetproject.TargetProject
+import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
+import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
@@ -12,16 +14,24 @@ val Sheet.rows: Sequence<Row>
 
 fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
 
-internal class Importer(private val sourceSheet: Sheet, private val targetProject: TargetProject) {
+internal class Importer(private val sourceSheet: Sheet,
+                        private val targetProject: TargetProject,
+                        private val valueTransformationMap: Map<String, String>? = null) {
+
+    private val valueTransformation: ValueTransformation by lazy {
+        valueTransformationMap?.let { CustomValueTransformation(valueTransformationMap) }
+                ?: declaration.projectType.valueTransformation
+    }
 
     fun import() {
-        config.matchedSourcesAndTargets.forEach { match ->
-            config.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
-                sourceSheet.rows.skipTo(config.firstTranslationRow).forEach { row ->
-                    val keyCell = row.getCell(config.keyColumn)
+        declaration.matchedSourcesAndTargets.forEach { match ->
+            declaration.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
+                sourceSheet.rows.skipTo(declaration.firstTranslationRow).forEach { row ->
+                    val keyCell = row.getCell(declaration.keyColumn)
                     val valueCell = row.getCell(match.sourceColumn.column)
                     if ((keyCell != null) && (keyCell.stringCellValue.isNotBlank()) && (valueCell != null)) {
-                        fileWriter.write(key = keyCell.stringCellValue, value = valueCell.stringCellValue)
+                        val value = valueTransformation.transform(valueCell.stringCellValue)
+                        fileWriter.write(key = keyCell.stringCellValue, value = value)
                     }
                 }
             }
@@ -29,19 +39,19 @@ internal class Importer(private val sourceSheet: Sheet, private val targetProjec
     }
 
     private val evaluation: ImportEvaluation by lazy {
-        ImportEvaluator().evaluate(configRow, targetProject)
+        ImportEvaluator().evaluate(headerRow, targetProject)
     }
 
-    private val config: ImportConfiguration by lazy {
-        ImportConfiguration(
-            configRow.indexOfTranslationKeyColumnForProjectType(evaluation.projectType),
-            configRow.rowWithFirstTranslation,
+    private val declaration: ImportDeclaration by lazy {
+        ImportDeclaration(
+            headerRow.indexOfTranslationKeyColumnForProjectType(evaluation.projectType),
+            headerRow.rowWithFirstTranslation,
             evaluation.matchedSourcesAndTargets,
             evaluation.projectType
         )
     }
 
-    private val configRow: ConfigRow by lazy {
-        ConfigRow.getFrom(sourceSheet)
+    private val headerRow: HeaderRow by lazy {
+        HeaderRow.getFrom(sourceSheet)
     }
 }
