@@ -6,15 +6,24 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
 
+internal class LocaleCellsBuilder {
+    val cells = mutableListOf<LocaleCell>()
+    fun addLocale(localeName: String):LocaleCellsBuilder {
+        val cell = LocaleCell(localeName, RowIndex(0), ColumnIndex(cells.size))
+        cells.add(cell)
+        return this
+    }
+}
+
 class AndroidMatchingTests {
 
     @Test
     fun matching_by_simple_tag_without_region() {
-        val sources = listOf(
-            SourceColumn("Polish", 0),
-            SourceColumn("French", 1),
-            SourceColumn("English", 2)
-        )
+        val sources = LocaleCellsBuilder()
+                .addLocale("Polish")
+                .addLocale("French")
+                .addLocale("English").cells
+
         val targets = listOf(
                 "res/values-fr".asTargetDir(),
                 "res/values-pl".asTargetDir(),
@@ -31,11 +40,11 @@ class AndroidMatchingTests {
 
     @Test
     fun matching_by_tag_with_region() {
-        val sources = listOf(
-            SourceColumn("pl", 0),
-            SourceColumn("French", 1),
-            SourceColumn("en_US", 2)
-        )
+        val sources = LocaleCellsBuilder()
+                .addLocale("pl")
+                .addLocale("French")
+                .addLocale("en_US").cells
+
         val targets = listOf(
                 "res/values-fr-rFR".asTargetDir(),
                 "res/values-pl".asTargetDir(),
@@ -56,14 +65,14 @@ class iOSMatchingTests {
 
     @Test
     fun matches_by_tag_translations_existing_in_source_and_target() {
-        val sources = listOf(
-            SourceColumn("fr_DZ", 0),
-            SourceColumn("fr_ML", 1),
-            SourceColumn("fr_PM", 2),
-            SourceColumn("fr_MG", 3),
-            SourceColumn("english", 4),
-            SourceColumn("fr_MF", 5)
-        )
+       val sources = LocaleCellsBuilder()
+                .addLocale("fr_DZ")
+                .addLocale("fr_ML")
+                .addLocale("fr_PM")
+                .addLocale("fr_MG")
+                .addLocale("english")
+                .addLocale("fr_MF").cells
+
         val targets = listOf(
             TargetDirectory(File("project/fr-PM.lproj")),
             TargetDirectory(File("project/fr-ML.lproj")),
@@ -87,10 +96,10 @@ class iOSMatchingTests {
 
     @Test
     fun matches_only_translations_existing_in_source_and_target() {
-        val sources = listOf(
-            SourceColumn("Polish", 0),
-            SourceColumn("French", 1)
-        )
+        val sources = LocaleCellsBuilder()
+                .addLocale("Polish")
+                .addLocale("French").cells
+
         val targets = listOf(
             TargetDirectory(File("project/fr-CA.lproj")),
             TargetDirectory(File("project/en.lproj"))
@@ -100,15 +109,15 @@ class iOSMatchingTests {
             .match(sources, targets)
 
         assertEquals(1, result.count)
-        assertEquals("French", result.getAt(0).sourceColumn.text)
+        assertEquals("French", result.getAt(0).sourceLocaleCell.text)
     }
 
     @Test
     fun matches_all_source_columns_with_target_dirs() {
-        val sources = listOf(
-            SourceColumn("English", 0),
-            SourceColumn("French", 1)
-        )
+        val sources = LocaleCellsBuilder()
+                .addLocale("English")
+                .addLocale("French").cells
+
         val targets = listOf(
             TargetDirectory(File("project/fr-CA.lproj")),
             TargetDirectory(File("project/en.lproj"))
@@ -122,10 +131,10 @@ class iOSMatchingTests {
 
     @Test
     fun matches_base_directory_with_single_unmatched_column() {
-        val sources = listOf(
-            SourceColumn("English", 0),
-            SourceColumn("French", 1)
-        )
+        val sources = LocaleCellsBuilder()
+                .addLocale("English")
+                .addLocale("French").cells
+
         val targets = listOf(
             TargetDirectory(File("project/fr-CA.lproj")),
             TargetDirectory(File("project/Base.lproj"))
@@ -144,7 +153,7 @@ internal val MatchedSourceAndTarget.path: String
     get() { return targetDirectory.file.path }
 
 internal fun MatchedSourcesAndTargets.findWithTitle(title: String): MatchedSourceAndTarget? {
-    return matches.find { match -> match.sourceColumn.text == title }
+    return matches.find { match -> match.sourceLocaleCell.text == title }
 }
 
 internal fun MatchedSourcesAndTargets.getMatchWithTitle(title: String): MatchedSourceAndTarget {

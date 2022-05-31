@@ -7,7 +7,7 @@ import java.text.DateFormat
 import java.util.*
 
 internal interface SourceTargetMatcher {
-    fun match(sources: Collection<SourceColumn>, targets: Collection<TargetDirectory>):
+    fun match(sources: Collection<LocaleCell>, targets: Collection<TargetDirectory>):
             MatchedSourcesAndTargets
 }
 
@@ -44,7 +44,10 @@ internal class Locales {
     }
 }
 
-internal data class SourceColumn(val text: String, val columnIndex: Int) {//source point
+inline class RowIndex(val value: Int)
+inline class ColumnIndex(val value: Int)
+
+internal data class LocaleCell(val text: String, val rowIndex: RowIndex, val columnIndex: ColumnIndex) {//source point
     val locales: List<Locale> by lazy {
         allLocales.items.filter { locale -> locale.identifiedBy(text) }
     }
@@ -54,7 +57,7 @@ internal data class TargetDirectory(val file: File){
     val path: Path = file.toPath()
 }
 
-internal data class MatchedSourceAndTarget(val sourceColumn: SourceColumn, val targetDirectory: TargetDirectory)//TransactionAddress, TransferAddress
+internal data class MatchedSourceAndTarget(val sourceLocaleCell: LocaleCell, val targetDirectory: TargetDirectory)//TransactionAddress, TransferAddress
 
 internal class MatchedSourcesAndTargets(private val _matches: MutableList<MatchedSourceAndTarget> = mutableListOf())
     : Iterable<MatchedSourceAndTarget> by _matches {
@@ -68,11 +71,11 @@ internal class MatchedSourcesAndTargets(private val _matches: MutableList<Matche
         _matches.add(matchedSourceAndTarget)
     }
 
-    fun notContainsSource(sourceColumn: SourceColumn): Boolean {
-        return !containsSource(sourceColumn)
+    fun notContainsSource(sourceLocaleCell: LocaleCell): Boolean {
+        return !containsSource(sourceLocaleCell)
     }
-    private fun containsSource(sourceColumn: SourceColumn): Boolean {
-        return _matches.find { address -> address.sourceColumn.columnIndex==sourceColumn.columnIndex } != null
+    private fun containsSource(sourceLocaleCell: LocaleCell): Boolean {
+        return _matches.find { address -> address.sourceLocaleCell.columnIndex==sourceLocaleCell.columnIndex } != null
     }
 
     fun notContainsTarget(target: TargetDirectory): Boolean {
@@ -91,13 +94,13 @@ internal class MatchedSourcesAndTargets(private val _matches: MutableList<Matche
 internal class iOSSourceTargetMatcher:
     SourceTargetMatcher {
 
-    private fun matchesStrongly(source: SourceColumn, target: TargetDirectory): Boolean {
+    private fun matchesStrongly(source: LocaleCell, target: TargetDirectory): Boolean {
         val sourceTag = source.text.normalizedTag
         val targetTag = target.file.nameWithoutExtension.normalizedTag
         return sourceTag == targetTag
     }
 
-    private fun matchesWeakly(source: SourceColumn, target: TargetDirectory): Boolean {
+    private fun matchesWeakly(source: LocaleCell, target: TargetDirectory): Boolean {
         val name = target.file.nameWithoutExtension.normalizedTag
         val locale = source.locales.find { locale -> locale.toLanguageTag().normalizedTag == name }
         return locale != null
@@ -107,7 +110,7 @@ internal class iOSSourceTargetMatcher:
         get() = this.file.name.toLowerCase().endsWith("base.lproj")
 
 
-    override fun match(sources: Collection<SourceColumn>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
+    override fun match(sources: Collection<LocaleCell>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
         val matchedSourcesAndTargets =
             MatchedSourcesAndTargets()
         for (source in sources) {
@@ -174,14 +177,14 @@ internal class AndroidSourceTargetMatcher:
             }
         }
 
-    private fun matchesStrongly(source: SourceColumn, target: TargetDirectory): Boolean {
+    private fun matchesStrongly(source: LocaleCell, target: TargetDirectory): Boolean {
         return target.file.name.extractedTag?.normalizedTag?.let { targetTag ->
             val sourceTag = source.text.normalizedTag
             sourceTag == targetTag
         } ?: false
     }
 
-    private fun matchesWeakly(source: SourceColumn, target: TargetDirectory): Boolean {
+    private fun matchesWeakly(source: LocaleCell, target: TargetDirectory): Boolean {
         return target.file.name.extractedTag?.normalizedTag?.let { targetTag ->
             val locale = source.locales.find { locale -> locale.toLanguageTag().normalizedTag == targetTag }
             locale != null
@@ -192,7 +195,7 @@ internal class AndroidSourceTargetMatcher:
         get() = this.file.name == "values"
 
 
-    override fun match(sources: Collection<SourceColumn>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
+    override fun match(sources: Collection<LocaleCell>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
         val matchedSourcesAndTargets =
             MatchedSourcesAndTargets()
         for (source in sources) {

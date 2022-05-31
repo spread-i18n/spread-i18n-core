@@ -1,8 +1,10 @@
 package com.andro.spreadi18ncore.sourcesheet
 
 import com.andro.spreadi18ncore.importing.ImportException
+import com.andro.spreadi18ncore.sourcetargetmatching.ColumnIndex
+import com.andro.spreadi18ncore.sourcetargetmatching.LocaleCell
 import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
-import com.andro.spreadi18ncore.sourcetargetmatching.SourceColumn
+import com.andro.spreadi18ncore.sourcetargetmatching.RowIndex
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
@@ -10,7 +12,7 @@ import org.apache.poi.ss.usermodel.Sheet
 
 internal class HeaderRowNotFound(): ImportException("Header row not found in the source file.")
 
-internal data class HeaderRow(val rowInDocument: Int, val sourceColumns: Set<SourceColumn>,
+internal data class HeaderRow(val rowInDocument: Int, val localeCells: Set<LocaleCell>,
                               private val translationKeyColumns: TranslationKeyColumns
 ) {
 
@@ -38,17 +40,16 @@ internal data class HeaderRow(val rowInDocument: Int, val sourceColumns: Set<Sou
     }
 }
 
-internal typealias LocaleCell = SourceColumn
 internal typealias KeyCell = TranslationKeyColumn
 
 internal object RowAnalyser {
 
     fun toHeaderRow(indexedRow: IndexedValue<Row>): HeaderRow? {
         val keyCells = TranslationKeyColumns()
-        val localeCells = mutableSetOf<SourceColumn>()
+        val localeCells = mutableSetOf<LocaleCell>()
 
         fun saveLocaleCell(localeCellCandidate: IndexedValue<Cell>): Boolean {
-            return toLocaleCell(localeCellCandidate)?.let {
+            return toLocaleCell(localeCellCandidate, indexedRow.index)?.let {
                 localeCells.add(it)
                 true
             } ?: false
@@ -72,13 +73,13 @@ internal object RowAnalyser {
         return null
     }
 
-    private fun toLocaleCell(localeCellCandidate: IndexedValue<Cell>): LocaleCell? {
+    private fun toLocaleCell(localeCellCandidate: IndexedValue<Cell>, rowIndex: Int): LocaleCell? {
         val localeCandidate = localeCellCandidate.value.stringCellValue.trim()
         if (localeCandidate.isEmpty()) {
             return null
         }
         allLocales.findLocale(localeCandidate)?.let {
-            return LocaleCell(localeCandidate, localeCellCandidate.index)
+            return LocaleCell(localeCandidate, RowIndex(rowIndex), ColumnIndex(localeCellCandidate.index))
         }
         return null
     }

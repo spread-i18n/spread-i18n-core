@@ -36,7 +36,7 @@ class HeaderRowTests {
 
         val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
         assertThat(headerRow.rowInDocument).isEqualTo(1)
-        assertThat(headerRow.sourceColumns.map { it.text }).hasSameElementsAs(listOf("English", "Polish"))
+        assertThat(headerRow.localeCells.map { it.text }).hasSameElementsAs(listOf("English", "Polish"))
     }
 
     @Test

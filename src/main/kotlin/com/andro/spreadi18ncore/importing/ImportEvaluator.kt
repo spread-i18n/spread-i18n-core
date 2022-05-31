@@ -11,7 +11,7 @@ internal class ImportEvaluator {
 
     fun evaluate(headerRow: HeaderRow, targetProject: TargetProject): ImportEvaluation {
         val targetDirectories = targetProject.localizationDirectories
-        val matchResult = targetProject.type.sourceTargetMatcher.match(headerRow.sourceColumns, targetDirectories)
+        val matchResult = targetProject.type.sourceTargetMatcher.match(headerRow.localeCells, targetDirectories)
         return ImportEvaluation(targetProject.type, matchResult)
     }
 }
