@@ -44,9 +44,9 @@ internal class Locales {
     }
 }
 
-internal data class SourceColumn(val title: String, val column: Int) {//source point
+internal data class SourceColumn(val text: String, val columnIndex: Int) {//source point
     val locales: List<Locale> by lazy {
-        allLocales.items.filter { locale -> locale.identifiedBy(title) }
+        allLocales.items.filter { locale -> locale.identifiedBy(text) }
     }
 }
 
@@ -72,7 +72,7 @@ internal class MatchedSourcesAndTargets(private val _matches: MutableList<Matche
         return !containsSource(sourceColumn)
     }
     private fun containsSource(sourceColumn: SourceColumn): Boolean {
-        return _matches.find { address -> address.sourceColumn.column==sourceColumn.column } != null
+        return _matches.find { address -> address.sourceColumn.columnIndex==sourceColumn.columnIndex } != null
     }
 
     fun notContainsTarget(target: TargetDirectory): Boolean {
@@ -92,7 +92,7 @@ internal class iOSSourceTargetMatcher:
     SourceTargetMatcher {
 
     private fun matchesStrongly(source: SourceColumn, target: TargetDirectory): Boolean {
-        val sourceTag = source.title.normalizedTag
+        val sourceTag = source.text.normalizedTag
         val targetTag = target.file.nameWithoutExtension.normalizedTag
         return sourceTag == targetTag
     }
@@ -176,7 +176,7 @@ internal class AndroidSourceTargetMatcher:
 
     private fun matchesStrongly(source: SourceColumn, target: TargetDirectory): Boolean {
         return target.file.name.extractedTag?.normalizedTag?.let { targetTag ->
-            val sourceTag = source.title.normalizedTag
+            val sourceTag = source.text.normalizedTag
             sourceTag == targetTag
         } ?: false
     }

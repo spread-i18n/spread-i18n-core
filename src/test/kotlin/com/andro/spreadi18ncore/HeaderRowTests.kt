@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
 
-class ConfigurationTests {
+class HeaderRowTests {
 
     @Test
     fun does_not_find_a_headerRow_when_any_row_does_not_have_localisation_and_project_column() {
@@ -36,7 +36,7 @@ class ConfigurationTests {
 
         val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
         assertThat(headerRow.rowInDocument).isEqualTo(1)
-        assertThat(headerRow.sourceColumns.map { it.title }).hasSameElementsAs(listOf("English", "Polish"))
+        assertThat(headerRow.sourceColumns.map { it.text }).hasSameElementsAs(listOf("English", "Polish"))
     }
 
     @Test

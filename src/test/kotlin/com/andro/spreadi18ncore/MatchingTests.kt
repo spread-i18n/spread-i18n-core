@@ -100,7 +100,7 @@ class iOSMatchingTests {
             .match(sources, targets)
 
         assertEquals(1, result.count)
-        assertEquals("French", result.getAt(0).sourceColumn.title)
+        assertEquals("French", result.getAt(0).sourceColumn.text)
     }
 
     @Test
@@ -144,7 +144,7 @@ internal val MatchedSourceAndTarget.path: String
     get() { return targetDirectory.file.path }
 
 internal fun MatchedSourcesAndTargets.findWithTitle(title: String): MatchedSourceAndTarget? {
-    return matches.find { match -> match.sourceColumn.title == title }
+    return matches.find { match -> match.sourceColumn.text == title }
 }
 
 internal fun MatchedSourcesAndTargets.getMatchWithTitle(title: String): MatchedSourceAndTarget {
