@@ -1,5 +1,6 @@
 package com.andro.spreadi18ncore.sourcetargetmatching
 
+import com.andro.spreadi18ncore.sourcesheet.LocaleCell
 import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
 import java.io.File
 import java.nio.file.Path
@@ -27,13 +28,11 @@ internal fun Locale.identifiedBy(localeDataCandidate: String): Boolean {
     }
 }
 
-internal class Locales {
+internal class Locales private constructor() {
 
     fun findLocale(localeDataCandidate: String): Locale? {
         return items.find { locale -> locale.identifiedBy(localeDataCandidate) }
     }
-
-    private constructor()
 
     companion object {
         val allLocales = Locales()
@@ -41,15 +40,6 @@ internal class Locales {
 
     val items: Array<Locale> by lazy {
         DateFormat.getAvailableLocales()
-    }
-}
-
-inline class RowIndex(val value: Int)
-inline class ColumnIndex(val value: Int)
-
-internal data class LocaleCell(val text: String, val rowIndex: RowIndex, val columnIndex: ColumnIndex) {//source point
-    val locales: List<Locale> by lazy {
-        allLocales.items.filter { locale -> locale.identifiedBy(text) }
     }
 }
 
@@ -171,7 +161,7 @@ internal class AndroidSourceTargetMatcher:
             return directoryNameRegex.matchEntire(this)?.groups?.filterNotNull()?.let {
                 when (it.size) {
                     3 -> "${it[1].value}-${it[2].value}"
-                    2 -> "${it[1].value}"
+                    2 -> it[1].value
                     else -> null
                 }
             }

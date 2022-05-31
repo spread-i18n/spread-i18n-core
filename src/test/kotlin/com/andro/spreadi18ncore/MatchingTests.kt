@@ -1,5 +1,8 @@
 package com.andro.spreadi18ncore
 
+import com.andro.spreadi18ncore.sourcesheet.ColumnIndex
+import com.andro.spreadi18ncore.sourcesheet.LocaleCell
+import com.andro.spreadi18ncore.sourcesheet.RowIndex
 import com.andro.spreadi18ncore.sourcetargetmatching.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals

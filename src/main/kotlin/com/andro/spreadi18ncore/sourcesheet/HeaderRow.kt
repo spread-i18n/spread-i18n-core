@@ -1,10 +1,7 @@
 package com.andro.spreadi18ncore.sourcesheet
 
 import com.andro.spreadi18ncore.importing.ImportException
-import com.andro.spreadi18ncore.sourcetargetmatching.ColumnIndex
-import com.andro.spreadi18ncore.sourcetargetmatching.LocaleCell
 import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
-import com.andro.spreadi18ncore.sourcetargetmatching.RowIndex
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
@@ -12,7 +9,7 @@ import org.apache.poi.ss.usermodel.Sheet
 
 internal class HeaderRowNotFound(): ImportException("Header row not found in the source file.")
 
-internal data class HeaderRow(val rowInDocument: Int, val localeCells: Set<LocaleCell>,
+internal data class HeaderRow(val rowInDocument: Int, val localeCells: LocaleCells,
                               private val translationKeyColumns: TranslationKeyColumns
 ) {
 
@@ -46,7 +43,7 @@ internal object RowAnalyser {
 
     fun toHeaderRow(indexedRow: IndexedValue<Row>): HeaderRow? {
         val keyCells = TranslationKeyColumns()
-        val localeCells = mutableSetOf<LocaleCell>()
+        val localeCells = LocaleCells()
 
         fun saveLocaleCell(localeCellCandidate: IndexedValue<Cell>): Boolean {
             return toLocaleCell(localeCellCandidate, indexedRow.index)?.let {
