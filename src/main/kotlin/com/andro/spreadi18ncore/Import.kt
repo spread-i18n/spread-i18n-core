@@ -21,7 +21,8 @@ object Import {
             workbook(configuration.sourceFilePath).use {
                 val importer = Importer(
                         it.getSheetAt(0),
-                        project(configuration.targetProjectPath)
+                        project(configuration.targetProjectPath),
+                        configuration.valueTransformationMap
                 )
                 importer.import()
             }
@@ -34,19 +35,7 @@ object Import {
 
     @JvmStatic
     fun perform(sourceFilePath: Path, targetProjectPath: Path) {
-        try {
-            workbook(sourceFilePath).use {
-                val importer = Importer(
-                    it.getSheetAt(0),
-                    project(targetProjectPath)
-                )
-                importer.import()
-            }
-        } catch (exc: ImportException) {
-            throw exc
-        } catch (exc: Exception) {
-            throw UnknownImportError(exc)
-        }
+        perform(ImportConfiguration(sourceFilePath, targetProjectPath))
     }
 
     private fun workbook(sourceFilePath: Path): XSSFWorkbook {
