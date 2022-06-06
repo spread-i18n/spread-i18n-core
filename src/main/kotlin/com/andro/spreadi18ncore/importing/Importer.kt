@@ -1,9 +1,11 @@
 package com.andro.spreadi18ncore.importing
 
+import com.andro.spreadi18ncore.sourcesheet.ColumnIndex
 import com.andro.spreadi18ncore.sourcesheet.HeaderRow
 import com.andro.spreadi18ncore.targetproject.TargetProject
 import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
+import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
@@ -13,6 +15,8 @@ val Sheet.rows: Sequence<Row>
     get() = rowIterator().asSequence()
 
 fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
+
+fun Row.getCell(columnIndex: ColumnIndex): Cell? = getCell(columnIndex.value)
 
 internal class Importer(private val sourceSheet: Sheet,
                         private val targetProject: TargetProject,
@@ -27,7 +31,7 @@ internal class Importer(private val sourceSheet: Sheet,
         declaration.matchedSourcesAndTargets.forEach { match ->
             declaration.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
                 sourceSheet.rows.skipTo(declaration.firstTranslationRow).forEach { row ->
-                    val keyCell = row.getCell(declaration.keyColumn)
+                    val keyCell = row.getCell(declaration.keyColumnIndex)
                     val valueCell = row.getCell(match.sourceLocaleCell.columnIndex.value)
                     if ((keyCell != null) && (keyCell.stringCellValue.isNotBlank()) && (valueCell != null)) {
                         val value = valueTransformation.transform(valueCell.stringCellValue)
@@ -44,7 +48,7 @@ internal class Importer(private val sourceSheet: Sheet,
 
     private val declaration: ImportDeclaration by lazy {
         ImportDeclaration(
-            headerRow.indexOfTranslationKeyColumnForProjectType(evaluation.projectType),
+            headerRow.columnIndexForProjectType(evaluation.projectType),
             headerRow.rowWithFirstTranslation,
             evaluation.matchedSourcesAndTargets,
             evaluation.projectType

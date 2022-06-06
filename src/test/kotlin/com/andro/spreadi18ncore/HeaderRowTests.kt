@@ -40,7 +40,7 @@ class HeaderRowTests {
     }
 
     @Test
-    fun finding_translation_key_column_when_columns_are_specified_explicitly() {
+    fun finding_key_column_when_columns_are_specified_explicitly() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │Android Key│iOS Key   │English  │Polish   │
@@ -49,14 +49,14 @@ class HeaderRowTests {
             └──────────────────────────────────────────┘
         """
         val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
-        val androidKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
-        assertThat(androidKeyColumnIndex).isEqualTo(0)
-        val iOSKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
-        assertThat(iOSKeyColumnIndex).isEqualTo(1)
+        val androidKeyColumnIndex = headerRow.columnIndexForProjectType(ProjectType.Android)
+        assertThat(androidKeyColumnIndex.value).isEqualTo(0)
+        val iOSKeyColumnIndex = headerRow.columnIndexForProjectType(ProjectType.iOS)
+        assertThat(iOSKeyColumnIndex.value).isEqualTo(1)
     }
 
     @Test
-    fun finding_translation_key_column_when_column_is_specified_generally() {
+    fun finding_key_column_when_column_is_specified_generally() {
         val sheetContent = """
             ┌───────────────────────────────┐
             │Identifier │English  │Polish   │
@@ -65,10 +65,10 @@ class HeaderRowTests {
             └───────────────────────────────┘
         """
         val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
-        val androidKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
-        assertThat(androidKeyColumnIndex).isEqualTo(0)
-        val iOSKeyColumnIndex = headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.iOS)
-        assertThat(iOSKeyColumnIndex).isEqualTo(0)
+        val androidKeyColumnIndex = headerRow.columnIndexForProjectType(ProjectType.Android)
+        assertThat(androidKeyColumnIndex.value).isEqualTo(0)
+        val iOSKeyColumnIndex = headerRow.columnIndexForProjectType(ProjectType.iOS)
+        assertThat(iOSKeyColumnIndex.value).isEqualTo(0)
     }
 
     @Test
@@ -83,7 +83,7 @@ class HeaderRowTests {
         assertThatExceptionOfType(ImportException::class.java)
                 .isThrownBy{
                     val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
-                    headerRow.indexOfTranslationKeyColumnForProjectType(ProjectType.Android)
+                    headerRow.columnIndexForProjectType(ProjectType.Android)
                 }
     }
 }

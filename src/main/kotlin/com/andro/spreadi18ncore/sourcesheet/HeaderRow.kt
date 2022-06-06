@@ -10,14 +10,14 @@ import org.apache.poi.ss.usermodel.Sheet
 internal class HeaderRowNotFound(): ImportException("Header row not found in the source file.")
 
 internal data class HeaderRow(val rowInDocument: Int, val localeCells: LocaleCells,
-                              private val translationKeyColumns: TranslationKeyColumns
+                              private val keyCells: KeyCells
 ) {
 
-    fun indexOfTranslationKeyColumnForProjectType(projectType: ProjectType): Int {
-        if (translationKeyColumns.containsTranslationKeyColumnFor(projectType.translationKeyType)) {
-            return translationKeyColumns.getTranslationKeyColumn(projectType.translationKeyType).columnIndex
+    fun columnIndexForProjectType(projectType: ProjectType): ColumnIndex {
+        if (keyCells.containsKeyCellFor(projectType.translationKeyType)) {
+            return keyCells.getKeyCell(projectType.translationKeyType).columnIndex
         }
-        return translationKeyColumns.getTranslationKeyColumn(TranslationKeyType.General).columnIndex
+        return keyCells.getKeyCell(TranslationKeyType.General).columnIndex
     }
 
     val rowWithFirstTranslation = rowInDocument+1
@@ -37,12 +37,10 @@ internal data class HeaderRow(val rowInDocument: Int, val localeCells: LocaleCel
     }
 }
 
-internal typealias KeyCell = TranslationKeyColumn
-
 internal object RowAnalyser {
 
     fun toHeaderRow(indexedRow: IndexedValue<Row>): HeaderRow? {
-        val keyCells = TranslationKeyColumns()
+        val keyCells = KeyCells()
         val localeCells = LocaleCells()
 
         fun saveLocaleCell(localeCellCandidate: IndexedValue<Cell>): Boolean {
@@ -53,7 +51,7 @@ internal object RowAnalyser {
         }
         
         fun saveKeyCell(localeCellCandidate: IndexedValue<Cell>): Boolean {
-            return toKeyCell(localeCellCandidate)?.let {
+            return toKeyCell(localeCellCandidate, indexedRow.index)?.let {
                 keyCells.add(it)
                 true
             } ?: false
@@ -81,7 +79,7 @@ internal object RowAnalyser {
         return null
     }
 
-    private fun toKeyCell(keyCellCandidate: IndexedValue<Cell>): KeyCell? {
+    private fun toKeyCell(keyCellCandidate: IndexedValue<Cell>, rowIndex: Int): KeyCell? {
         val tokens = keyCellCandidate.value.stringCellValue.trim()
                 .split(" ").filter { it.isNotBlank() }.map { it.toLowerCase() }
         if (tokens.isEmpty()) {
@@ -89,7 +87,7 @@ internal object RowAnalyser {
         }
         for (translationKeyType in TranslationKeyType.values()) {
             translationKeyType.cellText.find { tokens.contains(it) }?.let {
-                return KeyCell(keyCellCandidate.index, translationKeyType)
+                return KeyCell(RowIndex(rowIndex), ColumnIndex(keyCellCandidate.index), translationKeyType)
             }
         }
         return null
