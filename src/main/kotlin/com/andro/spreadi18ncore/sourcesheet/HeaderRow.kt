@@ -74,7 +74,7 @@ internal object RowAnalyser {
             return null
         }
         allLocales.findLocale(localeCandidate)?.let {
-            return LocaleCell(localeCandidate, RowIndex(rowIndex), ColumnIndex(localeCellCandidate.index))
+            return LocaleCell(RowIndex(rowIndex), ColumnIndex(localeCellCandidate.index), localeCandidate)
         }
         return null
     }

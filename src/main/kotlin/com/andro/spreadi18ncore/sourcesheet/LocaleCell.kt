@@ -7,7 +7,7 @@ import java.util.*
 inline class RowIndex(val value: Int)
 inline class ColumnIndex(val value: Int)
 
-internal data class LocaleCell(val text: String, val rowIndex: RowIndex, val columnIndex: ColumnIndex) {//source point
+internal data class LocaleCell(val rowIndex: RowIndex, val columnIndex: ColumnIndex, val text: String) {//source point
     val locales: List<Locale> by lazy {
         Locales.allLocales.items.filter { locale -> locale.identifiedBy(text) }
     }

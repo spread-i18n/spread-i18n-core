@@ -12,7 +12,7 @@ import java.io.File
 internal class LocaleCellsBuilder {
     val cells = mutableListOf<LocaleCell>()
     fun addLocale(localeName: String):LocaleCellsBuilder {
-        val cell = LocaleCell(localeName, RowIndex(0), ColumnIndex(cells.size))
+        val cell = LocaleCell(RowIndex(0), ColumnIndex(cells.size), localeName)
         cells.add(cell)
         return this
     }
