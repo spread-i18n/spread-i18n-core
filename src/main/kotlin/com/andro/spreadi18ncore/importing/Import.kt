@@ -7,15 +7,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 import java.nio.file.Path
 
-data class ImportConfiguration(
-        val sourceFilePath: Path,
-        val targetProjectPath: Path,
-        val valueTransformationMap: Map<String, String>? = null,
-)
 
-object Import {
+internal object Import {
 
-    @JvmStatic
     fun perform(configuration: ImportConfiguration) {
         try {
             workbook(configuration.sourceFilePath).use {
