@@ -47,7 +47,7 @@ It is expected to provide an Excel sheet in the expected format. The list below 
 - The key cell or cells are identified by one of texts: "Key", "Identifier", "Id", "Android", "iOS". Capitalization does not matter.
 - Locale cell content is equal to one of the property value of java `Locale` class.
 
-For instance if the locale cell contains polish translations the cell text should be equal to one of string: `pl`, `Poland`, `Polish`, `pl-PL`. Capitalization does not matter.
+For instance if the column contains polish translations locale cell text should be equal to one of the following strings: `pl`, `Poland`, `Polish`, `pl-PL`. Capitalization does not matter.
 
 ```kotlin
 Locale.country = 'PL'
