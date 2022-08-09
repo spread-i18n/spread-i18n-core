@@ -32,7 +32,7 @@ internal class Importer(private val sourceSheet: Sheet,
             declaration.projectType.fileWriter(match.targetDirectory.path).use { fileWriter ->
                 sourceSheet.rows.skipTo(declaration.firstTranslationRow).forEach { row ->
                     val keyCell = row.getCell(declaration.keyColumnIndex)
-                    val valueCell = row.getCell(match.sourceLocaleCell.columnIndex.value)
+                    val valueCell = row.getCell(match.sourceLocaleCell.columnIndex)
                     if ((keyCell != null) && (keyCell.stringCellValue.isNotBlank()) && (valueCell != null)) {
                         val value = valueTransformation.transform(valueCell.stringCellValue)
                         fileWriter.write(key = keyCell.stringCellValue, value = value)
