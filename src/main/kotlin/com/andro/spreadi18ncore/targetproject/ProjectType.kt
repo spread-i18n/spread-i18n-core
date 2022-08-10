@@ -1,14 +1,13 @@
 package com.andro.spreadi18ncore.targetproject
 
-import com.andro.spreadi18ncore.sourcetargetmatching.AndroidSourceTargetMatcher
-import com.andro.spreadi18ncore.sourcetargetmatching.SourceTargetMatcher
-import com.andro.spreadi18ncore.sourcetargetmatching.TargetDirectory
+import com.andro.spreadi18ncore.importing.AndroidSourceTargetMatcher
+import com.andro.spreadi18ncore.importing.SourceTargetMatcher
 import com.andro.spreadi18ncore.sourcesheet.TranslationKeyType
 import com.andro.spreadi18ncore.filewriting.AndroidTranslationFileWriter
 import com.andro.spreadi18ncore.filewriting.TranslationFileWriter
 import com.andro.spreadi18ncore.filewriting.iOSTranslationFileWriter
 import com.andro.spreadi18ncore.importing.ImportException
-import com.andro.spreadi18ncore.sourcetargetmatching.iOSSourceTargetMatcher
+import com.andro.spreadi18ncore.importing.iOSSourceTargetMatcher
 import com.andro.spreadi18ncore.valuetransformation.AndroidDefaultValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.iOSDefaultValueTransformation
@@ -17,15 +16,6 @@ import java.nio.file.Path
 
 internal class SupportedProjectTypeNotFound(projectPath: Path) :
         ImportException("Any supported project type not found in: ${projectPath}.")
-
-internal class TargetProject(private val projectPath: Path) {
-    val type: ProjectType = ProjectType.values().firstOrNull { it.existsIn(projectPath) }
-            ?: throw SupportedProjectTypeNotFound(projectPath)
-
-    val localizationDirectories: List<TargetDirectory> by lazy {
-        type.localizationDirectoriesFinder.findLocalizationDirectoriesIn(projectPath.toFile())
-    }
-}
 
 internal enum class ProjectType {
     iOS {

@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore
 
 import com.andro.spreadi18ncore.importing.skipTo
-import com.andro.spreadi18ncore.sourcetargetmatching.TargetDirectory
+import com.andro.spreadi18ncore.importing.TargetDirectory
 import com.andro.spreadi18ncore.targetproject.dirs
 import com.andro.spreadi18ncore.targetproject.files
 import io.mockk.every

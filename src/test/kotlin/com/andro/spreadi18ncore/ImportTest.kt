@@ -1,13 +1,15 @@
 package com.andro.spreadi18ncore
 
-import com.andro.spreadi18ncore.sourcesheet.TranslationKeyType
 import com.andro.spreadi18ncore.filewriting.TranslationFileWriter
 import com.andro.spreadi18ncore.importing.Importer
-import com.andro.spreadi18ncore.sourcetargetmatching.AndroidSourceTargetMatcher
+import com.andro.spreadi18ncore.sourcesheet.TranslationKeyType
+import com.andro.spreadi18ncore.importing.AndroidSourceTargetMatcher
 import com.andro.spreadi18ncore.targetproject.ProjectType
-import com.andro.spreadi18ncore.targetproject.TargetProject
 import com.andro.spreadi18ncore.valuetransformation.AndroidDefaultValueTransformation
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 
@@ -26,7 +28,7 @@ class ImportTest {
             └─────────────────────────────────────┘
         """
         val sheet = mockSheet(sheetContent)
-        val project = mockk<TargetProject>()
+        val project = mockk<Project>()
         val projectType = mockk<ProjectType>()
         every { projectType.sourceTargetMatcher } returns AndroidSourceTargetMatcher()
         every { projectType.translationKeyType } returns TranslationKeyType.Android
@@ -42,7 +44,7 @@ class ImportTest {
 
         //act
         val importer =
-            Importer(sourceSheet = sheet, targetProject = project)
+            Importer(sheet = sheet, project = project)
         importer.import()
 
         //assert

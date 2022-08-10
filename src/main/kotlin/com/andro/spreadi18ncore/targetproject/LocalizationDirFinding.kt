@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.targetproject
 
-import com.andro.spreadi18ncore.sourcetargetmatching.TargetDirectory
+import com.andro.spreadi18ncore.importing.TargetDirectory
 import java.io.File
 
 val File.dirs: Array<File>

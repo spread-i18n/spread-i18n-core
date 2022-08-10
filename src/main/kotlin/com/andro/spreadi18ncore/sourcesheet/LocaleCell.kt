@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.sourcesheet
 
-import com.andro.spreadi18ncore.sourcetargetmatching.Locales
-import com.andro.spreadi18ncore.sourcetargetmatching.identifiedBy
+import com.andro.spreadi18ncore.importing.Locales
+import com.andro.spreadi18ncore.importing.identifiedBy
 import java.util.*
 
 inline class RowIndex(val value: Int)

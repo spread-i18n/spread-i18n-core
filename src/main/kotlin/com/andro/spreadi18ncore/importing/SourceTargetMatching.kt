@@ -1,7 +1,6 @@
-package com.andro.spreadi18ncore.sourcetargetmatching
+package com.andro.spreadi18ncore.importing
 
 import com.andro.spreadi18ncore.sourcesheet.LocaleCell
-import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
 import java.io.File
 import java.nio.file.Path
 import java.text.DateFormat
@@ -43,14 +42,17 @@ internal class Locales private constructor() {
     }
 }
 
-internal data class TargetDirectory(val file: File){
+internal data class TargetDirectory(val file: File) {
     val path: Path = file.toPath()
 }
 
-internal data class MatchedSourceAndTarget(val sourceLocaleCell: LocaleCell, val targetDirectory: TargetDirectory)//TransactionAddress, TransferAddress
+internal data class MatchedSourceAndTarget(
+    val sourceLocaleCell: LocaleCell,
+    val targetDirectory: TargetDirectory
+)//TransactionAddress, TransferAddress
 
-internal class MatchedSourcesAndTargets(private val _matches: MutableList<MatchedSourceAndTarget> = mutableListOf())
-    : Iterable<MatchedSourceAndTarget> by _matches {
+internal class MatchedSourcesAndTargets(private val _matches: MutableList<MatchedSourceAndTarget> = mutableListOf()) :
+    Iterable<MatchedSourceAndTarget> by _matches {
 
     val matches: List<MatchedSourceAndTarget> = _matches
 
@@ -64,15 +66,17 @@ internal class MatchedSourcesAndTargets(private val _matches: MutableList<Matche
     fun notContainsSource(sourceLocaleCell: LocaleCell): Boolean {
         return !containsSource(sourceLocaleCell)
     }
+
     private fun containsSource(sourceLocaleCell: LocaleCell): Boolean {
-        return _matches.find { address -> address.sourceLocaleCell.columnIndex==sourceLocaleCell.columnIndex } != null
+        return _matches.find { address -> address.sourceLocaleCell.columnIndex == sourceLocaleCell.columnIndex } != null
     }
 
     fun notContainsTarget(target: TargetDirectory): Boolean {
         return !containsTarget(target)
     }
+
     private fun containsTarget(target: TargetDirectory): Boolean {
-        return _matches.find { address -> address.targetDirectory.file.toPath()==target.file.toPath() } != null
+        return _matches.find { address -> address.targetDirectory.file.toPath() == target.file.toPath() } != null
     }
 
     fun getAt(index: Int): MatchedSourceAndTarget {
@@ -81,7 +85,7 @@ internal class MatchedSourcesAndTargets(private val _matches: MutableList<Matche
 }
 
 @Suppress("ClassName")
-internal class iOSSourceTargetMatcher:
+internal class iOSSourceTargetMatcher :
     SourceTargetMatcher {
 
     private fun matchesStrongly(source: LocaleCell, target: TargetDirectory): Boolean {
@@ -100,7 +104,10 @@ internal class iOSSourceTargetMatcher:
         get() = this.file.name.toLowerCase().endsWith("base.lproj")
 
 
-    override fun match(sources: Collection<LocaleCell>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
+    override fun match(
+        sources: Collection<LocaleCell>,
+        targets: Collection<TargetDirectory>
+    ): MatchedSourcesAndTargets {
         val matchedSourcesAndTargets =
             MatchedSourcesAndTargets()
         for (source in sources) {
@@ -137,7 +144,7 @@ internal class iOSSourceTargetMatcher:
         remainingSources = sources.filter { source -> matchedSourcesAndTargets.notContainsSource(source) }
         remainingTargets = targets.filter { target -> matchedSourcesAndTargets.notContainsTarget(target) }
 
-        if ((remainingSources.size==1) && (remainingTargets.size==1) && remainingTargets[0].isBaseDir) {
+        if ((remainingSources.size == 1) && (remainingTargets.size == 1) && remainingTargets[0].isBaseDir) {
             matchedSourcesAndTargets.add(
                 MatchedSourceAndTarget(
                     remainingSources[0],
@@ -152,7 +159,7 @@ internal class iOSSourceTargetMatcher:
 //https://stackoverflow.com/questions/13693209/android-localization-values-folder-names
 //https://developer.android.com/reference/java/util/Locale
 //https://datatracker.ietf.org/doc/html/rfc4647#section-3.4.1
-internal class AndroidSourceTargetMatcher:
+internal class AndroidSourceTargetMatcher :
     SourceTargetMatcher {
 
     private val String.extractedTag: String?
@@ -185,7 +192,10 @@ internal class AndroidSourceTargetMatcher:
         get() = this.file.name == "values"
 
 
-    override fun match(sources: Collection<LocaleCell>, targets: Collection<TargetDirectory>): MatchedSourcesAndTargets {
+    override fun match(
+        sources: Collection<LocaleCell>,
+        targets: Collection<TargetDirectory>
+    ): MatchedSourcesAndTargets {
         val matchedSourcesAndTargets =
             MatchedSourcesAndTargets()
         for (source in sources) {
@@ -222,7 +232,7 @@ internal class AndroidSourceTargetMatcher:
         remainingSources = sources.filter { source -> matchedSourcesAndTargets.notContainsSource(source) }
         remainingTargets = targets.filter { target -> matchedSourcesAndTargets.notContainsTarget(target) }
 
-        if ((remainingSources.size==1) && (remainingTargets.size==1) && remainingTargets[0].isBaseDir) {
+        if ((remainingSources.size == 1) && (remainingTargets.size == 1) && remainingTargets[0].isBaseDir) {
             matchedSourcesAndTargets.add(
                 MatchedSourceAndTarget(
                     remainingSources[0],

@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.sourcesheet
 
 import com.andro.spreadi18ncore.importing.ImportException
-import com.andro.spreadi18ncore.sourcetargetmatching.Locales.Companion.allLocales
+import com.andro.spreadi18ncore.importing.Locales.Companion.allLocales
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
