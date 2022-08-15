@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore
 
-import com.andro.spreadi18ncore.targetproject.AndroidLocalizationDirectoriesFinder
+import com.andro.spreadi18ncore.targetproject.AndroidLocalizationResourceFinder
 import com.andro.spreadi18ncore.targetproject.iOSLocalizationDirectoriesFinder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -48,7 +48,7 @@ class LocalizationDirectoriesFinderTests {
                 }
             }
         }
-        val res = AndroidLocalizationDirectoriesFinder().findLocalizationDirectoriesIn(rootDir)
+        val res = AndroidLocalizationResourceFinder().findLocalizationDirectoriesIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("values", "values-pl"))
     }
 }

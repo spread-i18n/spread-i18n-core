@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.targetproject
 
-import com.andro.spreadi18ncore.importing.TargetDirectory
 import java.io.File
+import java.nio.file.Path
 
 val File.dirs: Array<File>
     get() = this.listFiles { file -> file.isDirectory }
@@ -10,8 +10,9 @@ val File.files: Array<File>
     get() = this.listFiles { file -> file.isFile }
 
 
-internal interface LocalizationDirectoriesFinder {
-    fun findLocalizationDirectoriesIn(rootFile: File): List<TargetDirectory>
+internal interface LocalizationResourceFinder {
+    fun findLocalizationDirectoriesIn(rootFile: File): List<LocalizationDirectory>
+    fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile>
 }
 
 fun allDirsRecursively(parentFile: File): List<File> {
@@ -24,19 +25,31 @@ fun allDirsRecursively(parentFile: File): List<File> {
 
 @Suppress("ClassName")
 internal class iOSLocalizationDirectoriesFinder:
-    LocalizationDirectoriesFinder {
-    override fun findLocalizationDirectoriesIn(rootFile: File): List<TargetDirectory> {
+    LocalizationResourceFinder {
+    override fun findLocalizationDirectoriesIn(rootFile: File): List<LocalizationDirectory> {
         return allDirsRecursively(rootFile)
                 .filter { dir -> dir.name.endsWith(".lproj") }
-                .map { TargetDirectory(it) }
+                .map { LocalizationDirectory(it.toPath()) }
+    }
+
+    override fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile> {
+        return emptyList()
     }
 }
 
-internal class AndroidLocalizationDirectoriesFinder:
-    LocalizationDirectoriesFinder {
-    override fun findLocalizationDirectoriesIn(rootFile: File): List<TargetDirectory> {
+internal class AndroidLocalizationResourceFinder:
+    LocalizationResourceFinder {
+    override fun findLocalizationDirectoriesIn(rootFile: File): List<LocalizationDirectory> {
         return allDirsRecursively(rootFile)
-                .filter { dir -> dir.name.startsWith("values") && dir.files.any { it.name == "strings.xml"} }
-                .map { TargetDirectory(it) }
+            .filter { dir -> dir.name.startsWith("values") && dir.files.any { it.name == "strings.xml"} }
+            .map { LocalizationDirectory(it.toPath()) }
+    }
+
+    override fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile> {
+        return allDirsRecursively(rootFile)
+            .filter { dir -> dir.name.startsWith("values") && dir.files.any { it.name == "strings.xml"} }
+            .map {
+                LocalizationFile(Path.of(it.toPath().toString(), "strings.xml"))
+            }
     }
 }
