@@ -2,11 +2,8 @@ package com.andro.spreadi18ncore.targetproject
 
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.export.KeyValue
-import com.andro.spreadi18ncore.importing.ValueTransformations
-import com.andro.spreadi18ncore.targetproject.LocalizationDirectory
-import org.apache.poi.ss.usermodel.Sheet
 
-internal class Translations(val key: String, valueCount: Int) {
+internal class TranslationRow(val key: String, valueCount: Int) {
     private val _values = MutableList(size = valueCount, init = { "" })
     val values: List<String> = _values
 
@@ -15,25 +12,34 @@ internal class Translations(val key: String, valueCount: Int) {
     }
 }
 
-inline class LocaleValue(private val locale: String) {
-    val friendlyValue: String get() = if (locale.isNullOrEmpty()) { "Base" } else locale
+data class LocaleValue(val value: String) {
+    val friendlyValue: String
+        get() = if (value.isNullOrEmpty()) {
+            "English"
+        } else value
 }
 
-internal class TranslationTable(val localeValues: List<LocaleValue>) {
+internal class TranslationTable(val languageTags: List<LanguageTag>) {
 
-    private val _translations = mutableListOf<Translations>()
-    val translations: List<Translations> = _translations
+    private val _translationRows = mutableListOf<TranslationRow>()
+    val translationRows: List<TranslationRow> = _translationRows
 
-    fun setValue(localeValue: LocaleValue, keyValue: KeyValue) {
-        loadTranslation(keyValue.key).set(localeValues.indexOf(localeValue), keyValue.value)
+    fun setValue(languageTag: LanguageTag, keyValue: KeyValue) {
+        loadTranslationRow(keyValue.key).set(languageTags.indexOf(languageTag), keyValue.value)
     }
 
-    private fun loadTranslation(key: String): Translations {
-        return _translations.firstOrNull { it.key == key } ?: run {
-            val translation = Translations(key, localeValues.size)
-            _translations.add(translation)
+    private fun loadTranslationRow(key: String): TranslationRow {
+        return _translationRows.firstOrNull { it.key == key } ?: run {
+            val translation = TranslationRow(key, languageTags.size)
+            _translationRows.add(translation)
             translation
         }
+    }
+
+    fun keyValues(languageTag: LanguageTag): List<KeyValue> {
+        return languageTags.withIndex().firstOrNull { it.value == languageTag }?.let { indexedValue ->
+            translationRows.map { row -> KeyValue(row.key, row.values[indexedValue.index]) }
+        } ?: emptyList()
     }
 }
 
@@ -41,16 +47,8 @@ internal interface TranslationTableReader {
     fun read(): TranslationTable
 }
 
-
-
-internal fun Project.extractLocaleValue(localizationDirectory: LocalizationDirectory): LocaleValue =
-    type.localeValueExtractor.extract(localizationDirectory)
-
 internal interface TranslationTableWriter {
     fun write(translationTable: TranslationTable)
 }
 
-internal val Project.locales: List<LocaleValue>
-    get() {
-        return localizationDirectories.map { type.localeValueExtractor.extract(it) }
-    }
+internal val Project.languageTags: List<LanguageTag> get() = localizationFiles.map { it.languageTag }

@@ -1,16 +1,15 @@
 package com.andro.spreadi18ncore.export
 
-import com.andro.spreadi18ncore.targetproject.LocalizationDirectory
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.nio.file.Path
 import javax.xml.parsers.DocumentBuilderFactory
 
-internal class AndroidTranslationFileReader(private val localizationDirectory: LocalizationDirectory) :
-    TranslationFileReader {
+internal class AndroidTranslationKeyValueReader(private val pathOfLocalizableFile: Path) :
+    TranslationKeyValueReader {
     private val localizableFilePath: Path by lazy {
-        localizationDirectory.path.resolve("strings.xml")
+        pathOfLocalizableFile.resolve("strings.xml")
     }
 
     private val nodeList: NodeList by lazy {

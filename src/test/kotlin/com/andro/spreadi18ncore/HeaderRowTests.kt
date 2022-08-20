@@ -1,7 +1,8 @@
 package com.andro.spreadi18ncore
 
 import com.andro.spreadi18ncore.sourcesheet.HeaderRow
-import com.andro.spreadi18ncore.importing.ImportException
+import com.andro.spreadi18ncore.sourcesheet.ImportException
+import com.andro.spreadi18ncore.targetproject.LanguageTag
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -10,10 +11,10 @@ import org.junit.jupiter.api.Test
 class HeaderRowTests {
 
     @Test
-    fun does_not_find_a_headerRow_when_any_row_does_not_have_localisation_and_project_column() {
+    fun `A headerRow is not found when any row does not have localization and project column`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
-            │           │          │English  │Polish   │
+            │           │          │en       │pl       │
             ├──────────────────────────────────────────┤
             │Android Key│iOS Key   │         │         │
             └──────────────────────────────────────────┘
@@ -22,13 +23,14 @@ class HeaderRowTests {
         assertThat(headerRow).isNull()
     }
 
+    private val String.tag get() = LanguageTag.extractFromString(this)
     @Test
-    fun finding_headerRow_with_expected_translation_source_columns() {
+    fun `Finding a header row with expected language tags`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │           │          │         │         │
             ├──────────────────────────────────────────┤
-            │Android Key│iOS Key   │English  │Polish   │
+            │Android Key│iOS Key   │en       │pl       │
             ├──────────────────────────────────────────┤
             │           │          │         │         │
             └──────────────────────────────────────────┘
@@ -36,14 +38,15 @@ class HeaderRowTests {
 
         val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
         assertThat(headerRow.rowInDocument).isEqualTo(1)
-        assertThat(headerRow.localeCells.map { it.text }).hasSameElementsAs(listOf("English", "Polish"))
+        assertThat(headerRow.localeCells.map { it.languageTag }).
+            hasSameElementsAs(listOf("en".tag, "pl".tag))
     }
 
     @Test
-    fun finding_key_column_when_columns_are_specified_explicitly() {
+    fun `Finding a key column when platform keys are specified explicitly`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
-            │Android Key│iOS Key   │English  │Polish   │
+            │Android Key│iOS Key   │en       │pl       │
             ├──────────────────────────────────────────┤
             │           │          │         │         │
             └──────────────────────────────────────────┘
@@ -56,10 +59,10 @@ class HeaderRowTests {
     }
 
     @Test
-    fun finding_key_column_when_column_is_specified_generally() {
+    fun `Finding key column when key is specified generally by Identifier word`() {
         val sheetContent = """
             ┌───────────────────────────────┐
-            │Identifier │English  │Polish   │
+            │Identifier │en       │pl       │
             ├───────────────────────────────┤
             │           │         │         │
             └───────────────────────────────┘
@@ -72,10 +75,10 @@ class HeaderRowTests {
     }
 
     @Test
-    fun throwing_exception_when_getting_translation_column_for_not_existing_project() {
+    fun `Throwing exception when getting key column does not exist for a platform`() {
         val sheetContent = """
             ┌────────────────────────────┐
-            │iOS Key │English  │Polish   │
+            │iOS Key │en       │pl       │
             ├────────────────────────────┤
             │        │         │         │
             └────────────────────────────┘

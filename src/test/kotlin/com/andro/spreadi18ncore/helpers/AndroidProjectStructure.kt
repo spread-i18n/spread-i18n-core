@@ -1,19 +1,19 @@
 package com.andro.spreadi18ncore.helpers
 
-import com.andro.spreadi18ncore.filewriting.AndroidTranslationFileWriter
+import com.andro.spreadi18ncore.filewriting.AndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.targetproject.LanguageTag
 import java.io.File
 import java.nio.file.Path
-import java.util.*
 
 
 internal class AndroidProjectStructure(private val projectPath: Path) {
 
-    private val localisationFiles = mutableListOf<LocalizationFileContent>()
+    private val localizationFiles = mutableListOf<LocalizationFileContent>()
 
-    fun localizationFile(locale: Locale, block: LocalizationFileContent.() -> Unit): AndroidProjectStructure {
-        val file = LocalizationFileContent(locale)
+    fun withLocalizationFile(languageTagCandidate: String, block: LocalizationFileContent.() -> Unit): AndroidProjectStructure {
+        val file = LocalizationFileContent(LanguageTag.extractFromString(languageTagCandidate))
         file.block()
-        localisationFiles.add(file)
+        localizationFiles.add(file)
         return this
     }
 
@@ -24,12 +24,12 @@ internal class AndroidProjectStructure(private val projectPath: Path) {
         Path.of(projectPath.toString(), "src/main/res/").toFile().mkdirs()
         Path.of(projectPath.toString(), "src/main/AndroidManifest.xml").toFile().createNewFile()
 
-        localisationFiles.forEach { fileContent ->
-            val localeDirPath = Path.of(projectPath.toString(), "src/main/res/values-${fileContent.locale.language}")
+        localizationFiles.forEach { fileContent ->
+            val localeDirPath = Path.of(projectPath.toString(), "src/main/res/values-${fileContent.languageTag.canonical}")
             localeDirPath.toFile().mkdirs()
-            AndroidTranslationFileWriter(localeDirPath).use { fileWriter ->
+            AndroidTranslationKeyValueWriter(localeDirPath).use { fileWriter ->
                 fileContent.translations.forEach { keyValue ->
-                    fileWriter.write(keyValue.key, keyValue.value)
+                    fileWriter.write(keyValue)
                 }
             }
         }

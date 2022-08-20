@@ -23,14 +23,14 @@ internal class ExcelTranslationTableWriter(private val destinationFilePath: Path
     }
 
     private fun XSSFSheet.copyFrom(translationTable: TranslationTable) {
-        //fill row
+        //fill header row
         val headerRow = createRow(0)
         headerRow.createCell(0).setCellValue("key")
-        translationTable.localeValues.withIndex().forEach {
-            headerRow.createCell(it.index+1).setCellValue(it.value.friendlyValue)
+        translationTable.languageTags.withIndex().forEach {
+            headerRow.createCell(it.index+1).setCellValue(it.value.canonical)
         }
         //fill translations
-        translationTable.translations.withIndex().forEach { indexedTranslations ->
+        translationTable.translationRows.withIndex().forEach { indexedTranslations ->
             val translationRow = createRow(indexedTranslations.index+1)
             with(indexedTranslations.value) {
                 translationRow.createCell(0).setCellValue(key)

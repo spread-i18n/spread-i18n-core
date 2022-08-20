@@ -1,14 +1,14 @@
 package com.andro.spreadi18ncore
 
-import com.andro.spreadi18ncore.targetproject.AndroidLocalizationResourceFinder
-import com.andro.spreadi18ncore.targetproject.iOSLocalizationDirectoriesFinder
+import com.andro.spreadi18ncore.targetproject.AndroidLocalizationFileFinder
+import com.andro.spreadi18ncore.targetproject.iOSLocalizationFileFinder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class LocalizationDirectoriesFinderTests {
 
     @Test
-    fun `finding localization directories in iOS project`() {
+    fun `Finding localization directories in iOS project`() {
         val rootDir = dir("ProjectRoot") {
             dir("Assets.xcassets") {
                 dir("AppIcon.appiconset") { file("Contents.json") }
@@ -18,12 +18,12 @@ class LocalizationDirectoriesFinderTests {
                 dir("fr.lproj") { file("Localizable.strings") }
             }
         }
-        val res = iOSLocalizationDirectoriesFinder().findLocalizationDirectoriesIn(rootDir)
+        val res = iOSLocalizationFileFinder().findLocalizationFileIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("Base.lproj", "fr.lproj"))
     }
 
     @Test
-    fun `finding localization directories in Android project`() {
+    fun `Finding localization directories in Android project`() {
         val rootDir = dir("app") {
             dir("src") {
                 dir("main") {
@@ -48,7 +48,7 @@ class LocalizationDirectoriesFinderTests {
                 }
             }
         }
-        val res = AndroidLocalizationResourceFinder().findLocalizationDirectoriesIn(rootDir)
+        val res = AndroidLocalizationFileFinder().findLocalizationFileIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("values", "values-pl"))
     }
 }

@@ -4,6 +4,6 @@ import java.io.Closeable
 
 internal data class KeyValue(val key: String, val value: String)
 
-internal interface TranslationFileReader: Closeable {
+internal interface TranslationKeyValueReader: Closeable {
     fun read(): KeyValue?
 }

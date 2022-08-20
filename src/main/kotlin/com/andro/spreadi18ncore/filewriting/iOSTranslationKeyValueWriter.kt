@@ -1,5 +1,6 @@
 package com.andro.spreadi18ncore.filewriting
 
+import com.andro.spreadi18ncore.export.KeyValue
 import java.io.BufferedWriter
 import java.io.IOException
 import java.lang.StringBuilder
@@ -40,17 +41,17 @@ internal class iOSHeaderCopying {
 }
 
 @Suppress("ClassName")
-internal class iOSTranslationFileWriter(private val targetDirectoryPath: Path) :
-    TranslationFileWriter {
+internal class iOSTranslationKeyValueWriter(private val pathOfLocalizationFile: Path) :
+    TranslationKeyValueWriter {
 
     private val localizableFilePath: Path by lazy {
-        targetDirectoryPath.resolve("Localizable.strings")
+        pathOfLocalizationFile.resolve("Localizable.strings")
     }
     private val localizableWriter: BufferedWriter by lazy {
         Files.newBufferedWriter(localizableFilePath)
     }
     private val infoPlistFilePath: Path by lazy {
-        targetDirectoryPath.resolve("InfoPlist.strings")
+        pathOfLocalizationFile.resolve("InfoPlist.strings")
     }
     private val infoPlistWriter: BufferedWriter by lazy {
         Files.newBufferedWriter(infoPlistFilePath)
@@ -82,15 +83,17 @@ internal class iOSTranslationFileWriter(private val targetDirectoryPath: Path) :
         }
     }
 
-    override fun write(key: String, value: String) {
-        val isSystemTranslation = listOf("NS", "CF").firstOrNull { key.startsWith(it) } != null
-        if (isSystemTranslation) {
-            infoPlistWriter.write("\"$key\" = \"$value\";\n")
-        } else {
-            if (key.startsWith("//")) {
-                localizableWriter.write("$key\n")
-            } else if (key.isNotBlank()) {
-                localizableWriter.write("\"$key\" = \"$value\";\n")
+    override fun write(keyValue: KeyValue) {
+        with(keyValue) {
+            val isSystemTranslation = listOf("NS", "CF").firstOrNull { key.startsWith(it) } != null
+            if (isSystemTranslation) {
+                infoPlistWriter.write("\"$key\" = \"$value\";\n")
+            } else {
+                if (key.startsWith("//")) {
+                    localizableWriter.write("$key\n")
+                } else if (key.isNotBlank()) {
+                    localizableWriter.write("\"$key\" = \"$value\";\n")
+                }
             }
         }
     }

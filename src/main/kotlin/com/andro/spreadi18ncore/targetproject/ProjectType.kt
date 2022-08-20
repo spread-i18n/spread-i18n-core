@@ -1,17 +1,13 @@
 package com.andro.spreadi18ncore.targetproject
 
-import com.andro.spreadi18ncore.export.AndroidTranslationFileReader
-import com.andro.spreadi18ncore.export.TranslationFileReader
-import com.andro.spreadi18ncore.export.iOSTranslationFileReader
+import com.andro.spreadi18ncore.export.AndroidTranslationKeyValueReader
+import com.andro.spreadi18ncore.export.TranslationKeyValueReader
+import com.andro.spreadi18ncore.export.iOSTranslationKeyValueReader
+import com.andro.spreadi18ncore.filewriting.AndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.filewriting.TranslationKeyValueWriter
+import com.andro.spreadi18ncore.filewriting.iOSTranslationKeyValueWriter
+import com.andro.spreadi18ncore.sourcesheet.ImportException
 import com.andro.spreadi18ncore.sourcesheet.TranslationKeyType
-import com.andro.spreadi18ncore.filewriting.AndroidTranslationFileWriter
-import com.andro.spreadi18ncore.filewriting.TranslationFileWriter
-import com.andro.spreadi18ncore.filewriting.iOSTranslationFileWriter
-import com.andro.spreadi18ncore.importing.*
-import com.andro.spreadi18ncore.importing.AndroidLocaleValueExtractor
-import com.andro.spreadi18ncore.importing.AndroidSourceTargetMatcher
-import com.andro.spreadi18ncore.importing.SourceTargetMatcher
-import com.andro.spreadi18ncore.importing.iOSSourceTargetMatcher
 import com.andro.spreadi18ncore.valuetransformation.AndroidDefaultValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.iOSDefaultValueTransformation
@@ -21,65 +17,53 @@ import java.nio.file.Path
 internal class SupportedProjectTypeNotFound(projectPath: Path) :
     ImportException("Any supported project type not found in: ${projectPath}.")
 
-internal interface LocaleValueExtractor {
-    fun extract(localizationDirectory: LocalizationDirectory): LocaleValue
-}
-
 internal enum class ProjectType {
+    @Suppress("EnumEntryName")
     iOS {
-        override val sourceTargetMatcher =
-            iOSSourceTargetMatcher()
+        override fun keyValueWriter(pathOfLocalizationFile: Path) =
+            iOSTranslationKeyValueWriter(pathOfLocalizationFile)
 
-        override fun fileWriter(path: Path) = iOSTranslationFileWriter(path)
-
-        override fun fileReader(localizationDirectory: LocalizationDirectory) =
-            iOSTranslationFileReader(localizationDirectory)
+        override fun keyValueReader(pathOfLocalizationFile: Path) =
+            iOSTranslationKeyValueReader(pathOfLocalizationFile)
 
         override val translationKeyType = TranslationKeyType.iOS
 
         override fun existsIn(path: Path) = xcodeprojDirectory.existsIn(path)
 
-        override val localizationResourceFinder = iOSLocalizationDirectoriesFinder()
+        override val localizationFileFinder = iOSLocalizationFileFinder()
 
-        override val valueTransformation = iOSDefaultValueTransformation()
-
-        override val localeValueExtractor get() = iOSLocaleValueExtractor
+        override val valueTransformation = iOSDefaultValueTransformation
     },
     Android {
-        override val sourceTargetMatcher =
-            AndroidSourceTargetMatcher()
 
-        override fun fileWriter(path: Path) = AndroidTranslationFileWriter(path)
+        override fun keyValueWriter(pathOfLocalizationFile: Path) =
+            AndroidTranslationKeyValueWriter(pathOfLocalizationFile)
 
-        override fun fileReader(localizationDirectory: LocalizationDirectory) =
-            AndroidTranslationFileReader(localizationDirectory)
+        override fun keyValueReader(pathOfLocalizationFile: Path) =
+            AndroidTranslationKeyValueReader(pathOfLocalizationFile)
 
         override val translationKeyType = TranslationKeyType.Android
 
         override fun existsIn(path: Path) = AndroidManifest.existsIn(path)
 
-        override val localizationResourceFinder = AndroidLocalizationResourceFinder()
+        override val localizationFileFinder = AndroidLocalizationFileFinder()
 
-        override val valueTransformation = AndroidDefaultValueTransformation()
-
-        override val localeValueExtractor = AndroidLocaleValueExtractor
+        override val valueTransformation = AndroidDefaultValueTransformation
     };
 
-    abstract val sourceTargetMatcher: SourceTargetMatcher
-    abstract val localizationResourceFinder: LocalizationResourceFinder
+    abstract val localizationFileFinder: LocalizationFileFinder
     abstract val valueTransformation: ValueTransformation
-    abstract fun fileWriter(path: Path): TranslationFileWriter
-    abstract fun fileReader(localizationDirectory: LocalizationDirectory): TranslationFileReader
+    abstract fun keyValueWriter(pathOfLocalizationFile: Path): TranslationKeyValueWriter
+    abstract fun keyValueReader(pathOfLocalizationFile: Path): TranslationKeyValueReader
     abstract val translationKeyType: TranslationKeyType
     abstract fun existsIn(path: Path): Boolean
-    abstract val localeValueExtractor: LocaleValueExtractor
 }
 
 
 @Suppress("ClassName")
 internal object xcodeprojDirectory {
     fun existsIn(path: Path): Boolean {
-        var isXcodeDir: (File) -> Boolean = {
+        val isXcodeDir: (File) -> Boolean = {
             it.name.endsWith(".xcodeproj")
         }
         return (path.toFile().dirs.any { isXcodeDir(it) }) ||

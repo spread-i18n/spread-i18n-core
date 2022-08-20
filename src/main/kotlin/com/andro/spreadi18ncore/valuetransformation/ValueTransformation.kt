@@ -5,7 +5,7 @@ interface ValueTransformation {
 }
 
 @Suppress("ClassName")
-class iOSDefaultValueTransformation: ValueTransformation {
+object iOSDefaultValueTransformation: ValueTransformation {
     override fun transform(value: String): String {
         return value
                 .replace("%s", "%@")
@@ -14,7 +14,7 @@ class iOSDefaultValueTransformation: ValueTransformation {
     }
 }
 
-class AndroidDefaultValueTransformation: ValueTransformation {
+object AndroidDefaultValueTransformation: ValueTransformation {
     override fun transform(value: String): String {
         return value
                 .replace("\"", "\\\"")

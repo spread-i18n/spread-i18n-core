@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.sourcesheet
 
-import com.andro.spreadi18ncore.importing.ImportException
-import com.andro.spreadi18ncore.importing.Locales.Companion.allLocales
+import com.andro.spreadi18ncore.targetproject.LanguageTag
+import com.andro.spreadi18ncore.targetproject.LanguageTagExtractionError
 import com.andro.spreadi18ncore.targetproject.ProjectType
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
@@ -9,6 +9,15 @@ import org.apache.poi.ss.usermodel.Sheet
 
 internal class HeaderRowNotFound(): ImportException("Header row not found in the source file.")
 
+open class ImportException(message: String? = null, cause: Throwable? = null): Exception(message, cause)
+
+val Sheet.rows: Sequence<Row>
+    get() = rowIterator().asSequence()
+
+fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
+
+
+typealias ValueTransformations = Map<String, String>
 internal data class HeaderRow(val rowInDocument: Int, val localeCells: LocaleCells,
                               private val keyCells: KeyCells
 ) {
@@ -73,10 +82,12 @@ internal object RowAnalyser {
         if (localeCandidate.isEmpty()) {
             return null
         }
-        allLocales.findLocale(localeCandidate)?.let {
-            return LocaleCell(RowIndex(rowIndex), ColumnIndex(localeCellCandidate.index), localeCandidate)
+        return try {
+            val tag = LanguageTag.extractFromString(localeCandidate)
+            LocaleCell(RowIndex(rowIndex), ColumnIndex(localeCellCandidate.index), tag)
+        } catch (exc: LanguageTagExtractionError) {
+            null
         }
-        return null
     }
 
     private fun toKeyCell(keyCellCandidate: IndexedValue<Cell>, rowIndex: Int): KeyCell? {

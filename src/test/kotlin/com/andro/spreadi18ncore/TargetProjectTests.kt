@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class TargetProjectTests {
 
     @Test
-    fun `xcodeproj is discovered in directory hierarchy`() {
+    fun `xcodeproj is discovered in an iOS project structure`() {
         val iOSProjRootDir = dir("ProjectA") {
             dir("ProjectA.xcodeproj") {}
         }
@@ -16,7 +16,7 @@ class TargetProjectTests {
     }
 
     @Test
-    fun `AndroidManifest is discovered in directory hierarchy`() {
+    fun `AndroidManifest is discovered in an Android project structure`() {
         val androidProjRootDir = dir("app") {
             dir("src") {
                 dir("main") {
@@ -30,7 +30,7 @@ class TargetProjectTests {
     }
 
     @Test
-    fun `AndroidManifest is not discovered in directory hierarchy`() {
+    fun `AndroidManifest is not discovered in incomplete Android project structure`() {
         val androidProjRootDir = dir("app") {
             dir("src") {
                 dir("main") {

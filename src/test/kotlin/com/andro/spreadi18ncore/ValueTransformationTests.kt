@@ -10,13 +10,13 @@ class ValueTransformationTests {
 
     @Test
     fun default_iOS_transformation() {
-        assertThat(iOSDefaultValueTransformation().transform(""" "Be or not to be: %s" """))
+        assertThat(iOSDefaultValueTransformation.transform(""" "Be or not to be: %s" """))
                                                 .isEqualTo("""\"Be or not to be: %@\"""")
     }
 
     @Test
     fun default_Android_transformation() {
-        assertThat(AndroidDefaultValueTransformation().transform(""" "Me & you" are > than 'they' """))
+        assertThat(AndroidDefaultValueTransformation.transform(""" "Me & you" are > than 'they' """))
                 .isEqualTo("""\"Me &amp; you\" are &gt; than \'they\'""")
     }
     

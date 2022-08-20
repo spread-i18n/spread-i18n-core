@@ -1,8 +1,8 @@
 package com.andro.spreadi18ncore.sourcesheet
 
-import com.andro.spreadi18ncore.importing.ImportException
 
 internal enum class TranslationKeyType {
+    @Suppress("EnumEntryName")
     iOS {
         override val cellText: List<String>
             get() = listOf("ios")
@@ -15,18 +15,20 @@ internal enum class TranslationKeyType {
         override val cellText: List<String>
             get() = listOf("key", "identifier", "id")
     };
+
     abstract val cellText: List<String>
 }
 
-internal class ColumnNotFound(): ImportException("")
+internal class ColumnNotFound : ImportException("")
 
 internal data class KeyCell(val rowIndex: RowIndex, val columnIndex: ColumnIndex, val keyType: TranslationKeyType)
 
-internal class KeyCells() {
+internal class KeyCells {
     private val keyCells = mutableSetOf<KeyCell>()
     fun add(keyCells: KeyCell) {
         this.keyCells.add(keyCells)
     }
+
     fun isNotEmpty() = keyCells.isNotEmpty()
 
     private fun findKeyCell(translationKeyType: TranslationKeyType): KeyCell? {
@@ -34,7 +36,7 @@ internal class KeyCells() {
     }
 
     fun containsKeyCellFor(translationKeyType: TranslationKeyType): Boolean {
-        return findKeyCell(translationKeyType)!=null
+        return findKeyCell(translationKeyType) != null
     }
 
     fun getKeyCell(translationKeyType: TranslationKeyType): KeyCell {

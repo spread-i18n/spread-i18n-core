@@ -1,20 +1,21 @@
 package com.andro.spreadi18ncore.export
 
-import com.andro.spreadi18ncore.targetproject.LocalizationDirectory
 import java.io.BufferedReader
 import java.nio.file.Files
+import java.nio.file.Path
 
 @Suppress("ClassName")
-internal class iOSTranslationFileReader(private val localizationDirectory: LocalizationDirectory) : TranslationFileReader {
+internal class iOSTranslationKeyValueReader(pathOfLocalizationFile: Path) : TranslationKeyValueReader {
 
     private var currentReader: BufferedReader?
     private var availableReaders = mutableListOf<BufferedReader>()
+
     init {
-        val localizableFilePath = localizationDirectory.path.resolve("Localizable.strings")
+        val localizableFilePath = pathOfLocalizationFile.resolve("Localizable.strings")
         if (Files.exists(localizableFilePath)) {
             availableReaders.add(Files.newBufferedReader(localizableFilePath))
         }
-        val infoPlistFilePath = localizationDirectory.path.resolve("InfoPlist.strings")
+        val infoPlistFilePath = pathOfLocalizationFile.resolve("InfoPlist.strings")
         if (Files.exists(infoPlistFilePath)) {
             availableReaders.add(Files.newBufferedReader(infoPlistFilePath))
         }
@@ -37,7 +38,7 @@ internal class iOSTranslationFileReader(private val localizationDirectory: Local
     private fun nextReader(): BufferedReader? {
         val index = availableReaders.indexOf(currentReader)
         return if (index >= 0) {
-            val indexOfNextReader = index+1
+            val indexOfNextReader = index + 1
             if (indexOfNextReader < availableReaders.size) {
                 availableReaders[indexOfNextReader]
             } else null
