@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 import java.nio.file.Path
 
+
 internal interface TranslationsSource {
     val translationTableReader: TranslationTableReader
 }
@@ -59,16 +60,20 @@ class Project private constructor(private val projectPath: Path) {
         type.localizationFileFinder.findLocalizationFileIn(projectPath.toFile())
     }
 
-    fun export(destinationFilePath: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
-        val project = ProjectTranslations(this)
-        val excelFile = ExcelFile(destinationFilePath, type)
-        Transfer.from(project).to(excelFile)
+    fun export(to: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
+        rename(to, to = { destinationFilePath ->
+            val project = ProjectTranslations(this)
+            val excelFile = ExcelFile(destinationFilePath, type)
+            Transfer.from(project).to(excelFile)
+        })
     }
 
-    fun import(sourceFilePath: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
-        val excelFile = ExcelFile(sourceFilePath, type)
-        val project = ProjectTranslations(this)
-        Transfer.from(excelFile).to(project)
+    fun import(from: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
+        rename(from, to = { sourceFilePath ->
+            val excelFile = ExcelFile(sourceFilePath, type)
+            val project = ProjectTranslations(this)
+            Transfer.from(excelFile).to(project)
+        })
     }
 
     internal fun keyValueReader(localizationFile: LocalizationFile): TranslationKeyValueReader =
@@ -91,6 +96,9 @@ internal fun workbook(sourceFilePath: Path): XSSFWorkbook {
 internal class UnknownTransferError(exc: Exception) : ImportException(cause = exc)
 internal class WorkbookOpeningError(exc: Exception) : ImportException(cause = exc)
 
+internal inline fun <T, R> rename(obj: T, to: (T) -> R): R {
+    return to(obj)
+}
 internal inline fun <R> tryBlock(block: () -> R): R =
     try {
         block()

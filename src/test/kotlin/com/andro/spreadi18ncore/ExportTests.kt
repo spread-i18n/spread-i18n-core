@@ -40,7 +40,7 @@ class ExportTests {
 
         val destinationFilePath = Path.of("tmp/iOS/proj-x1.xls")
 
-        Project.onPath(projectPath).export(destinationFilePath)
+        Project.onPath(projectPath).export(to = destinationFilePath)
 
         ExistingExcelFile.onPath(destinationFilePath).use { excelFile ->
             assert(excelFile.containsInRow("key", "en", "fr"))
@@ -66,7 +66,7 @@ class ExportTests {
 
         val destinationFilePath = Path.of("tmp/android/proj-x1.xls")
 
-        Project.onPath(projectPath).export(destinationFilePath)
+        Project.onPath(projectPath).export(to = destinationFilePath)
 
         ExistingExcelFile.onPath(destinationFilePath).use { excelFile ->
 
@@ -75,4 +75,5 @@ class ExportTests {
             assert(excelFile.containsInRow("message_bye", "Bye", "Adieu"))
         }
     }
+
 }
