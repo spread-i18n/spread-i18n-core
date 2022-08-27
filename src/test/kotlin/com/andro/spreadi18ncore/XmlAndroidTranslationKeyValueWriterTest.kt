@@ -10,9 +10,9 @@ import java.io.StringReader
 import java.io.StringWriter
 
 
-class AndroidTranslationKeyValueWriter2Test {
+class XmlAndroidTranslationKeyValueWriterTest {
     @Test
-    fun `Replacing values in Android string resource`() {
+    fun `Replaces values in Android string resource`() {
 
         val inXml = """<?xml version="1.0" encoding="UTF-8"?>
                 <resources>
@@ -36,20 +36,17 @@ class AndroidTranslationKeyValueWriter2Test {
         assertThat(outXml).doesNotContain("message_bye")
         assertThat(outXml).doesNotContain("Bye")
     }
+
     @Test
-    fun `xxx`() {
+    fun `Creates comments in an Android resource`() {
 
         val inXml = ""
         val stringWriter = StringWriter()
         val writer = XmlAndroidTranslationKeyValueWriter(BufferedReader(StringReader(inXml)), BufferedWriter(stringWriter))
-        writer.write(KeyValue("key1", "value1"))
-        writer.write(KeyValue("key2", "value2"))
+        writer.write(KeyValue("//A comment", ""))
         writer.close()
 
         val outXml = stringWriter.toString()
-        assertThat(outXml).contains("key1")
-        assertThat(outXml).contains("value1")
-        assertThat(outXml).contains("key2")
-        assertThat(outXml).contains("value2")
+        assertThat(outXml).contains("<!--A comment-->")
     }
 }

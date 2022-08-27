@@ -18,10 +18,14 @@ internal interface TranslationsSource {
     val translationTableReader: TranslationTableReader
 }
 
-internal class ProjectTranslations(private val project: Project) : TranslationsSource, TranslationsDestination {
+internal class ProjectTranslations(
+    private val project: Project,
+    private val valueTransformations: ValueTransformations? = null
+) :
+    TranslationsSource, TranslationsDestination {
 
     override val translationTableReader: TranslationTableReader
-        get() = ProjectTranslationTableReader(project)
+        get() = ProjectTranslationTableReader(project, valueTransformations)
 
     override val translationTableWriter: TranslationTableWriter
         get() = ProjectTranslationTableWriter(project)
@@ -31,14 +35,18 @@ internal interface TranslationsDestination {
     val translationTableWriter: TranslationTableWriter
 }
 
-internal class ExcelFile(private val filePath: Path, private val type: ProjectType) :
+internal class ExcelFile(
+    private val filePath: Path,
+    private val type: ProjectType,
+    private val valueTransformations: ValueTransformations? = null
+) :
     TranslationsSource, TranslationsDestination {
 
     override val translationTableWriter: TranslationTableWriter
         get() = ExcelTranslationTableWriter(filePath)
 
     override val translationTableReader: TranslationTableReader
-        get() = ExcelTranslationTableReader(filePath, type)
+        get() = ExcelTranslationTableReader(filePath, type, valueTransformations)
 }
 
 class Project private constructor(private val projectPath: Path) {
@@ -62,7 +70,7 @@ class Project private constructor(private val projectPath: Path) {
 
     fun export(to: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
         rename(to, to = { destinationFilePath ->
-            val project = ProjectTranslations(this)
+            val project = ProjectTranslations(this, valueTransformations)
             val excelFile = ExcelFile(destinationFilePath, type)
             Transfer.from(project).to(excelFile)
         })
@@ -70,7 +78,7 @@ class Project private constructor(private val projectPath: Path) {
 
     fun import(from: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
         rename(from, to = { sourceFilePath ->
-            val excelFile = ExcelFile(sourceFilePath, type)
+            val excelFile = ExcelFile(sourceFilePath, type, valueTransformations)
             val project = ProjectTranslations(this)
             Transfer.from(excelFile).to(project)
         })
@@ -99,6 +107,7 @@ internal class WorkbookOpeningError(exc: Exception) : ImportException(cause = ex
 internal inline fun <T, R> rename(obj: T, to: (T) -> R): R {
     return to(obj)
 }
+
 internal inline fun <R> tryBlock(block: () -> R): R =
     try {
         block()

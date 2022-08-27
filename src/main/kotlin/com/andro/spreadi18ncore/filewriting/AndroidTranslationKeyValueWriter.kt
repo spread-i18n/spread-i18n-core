@@ -2,7 +2,6 @@ package com.andro.spreadi18ncore.filewriting
 
 import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.sourcesheet.ImportException
-import com.andro.spreadi18ncore.valuetransformation.AndroidDefaultValueTransformation
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -48,6 +47,18 @@ internal class AndroidTranslationKeyValueWriter(
     }
 }
 
+object AndroidValueTransformation {
+    fun transform(value: String): String {
+        return value
+            .replace("\"", "\\\"")
+            .replace("\'", "\\\'")
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .trim()
+    }
+}
+
 internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter: BufferedWriter) :
     TranslationKeyValueWriter {
 
@@ -60,11 +71,12 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
             if (key.startsWith("//")) {
                 bufferedWriter.write("    <!-- ${key.replace("// *".toRegex(), "")} -->\n")
             } else if (key.isNotBlank()) {
-                val xmlValue = AndroidDefaultValueTransformation.transform(value)
-                bufferedWriter.write("    <string name=\"$key\">$xmlValue</string>\n")
+                bufferedWriter.write("    <string name=\"$key\">${transform(value)}</string>\n")
             }
         }
     }
+
+    private fun transform(value: String) = AndroidValueTransformation.transform(value)
 
     override fun close() {
         bufferedWriter.attachXmlClosingTag()
@@ -119,17 +131,24 @@ internal class XmlAndroidTranslationKeyValueWriter(
     }
 
     override fun write(keyValue: KeyValue) {
-        val string = document.createElement("string")
-        string.setAttribute("name", keyValue.key)
-        string.appendChild(document.createTextNode(keyValue.value))
-        resourceNode.appendChild(string)
+        with(keyValue) {
+            if (key.startsWith("//")) {
+                val comment = document.createComment(key.replace("// *".toRegex(), ""))
+                resourceNode.appendChild(comment)
+            } else {
+                val string = document.createElement("string")
+                string.setAttribute("name", key)
+                string.appendChild(document.createTextNode(value))
+                resourceNode.appendChild(string)
+            }
+        }
     }
 
     override fun close() {
         val transformer = TransformerFactory.newInstance().newTransformer()
 //        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes")
         transformer.transform(DOMSource(document), StreamResult(bufferedWriter))
         bufferedWriter.close()
     }

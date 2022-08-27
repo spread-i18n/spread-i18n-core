@@ -1,7 +1,6 @@
 package com.andro.spreadi18ncore.helpers
 
 import com.andro.spreadi18ncore.filewriting.AndroidTranslationKeyValueWriter
-import com.andro.spreadi18ncore.targetproject.LanguageTag
 import java.io.File
 import java.nio.file.Path
 
@@ -10,8 +9,8 @@ internal class AndroidProjectStructure(private val projectPath: Path) {
 
     private val localizationFiles = mutableListOf<LocalizationFileContent>()
 
-    fun withLocalizationFile(languageTagCandidate: String, block: LocalizationFileContent.() -> Unit): AndroidProjectStructure {
-        val file = LocalizationFileContent(LanguageTag.extractFromString(languageTagCandidate))
+    fun withLocalizationFile(languageTag: String, block: LocalizationFileContent.() -> Unit): AndroidProjectStructure {
+        val file = LocalizationFileContent(languageTag)
         file.block()
         localizationFiles.add(file)
         return this
@@ -25,7 +24,11 @@ internal class AndroidProjectStructure(private val projectPath: Path) {
         Path.of(projectPath.toString(), "src/main/AndroidManifest.xml").toFile().createNewFile()
 
         localizationFiles.forEach { fileContent ->
-            val localeDirPath = Path.of(projectPath.toString(), "src/main/res/values-${fileContent.languageTag.canonical}")
+            val directoryName = with(fileContent.languageTag) {
+                if(isEmpty()) "values"
+                else "values-$this"
+            }
+            val localeDirPath = Path.of(projectPath.toString(), "src/main/res/$directoryName")
             localeDirPath.toFile().mkdirs()
             AndroidTranslationKeyValueWriter(localeDirPath).use { fileWriter ->
                 fileContent.translations.forEach { keyValue ->

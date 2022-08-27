@@ -8,6 +8,16 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 @Suppress("ClassName")
+object iOSValueTransformation {
+    fun transform(value: String): String {
+        return value
+            .replace("%s", "%@")
+            .replace("\"", "\\\"")
+            .trim()
+    }
+}
+
+@Suppress("ClassName")
 internal class iOSHeaderCopying {
     companion object {
 
@@ -87,17 +97,16 @@ internal class iOSTranslationKeyValueWriter(private val pathOfLocalizationFile: 
         with(keyValue) {
             val isSystemTranslation = listOf("NS", "CF").firstOrNull { key.startsWith(it) } != null
             if (isSystemTranslation) {
-                infoPlistWriter.write("\"$key\" = \"$value\";\n")
+                infoPlistWriter.write("\"$key\" = \"${transform(value)}\";\n")
             } else {
                 if (key.startsWith("//")) {
                     localizableWriter.write("$key\n")
                 } else if (key.isNotBlank()) {
-                    localizableWriter.write("\"$key\" = \"$value\";\n")
+                    localizableWriter.write("\"$key\" = \"${transform(value)}\";\n")
                 }
             }
         }
     }
-
     override fun close() {
         localizableWriter.flush()
         localizableWriter.close()
@@ -105,5 +114,6 @@ internal class iOSTranslationKeyValueWriter(private val pathOfLocalizationFile: 
         infoPlistWriter.flush()
         infoPlistWriter.close()
     }
+    private fun transform(value: String) = iOSValueTransformation.transform(value)
 }
 

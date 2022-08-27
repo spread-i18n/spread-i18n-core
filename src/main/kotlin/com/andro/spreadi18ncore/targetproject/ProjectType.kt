@@ -8,9 +8,6 @@ import com.andro.spreadi18ncore.filewriting.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.filewriting.iOSTranslationKeyValueWriter
 import com.andro.spreadi18ncore.sourcesheet.ImportException
 import com.andro.spreadi18ncore.sourcesheet.TranslationKeyType
-import com.andro.spreadi18ncore.valuetransformation.AndroidDefaultValueTransformation
-import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
-import com.andro.spreadi18ncore.valuetransformation.iOSDefaultValueTransformation
 import java.io.File
 import java.nio.file.Path
 
@@ -31,8 +28,6 @@ internal enum class ProjectType {
         override fun existsIn(path: Path) = xcodeprojDirectory.existsIn(path)
 
         override val localizationFileFinder = iOSLocalizationFileFinder()
-
-        override val valueTransformation = iOSDefaultValueTransformation
     },
     Android {
 
@@ -47,12 +42,9 @@ internal enum class ProjectType {
         override fun existsIn(path: Path) = AndroidManifest.existsIn(path)
 
         override val localizationFileFinder = AndroidLocalizationFileFinder()
-
-        override val valueTransformation = AndroidDefaultValueTransformation
     };
 
     abstract val localizationFileFinder: LocalizationFileFinder
-    abstract val valueTransformation: ValueTransformation
     abstract fun keyValueWriter(pathOfLocalizationFile: Path): TranslationKeyValueWriter
     abstract fun keyValueReader(pathOfLocalizationFile: Path): TranslationKeyValueReader
     abstract val translationKeyType: TranslationKeyType

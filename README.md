@@ -6,7 +6,7 @@ It is written in `kotlin` language and can be run in `jvm` environment.
 //TODO: 
 - how to deal with comments
 - how to deal with transformations
-- 
+- how to deal with 'nonTransltables'
 #### API
 ```
 try {

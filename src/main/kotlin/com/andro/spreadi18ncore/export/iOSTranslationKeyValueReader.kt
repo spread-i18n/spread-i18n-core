@@ -1,5 +1,7 @@
 package com.andro.spreadi18ncore.export
 
+import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
+import com.andro.spreadi18ncore.valuetransformation.transform
 import java.io.BufferedReader
 import java.nio.file.Files
 import java.nio.file.Path
@@ -22,9 +24,9 @@ internal class iOSTranslationKeyValueReader(pathOfLocalizationFile: Path) : Tran
         currentReader = availableReaders.firstOrNull()
     }
 
-    override fun read(): KeyValue? {
+    override fun read(valueTransformation: ValueTransformation?): KeyValue? {
         currentReader?.let {
-            val keyValue = it.readKeyValue()
+            val keyValue = it.readKeyValue(valueTransformation)
             if (keyValue != null) {
                 return keyValue
             } else {
@@ -46,18 +48,21 @@ internal class iOSTranslationKeyValueReader(pathOfLocalizationFile: Path) : Tran
     }
 
     private val iOSKeyValueRegex = Regex("""^"(.*)".*=.*"(.*)";.*""")
-    private fun extractKeyValue(from: String): KeyValue? {
+    private fun extractKeyValue(from: String, valueTransformation: ValueTransformation?): KeyValue? {
+        if (from.startsWith("//")) {
+            return KeyValue(from, "")
+        }
         return iOSKeyValueRegex.matchEntire(from)?.groups?.filterNotNull()?.let { groups ->
             if (groups.size == 3) {
-                KeyValue(groups[1].value, groups[2].value)
+                KeyValue(groups[1].value, groups[2].value.transform(valueTransformation))
             } else null
         }
     }
 
-    private fun BufferedReader.readKeyValue(): KeyValue? {
+    private fun BufferedReader.readKeyValue(valueTransformation: ValueTransformation?): KeyValue? {
         var line = readLine()
         while (line != null) {
-            val keyValue = extractKeyValue(from = line)
+            val keyValue = extractKeyValue(from = line, valueTransformation)
             if (keyValue != null) {
                 return keyValue
             } else {
