@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.targetproject.LanguageTag
 import org.assertj.core.api.Assertions.assertThat

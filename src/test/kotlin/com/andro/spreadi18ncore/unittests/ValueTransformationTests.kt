@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.filewriting.AndroidValueTransformation
 import com.andro.spreadi18ncore.filewriting.iOSValueTransformation

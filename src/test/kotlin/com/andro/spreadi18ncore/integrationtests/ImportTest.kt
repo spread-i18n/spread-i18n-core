@@ -1,16 +1,10 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.integrationtests
 
+import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.helpers.*
-import com.andro.spreadi18ncore.helpers.NewExcelFile
-import com.andro.spreadi18ncore.helpers.androidFixture
-import com.andro.spreadi18ncore.helpers.iOSProjectStructure
-import com.andro.spreadi18ncore.helpers.localeFile
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.io.File
-import java.nio.file.Path
 
 class ImportTest {
 
@@ -22,7 +16,8 @@ class ImportTest {
             withLocalizationFile("fr") {}
         }.create()
 
-        NewExcelFile.onPath(excelFilePath).load ("""
+        NewExcelFile.onPath(excelFilePath).load(
+            """
             ┌─────────────────────────────────────┐
             │Key              │en      │fr        │
             ├─────────────────────────────────────┤
@@ -30,7 +25,8 @@ class ImportTest {
             ├─────────────────────────────────────┤
             │btn_apply_text   │Apply   │Appliquer │
             └─────────────────────────────────────┘
-            """).save()
+            """
+        ).save()
 
         //act
         Project.onPath(projectPath).import(excelFilePath)
@@ -46,35 +42,39 @@ class ImportTest {
             assert(contains(KeyValue("btn_apply_text", "Appliquer")))
         }
     }
+
     @Test
     fun `Transformation and import of translations from an excel file to an Android project`() =
         androidFixture("proj-i2") {
-        //arrange
-        with(structure) {
-            withLocalizationFile("en") {}
-            withLocalizationFile("pl") {}
-        }.create()
+            //arrange
+            with(structure) {
+                withLocalizationFile("en") {}
+                withLocalizationFile("pl") {}
+            }.create()
 
-        NewExcelFile.onPath(excelFilePath).load ("""
+            NewExcelFile.onPath(excelFilePath).load(
+                """
             ┌────────────────────────────────────┐
             │Key              │en        │pl     │
             ├────────────────────────────────────┤
             │x_times_text     │"%d times"│%d razy│
             └────────────────────────────────────┘
-            """).save()
+            """
+            ).save()
 
-        //act
-        Project.onPath(projectPath).import(from = excelFilePath, valueTransformations = mapOf("%d" to "%s", "\"" to "'"))
+            //act
+            Project.onPath(projectPath)
+                .import(from = excelFilePath, valueTransformations = mapOf("%d" to "%s", "\"" to "'"))
 
-        //assert
-        with(Project.onPath(projectPath).localeFile("en")) {
-            assert(contains(KeyValue("x_times_text", "'%s times'")))
+            //assert
+            with(Project.onPath(projectPath).localeFile("en")) {
+                assert(contains(KeyValue("x_times_text", "'%s times'")))
+            }
+
+            with(Project.onPath(projectPath).localeFile("pl")) {
+                assert(contains(KeyValue("x_times_text", "%s razy")))
+            }
         }
-
-        with(Project.onPath(projectPath).localeFile("pl")) {
-            assert(contains(KeyValue("x_times_text", "%s razy")))
-        }
-    }
 }
 
 @DisplayName("Comments are present in an excel translation files")
@@ -87,7 +87,8 @@ internal class CommentsImportTests {
             withLocalizationFile("pl") {}
         }.create()
 
-        NewExcelFile.onPath(excelFilePath).load ("""
+        NewExcelFile.onPath(excelFilePath).load(
+            """
             ┌──────────────────────────────────┐
             │Key              │en      │pl     │
             ├──────────────────────────────────┤
@@ -95,7 +96,8 @@ internal class CommentsImportTests {
             ├──────────────────────────────────┤
             │message_hello    │Hello   │Cześć  │
             └──────────────────────────────────┘
-            """).save()
+            """
+        ).save()
 
         //act
         Project.onPath(projectPath).import(from = excelFilePath)
@@ -118,7 +120,8 @@ internal class CommentsImportTests {
             withLocalizationFile("pl") {}
         }.create()
 
-        NewExcelFile.onPath(excelFilePath).load ("""
+        NewExcelFile.onPath(excelFilePath).load(
+            """
             ┌──────────────────────────────────┐
             │Key              │en      │pl     │
             ├──────────────────────────────────┤
@@ -126,7 +129,8 @@ internal class CommentsImportTests {
             ├──────────────────────────────────┤
             │message_hello    │Hello   │Cześć  │
             └──────────────────────────────────┘
-            """).save()
+            """
+        ).save()
 
         //act
         Project.onPath(projectPath).import(from = excelFilePath)

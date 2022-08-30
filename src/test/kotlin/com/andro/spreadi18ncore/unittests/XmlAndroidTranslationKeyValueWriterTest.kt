@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.filewriting.XmlAndroidTranslationKeyValueWriter

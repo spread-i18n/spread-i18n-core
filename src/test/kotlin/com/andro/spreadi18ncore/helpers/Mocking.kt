@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.helpers
 
 import com.andro.spreadi18ncore.sourcesheet.skipTo
 import com.andro.spreadi18ncore.targetproject.LocalizationFile

@@ -1,5 +1,7 @@
-package com.andro.spreadi18ncore
+package com.andro.spreadi18ncore.unittests
 
+import com.andro.spreadi18ncore.helpers.dir
+import com.andro.spreadi18ncore.helpers.mockkedPath
 import com.andro.spreadi18ncore.targetproject.AndroidManifest
 import com.andro.spreadi18ncore.targetproject.xcodeprojDirectory
 import org.assertj.core.api.Assertions.assertThat
