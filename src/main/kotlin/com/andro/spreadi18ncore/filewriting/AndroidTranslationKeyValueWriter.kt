@@ -1,7 +1,9 @@
 package com.andro.spreadi18ncore.filewriting
 
+import com.andro.spreadi18ncore.export.*
 import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.sourcesheet.ImportException
+import com.andro.spreadi18ncore.targetproject.CommentIndicator
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -68,7 +70,7 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
 
     override fun write(keyValue: KeyValue) {
         with(keyValue) {
-            if (key.startsWith("//")) {
+            if (key.indicatesComment) {
                 bufferedWriter.write("    <!-- ${key.replace("// *".toRegex(), "")} -->\n")
             } else if (key.isNotBlank()) {
                 bufferedWriter.write("    <string name=\"$key\">${transform(value)}</string>\n")
@@ -132,9 +134,15 @@ internal class XmlAndroidTranslationKeyValueWriter(
 
     override fun write(keyValue: KeyValue) {
         with(keyValue) {
-            if (key.startsWith("//")) {
-                val comment = document.createComment(key.replace("// *".toRegex(), ""))
+            if (key.indicatesComment) {
+                val comment = document.createComment(key.commentText)
                 resourceNode.appendChild(comment)
+            } else if (key.indicatesNonTranslatable) {
+                val string = document.createElement("string")
+                string.setAttribute("name", key.translatable)
+                string.setAttribute("translatable", "false")
+                string.appendChild(document.createTextNode(value))
+                resourceNode.appendChild(string)
             } else {
                 val string = document.createElement("string")
                 string.setAttribute("name", key)

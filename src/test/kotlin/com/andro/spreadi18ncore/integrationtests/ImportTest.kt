@@ -3,6 +3,7 @@ package com.andro.spreadi18ncore.integrationtests
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.helpers.*
+import com.andro.spreadi18ncore.targetproject.NonTranslatableIndicator
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -142,6 +143,38 @@ internal class CommentsImportTests {
 
         with(Project.onPath(projectPath).localeFile("pl")) {
             assert(contains(Comment("Polite phrases")))
+        }
+    }
+}
+
+internal class NonTranslatableImportTest {
+    @Test
+    fun `Import non translatables from an excel file to an Android project`() = androidFixture("proj-i5") {
+        //arrange
+        with(structure) {
+            withLocalizationFile("en") {}
+            withLocalizationFile("pl") {}
+        }.create()
+
+        NewExcelFile.onPath(excelFilePath).load(
+            """
+            ┌────────────────────────────────────┐
+            │Key                │en      │pl     │
+            ├────────────────────────────────────┤
+            │*celsius_symbol    │°C      │       │
+            ├────────────────────────────────────┤
+            │*fahrenheit_symbol │°F      │       │
+            └────────────────────────────────────┘
+            """
+        ).save()
+
+        //act
+        Project.onPath(projectPath).import(from = excelFilePath)
+
+        //assert
+        with(Project.onPath(projectPath).localeFile("en")) {
+            assert(contains(KeyValue("*celsius_symbol", "°C")))
+            assert(contains(KeyValue("*fahrenheit_symbol", "°F")))
         }
     }
 }

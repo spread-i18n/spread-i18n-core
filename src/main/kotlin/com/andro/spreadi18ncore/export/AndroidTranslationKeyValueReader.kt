@@ -1,6 +1,8 @@
 package com.andro.spreadi18ncore.export
 
 import com.andro.spreadi18ncore.filewriting.InvalidAndroidTranslationFile
+import com.andro.spreadi18ncore.targetproject.CommentIndicator
+import com.andro.spreadi18ncore.targetproject.NonTranslatableIndicator
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.transform
 import org.w3c.dom.Comment
@@ -49,13 +51,18 @@ internal class AndroidTranslationKeyValueReader(private val pathOfLocalizableFil
         return when (nodeType) {
             ELEMENT_NODE -> {
                 val element = this as Element
-                val key = element.getAttribute("name")
+                var key = element.getAttribute("name")
+                element.getAttribute("translatable")?.let {
+                    if (it == "false") {
+                        key = "$NonTranslatableIndicator$key"
+                    }
+                }
                 val value = element.textContent.transform(valueTransformation)
                 KeyValue(key, value)
             }
             COMMENT_NODE -> {
                 val comment = this as Comment
-                KeyValue("//${comment.textContent}", "")
+                KeyValue("$CommentIndicator${comment.textContent}", "")
             }
             else -> null
         }

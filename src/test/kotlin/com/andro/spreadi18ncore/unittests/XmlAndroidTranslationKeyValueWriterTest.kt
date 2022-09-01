@@ -49,4 +49,17 @@ class XmlAndroidTranslationKeyValueWriterTest {
         val outXml = stringWriter.toString()
         assertThat(outXml).contains("<!--A comment-->")
     }
+
+    @Test
+    fun `Creates non translatable attribute in an Android string resource`() {
+
+        val inXml = ""
+        val stringWriter = StringWriter()
+        val writer = XmlAndroidTranslationKeyValueWriter(BufferedReader(StringReader(inXml)), BufferedWriter(stringWriter))
+        writer.write(KeyValue("*celsius_symbol", "°C"))
+        writer.close()
+
+        val outXml = stringWriter.toString()
+        assertThat(outXml).contains("name=\"celsius_symbol\" translatable=\"false\"")
+    }
 }

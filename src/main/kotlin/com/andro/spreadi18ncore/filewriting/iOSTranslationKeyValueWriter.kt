@@ -1,6 +1,8 @@
 package com.andro.spreadi18ncore.filewriting
 
 import com.andro.spreadi18ncore.export.KeyValue
+import com.andro.spreadi18ncore.export.commentText
+import com.andro.spreadi18ncore.export.indicatesComment
 import java.io.BufferedWriter
 import java.io.IOException
 import java.lang.StringBuilder
@@ -99,8 +101,8 @@ internal class iOSTranslationKeyValueWriter(private val pathOfLocalizationFile: 
             if (isSystemTranslation) {
                 infoPlistWriter.write("\"$key\" = \"${transform(value)}\";\n")
             } else {
-                if (key.startsWith("//")) {
-                    localizableWriter.write("$key\n")
+                if (key.indicatesComment) {
+                    localizableWriter.write("//${key.commentText}\n")
                 } else if (key.isNotBlank()) {
                     localizableWriter.write("\"$key\" = \"${transform(value)}\";\n")
                 }

@@ -1,5 +1,6 @@
 package com.andro.spreadi18ncore.export
 
+import com.andro.spreadi18ncore.targetproject.CommentIndicator
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.transform
 import java.io.BufferedReader
@@ -49,7 +50,7 @@ internal class iOSTranslationKeyValueReader(pathOfLocalizationFile: Path) : Tran
 
     private val iOSKeyValueRegex = Regex("""^"(.*)".*=.*"(.*)";.*""")
     private fun extractKeyValue(from: String, valueTransformation: ValueTransformation?): KeyValue? {
-        if (from.startsWith("//")) {
+        if (from.startsWith(CommentIndicator)) {
             return KeyValue(from, "")
         }
         return iOSKeyValueRegex.matchEntire(from)?.groups?.filterNotNull()?.let { groups ->
