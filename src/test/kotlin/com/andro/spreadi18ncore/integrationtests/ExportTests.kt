@@ -5,7 +5,7 @@ import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.helpers.ExistingExcelFile
 import com.andro.spreadi18ncore.helpers.androidFixture
 import com.andro.spreadi18ncore.helpers.iOSFixture
-import com.andro.spreadi18ncore.targetproject.NonTranslatableIndicator
+import com.andro.spreadi18ncore.project.NonTranslatableIndicator
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 

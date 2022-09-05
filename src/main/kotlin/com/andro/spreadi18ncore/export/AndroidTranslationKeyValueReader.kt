@@ -1,29 +1,65 @@
 package com.andro.spreadi18ncore.export
 
+import com.andro.spreadi18ncore.filewriting.AndroidEscaping
 import com.andro.spreadi18ncore.filewriting.InvalidAndroidTranslationFile
-import com.andro.spreadi18ncore.targetproject.CommentIndicator
-import com.andro.spreadi18ncore.targetproject.NonTranslatableIndicator
+import com.andro.spreadi18ncore.project.CommentIndicator
+import com.andro.spreadi18ncore.project.NonTranslatableIndicator
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.transform
-import org.w3c.dom.Comment
-import org.w3c.dom.Element
-import org.w3c.dom.Node
+import org.apache.commons.io.input.ReaderInputStream
+import org.w3c.dom.*
 import org.w3c.dom.Node.COMMENT_NODE
 import org.w3c.dom.Node.ELEMENT_NODE
-import org.w3c.dom.NodeList
+import java.io.BufferedReader
+import java.nio.file.Files
 import java.nio.file.Path
 import javax.xml.parsers.DocumentBuilderFactory
 
-internal class AndroidTranslationKeyValueReader(private val pathOfLocalizableFile: Path) :
+internal class AndroidTranslationKeyValueReader(private val pathOfLocalizableFile: Path, usePlainReader: Boolean = true):
     TranslationKeyValueReader {
     private val localizableFilePath: Path by lazy {
         pathOfLocalizableFile.resolve("strings.xml")
     }
 
-    private val resourceNodes: NodeList by lazy {
+    private val internalReader: TranslationKeyValueReader
+
+    init {
+        val reader = Files.newBufferedReader(localizableFilePath)
+        internalReader = if (usePlainReader) {
+            PlainAndroidTranslationKeyValueReader(reader)
+        } else {
+            XmlAndroidTranslationKeyValueReader(reader)
+        }
+    }
+
+    override fun read(valueTransformation: ValueTransformation?): KeyValue? {
+        return internalReader.read(valueTransformation)
+    }
+
+    override fun close() {
+        internalReader.close()
+    }
+}
+
+internal class XmlAndroidTranslationKeyValueReader(private val bufferedReader: BufferedReader) :
+    TranslationKeyValueReader {
+
+    private val document: Document by lazy {
         val builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-        val document = builder.parse(localizableFilePath.toFile())
-        document.documentElement.normalize()
+        ReaderInputStream(bufferedReader, Charsets.UTF_8).use { inputStream ->
+            if (inputStream.available() > 0) {
+                builder.parse(inputStream).apply {
+                    documentElement.normalize()
+                }
+            } else {
+                builder.newDocument().apply {
+                    appendChild(createElement("resources"))
+                }
+            }
+        }
+    }
+
+    private val resourceNodes: NodeList by lazy {
         val resourceNodes = document.getElementsByTagName("resources")
         if (resourceNodes.length == 1) {
             val resource = resourceNodes.item(0)
@@ -52,7 +88,7 @@ internal class AndroidTranslationKeyValueReader(private val pathOfLocalizableFil
             ELEMENT_NODE -> {
                 val element = this as Element
                 var key = element.getAttribute("name")
-                element.getAttribute("translatable")?.let {
+                element.getAttribute("translatable").let {
                     if (it == "false") {
                         key = "$NonTranslatableIndicator$key"
                     }
@@ -66,5 +102,54 @@ internal class AndroidTranslationKeyValueReader(private val pathOfLocalizableFil
             }
             else -> null
         }
+    }
+}
+
+internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader: BufferedReader) :
+    TranslationKeyValueReader {
+    override fun read(valueTransformation: ValueTransformation?): KeyValue? {
+        var line = bufferedReader.readLine()
+        while (line != null) {
+            val keyValue = line.asKeyValue(valueTransformation)
+            if (keyValue != null) {
+                return keyValue
+            }
+            line = bufferedReader.readLine()
+        }
+        return null
+    }
+
+    private fun String.asKeyValue(valueTransformation: ValueTransformation?): KeyValue? {
+        return extractKeyValueFromStringResource(valueTransformation) ?: extractKeyValueFromComment()
+    }
+
+    private val xmlKeyValueRegex = Regex(""".*<string name="(\w+)"(\W+translatable="false")?[^>]*>(.+)</string>""")
+    private fun String.extractKeyValueFromStringResource(valueTransformation: ValueTransformation?): KeyValue? {
+            return xmlKeyValueRegex.matchEntire(this)?.groups?.filterNotNull()?.let { group ->
+                when (group.size) {
+                    3 -> makeKeyValue(group[1].value, group[2].value, valueTransformation)
+                    4 -> makeKeyValue(group[1].value.withNonTranslatableIndicator, group[3].value, valueTransformation)
+                    else -> null
+                }
+            }
+        }
+
+    private fun makeKeyValue(key: String, value: String, valueTransformation: ValueTransformation?): KeyValue {
+        return KeyValue(key, value.unescaped.transform(valueTransformation))
+    }
+
+    private val xmlCommentRegex = Regex(""".*<!--(.+)-->""")
+    private fun String.extractKeyValueFromComment(): KeyValue? {
+        return xmlCommentRegex.matchEntire(this)?.groups?.filterNotNull()?.let { group ->
+            when (group.size) {
+                2 -> KeyValue(group[1].value.withCommentIndicator, "")
+                else -> null
+            }
+        }
+    }
+
+    private val String.unescaped: String get() = AndroidEscaping.unescape(this)
+    override fun close() {
+        bufferedReader.close()
     }
 }

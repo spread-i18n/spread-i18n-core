@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore.targetproject
+package com.andro.spreadi18ncore.project
 
 import com.andro.spreadi18ncore.sourcesheet.ImportException
 import java.nio.file.Path
@@ -24,10 +24,10 @@ internal data class LanguageTag private constructor(val canonical: String) {
 
         fun extractFromString(tagCandidate: String): LanguageTag {
             fun extract(tagCandidate: String): String? {
-                return languageTagRegex.matchEntire(tagCandidate)?.groups?.filterNotNull()?.let { groups ->
-                    when(groups.size) {
-                        2 -> groups[1].value
-                        3 -> "${groups[1].value}-${groups[2].value.toUpperCase()}"
+                return languageTagRegex.matchEntire(tagCandidate)?.groups?.filterNotNull()?.let { group ->
+                    when(group.size) {
+                        2 -> group[1].value
+                        3 -> "${group[1].value}-${group[2].value.toUpperCase()}"
                         else -> null
                     }
                 }

@@ -4,9 +4,9 @@ import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.firstSheet
 import com.andro.spreadi18ncore.sourcesheet.*
 import com.andro.spreadi18ncore.sourcesheet.HeaderRow
-import com.andro.spreadi18ncore.targetproject.ProjectType
-import com.andro.spreadi18ncore.targetproject.TranslationTable
-import com.andro.spreadi18ncore.targetproject.TranslationTableReader
+import com.andro.spreadi18ncore.project.ProjectType
+import com.andro.spreadi18ncore.project.TranslationTable
+import com.andro.spreadi18ncore.project.TranslationTableReader
 import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.transform

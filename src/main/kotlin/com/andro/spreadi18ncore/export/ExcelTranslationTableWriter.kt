@@ -1,8 +1,8 @@
 package com.andro.spreadi18ncore.export
 
 import com.andro.spreadi18ncore.UnknownTransferError
-import com.andro.spreadi18ncore.targetproject.TranslationTable
-import com.andro.spreadi18ncore.targetproject.TranslationTableWriter
+import com.andro.spreadi18ncore.project.TranslationTable
+import com.andro.spreadi18ncore.project.TranslationTableWriter
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileOutputStream

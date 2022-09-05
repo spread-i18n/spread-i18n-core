@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.unittests
 
-import com.andro.spreadi18ncore.filewriting.AndroidValueTransformation
+import com.andro.spreadi18ncore.filewriting.AndroidEscaping
 import com.andro.spreadi18ncore.filewriting.iOSValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
 import org.assertj.core.api.Assertions.assertThat
@@ -16,8 +16,8 @@ class ValueTransformationTests {
 
     @Test
     fun default_Android_transformation() {
-        assertThat(AndroidValueTransformation.transform(""" "Me & you" are > than 'they' """))
-                .isEqualTo("""\"Me &amp; you\" are &gt; than \'they\'""")
+        assertThat(AndroidEscaping.escape(""""Me & you" are better than 'they'"""))
+                .isEqualTo("""\"Me & you\" are better than \'they\'""")
     }
     
     @Test

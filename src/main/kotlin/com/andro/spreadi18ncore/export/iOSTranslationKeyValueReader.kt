@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.export
 
-import com.andro.spreadi18ncore.targetproject.CommentIndicator
+import com.andro.spreadi18ncore.project.CommentIndicator
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.transform
 import java.io.BufferedReader

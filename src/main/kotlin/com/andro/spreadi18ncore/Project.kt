@@ -8,7 +8,7 @@ import com.andro.spreadi18ncore.filewriting.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.importing.ProjectTranslationTableWriter
 import com.andro.spreadi18ncore.sourcesheet.ImportException
 import com.andro.spreadi18ncore.sourcesheet.ValueTransformations
-import com.andro.spreadi18ncore.targetproject.*
+import com.andro.spreadi18ncore.project.*
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileInputStream
 import java.nio.file.Path

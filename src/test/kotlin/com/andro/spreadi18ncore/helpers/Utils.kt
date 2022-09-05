@@ -3,7 +3,7 @@ package com.andro.spreadi18ncore.helpers
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.export.TranslationKeyValueReader
-import com.andro.spreadi18ncore.targetproject.LanguageTag
+import com.andro.spreadi18ncore.project.LanguageTag
 
 inline class Comment(val value: String)
 internal class LocaleFile(private val makeReader: () -> TranslationKeyValueReader) {

@@ -1,9 +1,7 @@
 package com.andro.spreadi18ncore.filewriting
 
 import com.andro.spreadi18ncore.export.*
-import com.andro.spreadi18ncore.export.KeyValue
 import com.andro.spreadi18ncore.sourcesheet.ImportException
-import com.andro.spreadi18ncore.targetproject.CommentIndicator
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -11,16 +9,18 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.AbstractMap.SimpleEntry
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import kotlin.collections.Map.Entry
 
 
 internal class AndroidTranslationKeyValueWriter(
     private val pathOfLocalizationFile: Path,
-    usePlainWriter: Boolean = false
+    usePlainWriter: Boolean = true
 ) :
     TranslationKeyValueWriter {
 
@@ -49,15 +49,29 @@ internal class AndroidTranslationKeyValueWriter(
     }
 }
 
-object AndroidValueTransformation {
-    fun transform(value: String): String {
-        return value
-            .replace("\"", "\\\"")
-            .replace("\'", "\\\'")
-            .replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .trim()
+internal object AndroidEscaping {
+
+    private val escapingMap = mapOf(
+        "\"" to "\\\"",
+        "\'" to "\\\'",
+        //"&" to "&amp;",
+        //"<" to "&lt;",
+        //">" to "&gt;"
+    )
+    fun escape(value: String): String {
+        return escapingMap.entries.escape(value)
+    }
+
+    fun unescape(value: String): String {
+        return escapingMap.entries.map { it.swapKeyWithValue() }.escape(value)
+    }
+
+    private fun <K,V>Entry<K,V>.swapKeyWithValue():Entry<V,K> {
+        return SimpleEntry(value, key)
+    }
+
+    private fun Collection<Entry<String, String>>.escape(value: String): String {
+        return fold(value) { escapedValue, (oldValue, newValue) -> escapedValue.replace(oldValue, newValue) }
     }
 }
 
@@ -71,14 +85,16 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
     override fun write(keyValue: KeyValue) {
         with(keyValue) {
             if (key.indicatesComment) {
-                bufferedWriter.write("    <!-- ${key.replace("// *".toRegex(), "")} -->\n")
+                bufferedWriter.write("    <!--${key.replace("// *".toRegex(), "")}-->\n")
+            } else if(key.indicatesNonTranslatable) {
+                bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
             } else if (key.isNotBlank()) {
-                bufferedWriter.write("    <string name=\"$key\">${transform(value)}</string>\n")
+                bufferedWriter.write("    <string name=\"$key\">${value.escaped}</string>\n")
             }
         }
     }
 
-    private fun transform(value: String) = AndroidValueTransformation.transform(value)
+    private val String.escaped: String get() = AndroidEscaping.escape(this)
 
     override fun close() {
         bufferedWriter.attachXmlClosingTag()

@@ -3,8 +3,8 @@ package com.andro.spreadi18ncore.unittests
 import com.andro.spreadi18ncore.helpers.mockSheet
 import com.andro.spreadi18ncore.sourcesheet.HeaderRow
 import com.andro.spreadi18ncore.sourcesheet.ImportException
-import com.andro.spreadi18ncore.targetproject.LanguageTag
-import com.andro.spreadi18ncore.targetproject.ProjectType
+import com.andro.spreadi18ncore.project.LanguageTag
+import com.andro.spreadi18ncore.project.ProjectType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test

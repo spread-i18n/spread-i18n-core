@@ -1,9 +1,8 @@
 package com.andro.spreadi18ncore.helpers
 
 import com.andro.spreadi18ncore.sourcesheet.skipTo
-import com.andro.spreadi18ncore.targetproject.LocalizationFile
-import com.andro.spreadi18ncore.targetproject.dirs
-import com.andro.spreadi18ncore.targetproject.files
+import com.andro.spreadi18ncore.project.dirs
+import com.andro.spreadi18ncore.project.files
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

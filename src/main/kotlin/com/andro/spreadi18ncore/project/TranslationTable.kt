@@ -1,4 +1,4 @@
-package com.andro.spreadi18ncore.targetproject
+package com.andro.spreadi18ncore.project
 
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.export.KeyValue

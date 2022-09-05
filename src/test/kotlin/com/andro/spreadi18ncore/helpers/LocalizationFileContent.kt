@@ -1,7 +1,6 @@
 package com.andro.spreadi18ncore.helpers
 
 import com.andro.spreadi18ncore.export.KeyValue
-import com.andro.spreadi18ncore.targetproject.LanguageTag
 
 internal class LocalizationFileContent(val languageTag: String) {
 

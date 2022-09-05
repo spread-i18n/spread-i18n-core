@@ -2,9 +2,9 @@ package com.andro.spreadi18ncore.export
 
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.sourcesheet.ValueTransformations
-import com.andro.spreadi18ncore.targetproject.TranslationTable
-import com.andro.spreadi18ncore.targetproject.TranslationTableReader
-import com.andro.spreadi18ncore.targetproject.languageTags
+import com.andro.spreadi18ncore.project.TranslationTable
+import com.andro.spreadi18ncore.project.TranslationTableReader
+import com.andro.spreadi18ncore.project.languageTags
 import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
 import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
 
