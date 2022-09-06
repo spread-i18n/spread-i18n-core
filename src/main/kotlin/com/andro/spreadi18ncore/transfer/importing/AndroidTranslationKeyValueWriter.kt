@@ -1,7 +1,12 @@
-package com.andro.spreadi18ncore.filewriting
+package com.andro.spreadi18ncore.transfer.importing
 
-import com.andro.spreadi18ncore.export.*
-import com.andro.spreadi18ncore.sourcesheet.ImportException
+import com.andro.spreadi18ncore.excel.ImportException
+import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.commentText
+import com.andro.spreadi18ncore.transfer.indicatesComment
+import com.andro.spreadi18ncore.transfer.indicatesNonTranslatable
+import com.andro.spreadi18ncore.transfer.translatable
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -21,8 +26,7 @@ import kotlin.collections.Map.Entry
 internal class AndroidTranslationKeyValueWriter(
     private val pathOfLocalizationFile: Path,
     usePlainWriter: Boolean = true
-) :
-    TranslationKeyValueWriter {
+) : TranslationKeyValueWriter {
 
     private val localizableFilePath: Path by lazy {
         pathOfLocalizationFile.resolve("strings.xml")
@@ -58,6 +62,7 @@ internal object AndroidEscaping {
         //"<" to "&lt;",
         //">" to "&gt;"
     )
+
     fun escape(value: String): String {
         return escapingMap.entries.escape(value)
     }
@@ -66,7 +71,7 @@ internal object AndroidEscaping {
         return escapingMap.entries.map { it.swapKeyWithValue() }.escape(value)
     }
 
-    private fun <K,V>Entry<K,V>.swapKeyWithValue():Entry<V,K> {
+    private fun <K, V> Entry<K, V>.swapKeyWithValue(): Entry<V, K> {
         return SimpleEntry(value, key)
     }
 
@@ -86,7 +91,7 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
         with(keyValue) {
             if (key.indicatesComment) {
                 bufferedWriter.write("    <!--${key.replace("// *".toRegex(), "")}-->\n")
-            } else if(key.indicatesNonTranslatable) {
+            } else if (key.indicatesNonTranslatable) {
                 bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
             } else if (key.isNotBlank()) {
                 bufferedWriter.write("    <string name=\"$key\">${value.escaped}</string>\n")

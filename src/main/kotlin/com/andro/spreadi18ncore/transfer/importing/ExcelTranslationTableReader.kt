@@ -1,16 +1,14 @@
-package com.andro.spreadi18ncore.filewriting
+package com.andro.spreadi18ncore.transfer.importing
 
-import com.andro.spreadi18ncore.export.KeyValue
-import com.andro.spreadi18ncore.firstSheet
-import com.andro.spreadi18ncore.sourcesheet.*
-import com.andro.spreadi18ncore.sourcesheet.HeaderRow
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.excel.*
+import com.andro.spreadi18ncore.excel.HeaderRow
 import com.andro.spreadi18ncore.project.ProjectType
-import com.andro.spreadi18ncore.project.TranslationTable
-import com.andro.spreadi18ncore.project.TranslationTableReader
-import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
-import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
-import com.andro.spreadi18ncore.valuetransformation.transform
-import com.andro.spreadi18ncore.workbook
+import com.andro.spreadi18ncore.transfer.translation.TranslationTable
+import com.andro.spreadi18ncore.transfer.base.TranslationTableReader
+import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
+import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
+import com.andro.spreadi18ncore.transfer.transformation.transform
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFSheet

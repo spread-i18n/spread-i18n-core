@@ -1,8 +1,7 @@
-package com.andro.spreadi18ncore.export
+package com.andro.spreadi18ncore.transfer.exporting
 
-import com.andro.spreadi18ncore.UnknownTransferError
-import com.andro.spreadi18ncore.project.TranslationTable
-import com.andro.spreadi18ncore.project.TranslationTableWriter
+import com.andro.spreadi18ncore.transfer.base.TranslationTableWriter
+import com.andro.spreadi18ncore.transfer.translation.TranslationTable
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileOutputStream
@@ -11,14 +10,10 @@ import java.nio.file.Path
 internal class ExcelTranslationTableWriter(private val destinationFilePath: Path) : TranslationTableWriter {
 
     override fun write(translationTable: TranslationTable) {
-        try {
-            XSSFWorkbook().use { workbook ->
-                workbook.createSheet().copyFrom(translationTable)
-                val outputStream = FileOutputStream(destinationFilePath.toFile())
-                workbook.write(outputStream)
-            }
-        } catch (exc: Exception) {
-            throw UnknownTransferError(exc)
+        XSSFWorkbook().use { workbook ->
+            workbook.createSheet().copyFrom(translationTable)
+            val outputStream = FileOutputStream(destinationFilePath.toFile())
+            workbook.write(outputStream)
         }
     }
 

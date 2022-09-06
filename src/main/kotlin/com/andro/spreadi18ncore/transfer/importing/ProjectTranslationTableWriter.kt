@@ -1,10 +1,10 @@
-package com.andro.spreadi18ncore.importing
+package com.andro.spreadi18ncore.transfer.importing
 
 import com.andro.spreadi18ncore.Project
-import com.andro.spreadi18ncore.project.*
-import com.andro.spreadi18ncore.project.LocalizationFile
-import com.andro.spreadi18ncore.project.TranslationTable
-import com.andro.spreadi18ncore.project.TranslationTableWriter
+import com.andro.spreadi18ncore.localization.LanguageTag
+import com.andro.spreadi18ncore.localization.LocalizationFile
+import com.andro.spreadi18ncore.transfer.translation.TranslationTable
+import com.andro.spreadi18ncore.transfer.base.TranslationTableWriter
 
 internal class ProjectTranslationTableWriter(private val project: Project) : TranslationTableWriter {
 

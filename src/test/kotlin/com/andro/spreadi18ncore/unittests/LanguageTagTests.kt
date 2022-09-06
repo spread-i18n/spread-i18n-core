@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.unittests
 
-import com.andro.spreadi18ncore.project.LanguageTag
+import com.andro.spreadi18ncore.localization.LanguageTag
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.nio.file.Path

@@ -1,7 +1,7 @@
-package com.andro.spreadi18ncore.filewriting
+package com.andro.spreadi18ncore.transfer.base
 
-import com.andro.spreadi18ncore.export.KeyValue
-import com.andro.spreadi18ncore.sourcesheet.ImportException
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.excel.ImportException
 import java.io.Closeable
 import java.io.IOException
 

@@ -1,8 +1,8 @@
 package com.andro.spreadi18ncore.helpers
 
-import com.andro.spreadi18ncore.firstSheet
-import com.andro.spreadi18ncore.sourcesheet.rows
-import com.andro.spreadi18ncore.workbook
+import com.andro.spreadi18ncore.excel.firstSheet
+import com.andro.spreadi18ncore.excel.rows
+import com.andro.spreadi18ncore.excel.workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.Closeable
 import java.nio.file.Path

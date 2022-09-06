@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.helpers
 
-import com.andro.spreadi18ncore.sourcesheet.skipTo
+import com.andro.spreadi18ncore.excel.skipTo
 import com.andro.spreadi18ncore.project.dirs
 import com.andro.spreadi18ncore.project.files
 import io.mockk.every

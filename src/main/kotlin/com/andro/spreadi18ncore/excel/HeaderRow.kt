@@ -1,7 +1,7 @@
-package com.andro.spreadi18ncore.sourcesheet
+package com.andro.spreadi18ncore.excel
 
-import com.andro.spreadi18ncore.project.LanguageTag
-import com.andro.spreadi18ncore.project.LanguageTagExtractionError
+import com.andro.spreadi18ncore.localization.LanguageTag
+import com.andro.spreadi18ncore.localization.LanguageTagExtractionError
 import com.andro.spreadi18ncore.project.ProjectType
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row

@@ -1,8 +1,10 @@
-package com.andro.spreadi18ncore.filewriting
+package com.andro.spreadi18ncore.transfer.importing
 
-import com.andro.spreadi18ncore.export.KeyValue
-import com.andro.spreadi18ncore.export.commentText
-import com.andro.spreadi18ncore.export.indicatesComment
+import com.andro.spreadi18ncore.transfer.base.CanNotAccessLocalizationFile
+import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.commentText
+import com.andro.spreadi18ncore.transfer.indicatesComment
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import java.io.BufferedWriter
 import java.io.IOException
 import java.lang.StringBuilder

@@ -1,12 +1,15 @@
 package com.andro.spreadi18ncore.project
 
+import com.andro.spreadi18ncore.localization.LanguageTag
+import com.andro.spreadi18ncore.localization.LanguageTagExtractionError
+import com.andro.spreadi18ncore.localization.LocalizationFile
 import java.io.File
 
 val File.dirs: Array<File>
-    get() = this.listFiles { file -> file.isDirectory }
+    get() = this.listFiles { file -> file.isDirectory } as Array<File>
 
 val File.files: Array<File>
-    get() = this.listFiles { file -> file.isFile }
+    get() = this.listFiles { file -> file.isFile } as Array<File>
 
 
 internal interface LocalizationFileFinder {

@@ -1,12 +1,12 @@
-package com.andro.spreadi18ncore.export
+package com.andro.spreadi18ncore.transfer.exporting
 
 import com.andro.spreadi18ncore.Project
-import com.andro.spreadi18ncore.sourcesheet.ValueTransformations
-import com.andro.spreadi18ncore.project.TranslationTable
-import com.andro.spreadi18ncore.project.TranslationTableReader
-import com.andro.spreadi18ncore.project.languageTags
-import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
-import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
+import com.andro.spreadi18ncore.excel.ValueTransformations
+import com.andro.spreadi18ncore.transfer.translation.TranslationTable
+import com.andro.spreadi18ncore.transfer.base.TranslationTableReader
+import com.andro.spreadi18ncore.transfer.translation.languageTags
+import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
+import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
 
 internal class ProjectTranslationTableReader(
     private val project: Project,

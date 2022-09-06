@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.helpers
 
-import com.andro.spreadi18ncore.filewriting.AndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.importing.AndroidTranslationKeyValueWriter
 import java.io.File
 import java.nio.file.Path
 

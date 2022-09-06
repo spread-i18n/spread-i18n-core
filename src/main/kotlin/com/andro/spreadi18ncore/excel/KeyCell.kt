@@ -1,23 +1,4 @@
-package com.andro.spreadi18ncore.sourcesheet
-
-
-internal enum class TranslationKeyType {
-    @Suppress("EnumEntryName")
-    iOS {
-        override val cellText: List<String>
-            get() = listOf("ios")
-    },
-    Android {
-        override val cellText: List<String>
-            get() = listOf("android")
-    },
-    General {
-        override val cellText: List<String>
-            get() = listOf("key", "identifier", "id")
-    };
-
-    abstract val cellText: List<String>
-}
+package com.andro.spreadi18ncore.excel
 
 internal class ColumnNotFound : ImportException("")
 

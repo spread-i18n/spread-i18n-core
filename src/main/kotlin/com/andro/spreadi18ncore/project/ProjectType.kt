@@ -1,14 +1,13 @@
 package com.andro.spreadi18ncore.project
 
-import com.andro.spreadi18ncore.export.AndroidTranslationKeyValueReader
-import com.andro.spreadi18ncore.export.TranslationKeyValueReader
-import com.andro.spreadi18ncore.export.iOSTranslationKeyValueReader
-import com.andro.spreadi18ncore.filewriting.AndroidTranslationKeyValueWriter
-import com.andro.spreadi18ncore.filewriting.TranslationKeyValueWriter
-import com.andro.spreadi18ncore.filewriting.iOSTranslationKeyValueWriter
-import com.andro.spreadi18ncore.sourcesheet.ImportException
-import com.andro.spreadi18ncore.sourcesheet.TranslationKeyType
-import java.io.File
+import com.andro.spreadi18ncore.transfer.exporting.AndroidTranslationKeyValueReader
+import com.andro.spreadi18ncore.transfer.exporting.iOSTranslationKeyValueReader
+import com.andro.spreadi18ncore.transfer.importing.AndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.importing.iOSTranslationKeyValueWriter
+import com.andro.spreadi18ncore.excel.ImportException
+import com.andro.spreadi18ncore.excel.TranslationKeyType
+import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import java.nio.file.Path
 
 internal class SupportedProjectTypeNotFound(projectPath: Path) :
@@ -50,23 +49,3 @@ internal enum class ProjectType {
     abstract val translationKeyType: TranslationKeyType
     abstract fun existsIn(path: Path): Boolean
 }
-
-
-@Suppress("ClassName")
-internal object xcodeprojDirectory {
-    fun existsIn(path: Path): Boolean {
-        val isXcodeDir: (File) -> Boolean = {
-            it.name.endsWith(".xcodeproj")
-        }
-        return (path.toFile().dirs.any { isXcodeDir(it) }) ||
-                allDirsRecursively(path.toFile()).any { dir -> dir.dirs.any { isXcodeDir(it) } }
-    }
-}
-
-internal object AndroidManifest {
-    fun existsIn(path: Path): Boolean {
-        return allDirsRecursively(path.toFile())
-            .any { dir -> dir.files.any { it.name == "AndroidManifest.xml" } }
-    }
-}
-

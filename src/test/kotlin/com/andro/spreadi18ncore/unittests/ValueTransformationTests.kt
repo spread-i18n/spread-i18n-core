@@ -1,8 +1,8 @@
 package com.andro.spreadi18ncore.unittests
 
-import com.andro.spreadi18ncore.filewriting.AndroidEscaping
-import com.andro.spreadi18ncore.filewriting.iOSValueTransformation
-import com.andro.spreadi18ncore.valuetransformation.CustomValueTransformation
+import com.andro.spreadi18ncore.transfer.importing.AndroidEscaping
+import com.andro.spreadi18ncore.transfer.importing.iOSValueTransformation
+import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

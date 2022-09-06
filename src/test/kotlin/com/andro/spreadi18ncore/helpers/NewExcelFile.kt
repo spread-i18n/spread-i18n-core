@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.helpers
 
-import com.andro.spreadi18ncore.sourcesheet.rows
-import com.andro.spreadi18ncore.sourcesheet.skipTo
+import com.andro.spreadi18ncore.excel.rows
+import com.andro.spreadi18ncore.excel.skipTo
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileOutputStream

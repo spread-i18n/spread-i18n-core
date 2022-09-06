@@ -1,9 +1,9 @@
 package com.andro.spreadi18ncore.unittests
 
-import com.andro.spreadi18ncore.export.KeyValue
-import com.andro.spreadi18ncore.export.withCommentIndicator
-import com.andro.spreadi18ncore.export.withNonTranslatableIndicator
-import com.andro.spreadi18ncore.filewriting.PlainAndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.transfer.importing.PlainAndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.withCommentIndicator
+import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.BufferedWriter

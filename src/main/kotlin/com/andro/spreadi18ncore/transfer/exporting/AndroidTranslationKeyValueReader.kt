@@ -1,11 +1,13 @@
-package com.andro.spreadi18ncore.export
+package com.andro.spreadi18ncore.transfer.exporting
 
-import com.andro.spreadi18ncore.filewriting.AndroidEscaping
-import com.andro.spreadi18ncore.filewriting.InvalidAndroidTranslationFile
-import com.andro.spreadi18ncore.project.CommentIndicator
-import com.andro.spreadi18ncore.project.NonTranslatableIndicator
-import com.andro.spreadi18ncore.valuetransformation.ValueTransformation
-import com.andro.spreadi18ncore.valuetransformation.transform
+import com.andro.spreadi18ncore.transfer.importing.AndroidEscaping
+import com.andro.spreadi18ncore.transfer.importing.InvalidAndroidTranslationFile
+import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
+import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
+import com.andro.spreadi18ncore.transfer.transformation.transform
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.transfer.withCommentIndicator
+import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.*
 import org.w3c.dom.Node.COMMENT_NODE
@@ -90,7 +92,7 @@ internal class XmlAndroidTranslationKeyValueReader(private val bufferedReader: B
                 var key = element.getAttribute("name")
                 element.getAttribute("translatable").let {
                     if (it == "false") {
-                        key = "$NonTranslatableIndicator$key"
+                        key = key.withNonTranslatableIndicator
                     }
                 }
                 val value = element.textContent.transform(valueTransformation)
@@ -98,7 +100,7 @@ internal class XmlAndroidTranslationKeyValueReader(private val bufferedReader: B
             }
             COMMENT_NODE -> {
                 val comment = this as Comment
-                KeyValue("$CommentIndicator${comment.textContent}", "")
+                KeyValue(comment.textContent.withCommentIndicator, "")
             }
             else -> null
         }

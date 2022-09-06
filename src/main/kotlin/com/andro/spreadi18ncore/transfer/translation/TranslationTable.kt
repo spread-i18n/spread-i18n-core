@@ -1,10 +1,8 @@
-package com.andro.spreadi18ncore.project
+package com.andro.spreadi18ncore.transfer.translation
 
 import com.andro.spreadi18ncore.Project
-import com.andro.spreadi18ncore.export.KeyValue
+import com.andro.spreadi18ncore.localization.LanguageTag
 
-const val NonTranslatableIndicator = "*"
-const val CommentIndicator = "//"
 internal class TranslationRow(val key: String, valueCount: Int) {
     private val _values = MutableList(size = valueCount, init = { "" })
     val values: List<String> = _values
@@ -14,7 +12,7 @@ internal class TranslationRow(val key: String, valueCount: Int) {
     }
 }
 
-data class LocaleValue(val value: String) {
+internal data class LocaleValue(val value: String) {
     val friendlyValue: String get() = value.ifEmpty { "English" }
 }
 
@@ -42,12 +40,6 @@ internal class TranslationTable(val languageTags: List<LanguageTag>) {
     }
 }
 
-internal interface TranslationTableReader {
-    fun read(): TranslationTable
-}
 
-internal interface TranslationTableWriter {
-    fun write(translationTable: TranslationTable)
-}
 
 internal val Project.languageTags: List<LanguageTag> get() = localizationFiles.map { it.languageTag }

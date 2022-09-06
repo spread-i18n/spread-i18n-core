@@ -1,6 +1,7 @@
-package com.andro.spreadi18ncore.sourcesheet
+package com.andro.spreadi18ncore.excel
 
-import com.andro.spreadi18ncore.project.LanguageTag
+import com.andro.spreadi18ncore.localization.LanguageTag
+
 
 inline class RowIndex(val value: Int)
 inline class ColumnIndex(val value: Int)

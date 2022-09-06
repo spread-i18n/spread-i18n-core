@@ -1,11 +1,11 @@
 package com.andro.spreadi18ncore.integrationtests
 
 import com.andro.spreadi18ncore.Project
-import com.andro.spreadi18ncore.export.KeyValue
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.helpers.ExistingExcelFile
 import com.andro.spreadi18ncore.helpers.androidFixture
 import com.andro.spreadi18ncore.helpers.iOSFixture
-import com.andro.spreadi18ncore.project.NonTranslatableIndicator
+import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -151,16 +151,16 @@ internal class NonTranslatableExportTest {
     fun `Export non translatables from an Android project to an excel file`() = androidFixture("proj-e7") {
         with(structure) {
             withLocalizationFile("en") {
-                withTranslations { ("${NonTranslatableIndicator}celsius_symbol" to "°C") +
-                        ("${NonTranslatableIndicator}fahrenheit_symbol" to "°F") }
+                withTranslations { ("celsius_symbol".withNonTranslatableIndicator to "°C") +
+                        ("fahrenheit_symbol".withNonTranslatableIndicator to "°F") }
             }
         }.create()
 
         Project.onPath(projectPath).export(to = excelFilePath)
 
         ExistingExcelFile.onPath(excelFilePath).use { excelFile ->
-            assert(excelFile.containsInRow("${NonTranslatableIndicator}celsius_symbol", "°C"))
-            assert(excelFile.containsInRow("${NonTranslatableIndicator}fahrenheit_symbol", "°F"))
+            assert(excelFile.containsInRow("celsius_symbol".withNonTranslatableIndicator, "°C"))
+            assert(excelFile.containsInRow("fahrenheit_symbol".withNonTranslatableIndicator, "°F"))
         }
     }
 }

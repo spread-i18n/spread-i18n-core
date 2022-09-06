@@ -1,53 +1,19 @@
 package com.andro.spreadi18ncore
 
-import com.andro.spreadi18ncore.export.ExcelTranslationTableWriter
-import com.andro.spreadi18ncore.export.ProjectTranslationTableReader
-import com.andro.spreadi18ncore.export.TranslationKeyValueReader
-import com.andro.spreadi18ncore.filewriting.ExcelTranslationTableReader
-import com.andro.spreadi18ncore.filewriting.TranslationKeyValueWriter
-import com.andro.spreadi18ncore.importing.ProjectTranslationTableWriter
-import com.andro.spreadi18ncore.sourcesheet.ImportException
-import com.andro.spreadi18ncore.sourcesheet.ValueTransformations
-import com.andro.spreadi18ncore.project.*
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import java.io.FileInputStream
+import com.andro.spreadi18ncore.excel.ValueTransformations
+import com.andro.spreadi18ncore.localization.LocalizationFile
+import com.andro.spreadi18ncore.project.ProjectType
+import com.andro.spreadi18ncore.project.SupportedProjectTypeNotFound
+import com.andro.spreadi18ncore.transfer.Transfer
+import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
+import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.rename
+import com.andro.spreadi18ncore.transfer.translation.ExcelFileDestination
+import com.andro.spreadi18ncore.transfer.translation.ExcelFileSource
+import com.andro.spreadi18ncore.transfer.translation.ProjectTranslationsDestination
+import com.andro.spreadi18ncore.transfer.translation.ProjectTranslationsSource
+import com.andro.spreadi18ncore.transfer.tryBlock
 import java.nio.file.Path
-
-
-internal interface TranslationsSource {
-    val translationTableReader: TranslationTableReader
-}
-
-internal class ProjectTranslations(
-    private val project: Project,
-    private val valueTransformations: ValueTransformations? = null
-) :
-    TranslationsSource, TranslationsDestination {
-
-    override val translationTableReader: TranslationTableReader
-        get() = ProjectTranslationTableReader(project, valueTransformations)
-
-    override val translationTableWriter: TranslationTableWriter
-        get() = ProjectTranslationTableWriter(project)
-}
-
-internal interface TranslationsDestination {
-    val translationTableWriter: TranslationTableWriter
-}
-
-internal class ExcelFile(
-    private val filePath: Path,
-    private val type: ProjectType,
-    private val valueTransformations: ValueTransformations? = null
-) :
-    TranslationsSource, TranslationsDestination {
-
-    override val translationTableWriter: TranslationTableWriter
-        get() = ExcelTranslationTableWriter(filePath)
-
-    override val translationTableReader: TranslationTableReader
-        get() = ExcelTranslationTableReader(filePath, type, valueTransformations)
-}
 
 class Project private constructor(private val projectPath: Path) {
 
@@ -70,16 +36,16 @@ class Project private constructor(private val projectPath: Path) {
 
     fun export(to: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
         rename(to, to = { destinationFilePath ->
-            val project = ProjectTranslations(this, valueTransformations)
-            val excelFile = ExcelFile(destinationFilePath, type)
+            val project = ProjectTranslationsSource(this, valueTransformations)
+            val excelFile = ExcelFileDestination(destinationFilePath, type)
             Transfer.from(project).to(excelFile)
         })
     }
 
     fun import(from: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
         rename(from, to = { sourceFilePath ->
-            val excelFile = ExcelFile(sourceFilePath, type, valueTransformations)
-            val project = ProjectTranslations(this)
+            val excelFile = ExcelFileSource(sourceFilePath, type, valueTransformations)
+            val project = ProjectTranslationsDestination(this)
             Transfer.from(excelFile).to(project)
         })
     }
@@ -89,41 +55,4 @@ class Project private constructor(private val projectPath: Path) {
 
     internal fun keyValueWriter(localizationFile: LocalizationFile): TranslationKeyValueWriter =
         type.keyValueWriter(localizationFile.path)
-}
-
-internal val XSSFWorkbook.firstSheet get() = this.getSheetAt(0)
-internal fun workbook(sourceFilePath: Path): XSSFWorkbook {
-    try {
-        val file = FileInputStream(sourceFilePath.toFile())
-        return XSSFWorkbook(file)
-    } catch (exc: Exception) {
-        throw WorkbookOpeningError(exc)
-    }
-}
-
-internal class UnknownTransferError(exc: Exception) : ImportException(cause = exc)
-internal class WorkbookOpeningError(exc: Exception) : ImportException(cause = exc)
-
-internal inline fun <T, R> rename(obj: T, to: (T) -> R): R {
-    return to(obj)
-}
-
-internal inline fun <R> tryBlock(block: () -> R): R =
-    try {
-        block()
-    } catch (exc: Exception) {
-        throw UnknownTransferError(exc)
-    }
-
-internal object Transfer {
-    fun from(source: TranslationsSource): TransferPerformer {
-        return TransferPerformer(source)
-    }
-
-    internal class TransferPerformer(private val source: TranslationsSource) {
-        fun to(destination: TranslationsDestination) {
-            val table = source.translationTableReader.read()
-            destination.translationTableWriter.write(table)
-        }
-    }
 }
