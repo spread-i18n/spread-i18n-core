@@ -65,7 +65,7 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
         with(keyValue) {
             when {
                 key.indicatesComment -> {
-                    bufferedWriter.write("    <!--${key.commentText}-->\n")
+                    bufferedWriter.write("    <!-- ${key.commentText} -->\n")
                 }
                 key.indicatesNonTranslatable -> {
                     bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
