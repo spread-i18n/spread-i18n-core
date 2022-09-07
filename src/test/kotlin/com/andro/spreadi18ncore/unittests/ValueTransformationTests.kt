@@ -17,7 +17,7 @@ class ValueTransformationTests {
     @Test
     fun default_Android_transformation() {
         assertThat(AndroidEscaping.escape(""""Me & you" are better than 'they'"""))
-                .isEqualTo("""\"Me & you\" are better than \'they\'""")
+                .isEqualTo("""\"Me &amp; you\" are better than \'they\'""")
     }
     
     @Test
