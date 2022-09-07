@@ -63,12 +63,16 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
 
     override fun write(keyValue: KeyValue) {
         with(keyValue) {
-            if (key.indicatesComment) {
-                bufferedWriter.write("    <!--${key.replace("// *".toRegex(), "")}-->\n")
-            } else if (key.indicatesNonTranslatable) {
-                bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
-            } else if (key.isNotBlank()) {
-                bufferedWriter.write("    <string name=\"$key\">${value.escaped}</string>\n")
+            when {
+                key.indicatesComment -> {
+                    bufferedWriter.write("    <!--${key.commentText}-->\n")
+                }
+                key.indicatesNonTranslatable -> {
+                    bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
+                }
+                key.isNotBlank() -> {
+                    bufferedWriter.write("    <string name=\"$key\">${value.escaped}</string>\n")
+                }
             }
         }
     }
