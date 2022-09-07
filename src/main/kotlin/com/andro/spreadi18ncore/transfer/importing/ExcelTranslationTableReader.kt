@@ -46,7 +46,8 @@ internal class ExcelTranslationTableReader(
                 row.getNotBlank(keyColumnIndex)?.let { key ->
                     headerRow.localeCells.forEach { localeCell ->
                         row.getNotNull(localeCell.columnIndex)?.let { value ->
-                            table.setValue(localeCell.languageTag, KeyValue(key, value.transform(valueTransformation)))
+                            val keyValue = KeyValue(key.trim(), value.trim().transform(valueTransformation))
+                            table.setValue(localeCell.languageTag, keyValue)
                         }
                     }
                 }
