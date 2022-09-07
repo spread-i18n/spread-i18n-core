@@ -144,7 +144,7 @@ internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader:
     private fun String.extractKeyValueFromComment(): KeyValue? {
         return xmlCommentRegex.matchEntire(this)?.groups?.filterNotNull()?.let { group ->
             when (group.size) {
-                2 -> KeyValue(group[1].value.withCommentIndicator, "")
+                2 -> KeyValue(group[1].value.trim().withCommentIndicator, "")
                 else -> null
             }
         }
