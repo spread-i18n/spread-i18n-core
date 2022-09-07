@@ -20,7 +20,7 @@ class PlainAndroidTranslationKeyValueWriterTest {
         writer.close()
 
         val outXml = stringWriter.toString()
-        Assertions.assertThat(outXml).contains("<!--A comment-->")
+        Assertions.assertThat(outXml).contains("<!-- A comment -->")
     }
 
     @Test
