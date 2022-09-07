@@ -1,8 +1,8 @@
 package com.andro.spreadi18ncore.transfer.exporting
 
-import com.andro.spreadi18ncore.transfer.importing.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.importing.InvalidAndroidTranslationFile
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
+import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
 import com.andro.spreadi18ncore.transfer.transformation.transform
 import com.andro.spreadi18ncore.transfer.translation.KeyValue

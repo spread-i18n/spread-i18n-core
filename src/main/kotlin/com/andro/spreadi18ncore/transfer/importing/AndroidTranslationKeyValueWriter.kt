@@ -5,6 +5,7 @@ import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.commentText
 import com.andro.spreadi18ncore.transfer.indicatesComment
 import com.andro.spreadi18ncore.transfer.indicatesNonTranslatable
+import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.translatable
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import org.apache.commons.io.input.ReaderInputStream
@@ -50,33 +51,6 @@ internal class AndroidTranslationKeyValueWriter(
 
     override fun close() {
         internalWriter.close()
-    }
-}
-
-internal object AndroidEscaping {
-
-    private val escapingMap = mapOf(
-        "\"" to "\\\"",
-        "\'" to "\\\'",
-        //"&" to "&amp;",
-        //"<" to "&lt;",
-        //">" to "&gt;"
-    )
-
-    fun escape(value: String): String {
-        return escapingMap.entries.escape(value)
-    }
-
-    fun unescape(value: String): String {
-        return escapingMap.entries.map { it.swapKeyWithValue() }.escape(value)
-    }
-
-    private fun <K, V> Entry<K, V>.swapKeyWithValue(): Entry<V, K> {
-        return SimpleEntry(value, key)
-    }
-
-    private fun Collection<Entry<String, String>>.escape(value: String): String {
-        return fold(value) { escapedValue, (oldValue, newValue) -> escapedValue.replace(oldValue, newValue) }
     }
 }
 
