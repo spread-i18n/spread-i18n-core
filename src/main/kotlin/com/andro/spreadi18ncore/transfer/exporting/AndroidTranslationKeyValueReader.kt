@@ -140,18 +140,30 @@ internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader:
         return KeyValue(key, value.unescaped.transform(valueTransformation))
     }
 
-    private val xmlCommentRegex = Regex(""".*<!--(.+)-->""")
     private fun String.extractKeyValueFromComment(): KeyValue? {
-        return xmlCommentRegex.matchEntire(this)?.groups?.filterNotNull()?.let { group ->
-            when (group.size) {
-                2 -> KeyValue(group[1].value.trim().withCommentIndicator, "")
-                else -> null
-            }
+        return XmlCommentExtractor.extractComment(this)?.let {
+            KeyValue(it.withCommentIndicator, "")
         }
     }
 
     private val String.unescaped: String get() = AndroidEscaping.unescape(this)
     override fun close() {
         bufferedReader.close()
+    }
+}
+
+object XmlCommentExtractor {
+
+    //+? matches the previous token between one and unlimited times, as few times as possible, expanding as needed (lazy)
+    //\s matches any whitespace character (equivalent to [\r\n\t\f\v ])
+    private val xmlCommentRegex = Regex(""".*<!--\s*(.+?)\s*-->""")
+
+    fun extractComment(xmlCommentCandidate: String):String? {
+        return xmlCommentRegex.matchEntire(xmlCommentCandidate)?.groups?.filterNotNull()?.let { group ->
+            when (group.size) {
+                2 -> group[1].value
+                else -> null
+            }
+        }
     }
 }
