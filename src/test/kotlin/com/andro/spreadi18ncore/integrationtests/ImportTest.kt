@@ -1,8 +1,8 @@
 package com.andro.spreadi18ncore.integrationtests
 
 import com.andro.spreadi18ncore.Project
-import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.helpers.*
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -179,7 +179,7 @@ internal class NonTranslatableImportTest {
 }
 
 //https://developer.android.com/guide/topics/resources/string-resource#FormattingAndStyling
-class HTMLmarkupSupportTest {
+class HtmlMarkupSupportTest {
 
     @Test
     fun `Html markup is preserved after translations import to an Android project`() = androidFixture("proj-i6") {
@@ -206,4 +206,42 @@ class HTMLmarkupSupportTest {
             assert(contains(KeyValue("hello", "hello <b>World</b>")))
         }
     }
+}
+
+internal class CharacterEscapingTest {
+
+    //https://developer.android.com/guide/topics/resources/string-resource#escaping_quotes
+    @Test
+    fun `Special characters are escaped after import to an Android project`() = androidFixture("proj-i7") {
+        //arrange
+        with(structure) {
+            withLocalizationFile("en") {}
+        }.create()
+
+        with(NewExcelFile.onPath(excelFilePath)) {
+            writeRow("key", "en")
+            writeRow("new_line", "new\nline")
+            writeRow("tabulation", "tab\ttab")
+            writeRow("question", "wtf?")
+            writeRow("at", "john.doe@gmail.com")
+            writeRow("single_quote", "5 o'clock")
+            writeRow("double_quote", """Hello "World" """)
+            save()
+        }
+
+        //act
+        Project.onPath(projectPath).import(from = excelFilePath)
+
+        //assert
+        with(Project.onPath(projectPath).rawLocaleFile("en")) {
+            assert(containsInLine("new_line", """new\nline"""))
+            assert(containsInLine("tabulation", """tab\ttab"""))
+            assert(containsInLine("question", """wtf\?"""))
+            assert(containsInLine("at", """john.doe\@gmail.com"""))
+            assert(containsInLine("single_quote", """5 o\'clock"""))
+            assert(containsInLine("double_quote", """Hello \"World\""""))
+        }
+    }
+
+    //To test iOS escaping
 }

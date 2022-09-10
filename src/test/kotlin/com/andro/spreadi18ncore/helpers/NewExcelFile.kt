@@ -52,4 +52,12 @@ internal class NewExcelFile private constructor(private val filePath: Path) {
             workbook.write(outputStream)
         }
     }
+
+    fun writeRow(vararg values: String) {
+        sheet.createRow(sheet.rows.count()).apply {
+            values.withIndex().forEach {
+                createCell(it.index).setCellValue(it.value)
+            }
+        }
+    }
 }

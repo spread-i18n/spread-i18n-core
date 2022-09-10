@@ -8,7 +8,11 @@ internal object AndroidEscaping {
             "\"" to "\\\"",
             "\'" to "\\\'",
             "&" to "&amp;",
-            //"<" to "&lt;",
+            "\n" to "\\n",
+            "\t" to "\\t",
+            "@" to "\\@",
+            "?" to "\\?",
+        //"<" to "&lt;",
             //">" to "&gt;"
     )
 
