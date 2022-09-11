@@ -2,8 +2,8 @@ package com.andro.spreadi18ncore
 
 import java.nio.file.Path
 
-data class ImportConfiguration(
-    val sourceFilePath: Path,
-    val targetProjectPath: Path,
+data class Configuration(
+    val filePath: Path,
+    val projectPath: Path,
     val valueTransformationMap: Map<String, String>? = null,
 )
