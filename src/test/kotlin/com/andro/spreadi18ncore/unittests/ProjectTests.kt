@@ -1,13 +1,16 @@
 package com.andro.spreadi18ncore.unittests
 
+import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.helpers.dir
 import com.andro.spreadi18ncore.helpers.mockkedPath
 import com.andro.spreadi18ncore.project.AndroidManifest
 import com.andro.spreadi18ncore.project.xcodeprojDirectory
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
 
-class TargetProjectTests {
+class ProjectTests {
 
     @Test
     fun `xcodeproj is discovered in an iOS project structure`() {

@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.transfer.importing
 
-import com.andro.spreadi18ncore.excel.ImportException
+import com.andro.spreadi18ncore.excel.TransferException
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.commentText
 import com.andro.spreadi18ncore.transfer.indicatesComment
@@ -93,7 +93,7 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
     }
 }
 
-internal class InvalidAndroidTranslationFile(message: String) : ImportException(message = message)
+internal class InvalidAndroidTranslationFile(message: String) : TransferException(message = message)
 internal class XmlAndroidTranslationKeyValueWriter(
     private val bufferedReader: BufferedReader,
     private val bufferedWriter: BufferedWriter

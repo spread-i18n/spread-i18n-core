@@ -7,9 +7,10 @@ import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
-internal class HeaderRowNotFound(): ImportException("Header row not found in the source file.")
+internal class HeaderRowNotFound(): TransferException("A header row not found in the excel file. " +
+        "Visit 'https://github.com/rojarand/spread-i18n-core#spread-sheet-format-requirements' to see how to format the header row.")
 
-open class ImportException(message: String? = null, cause: Throwable? = null): Exception(message, cause)
+open class TransferException(message: String? = null, cause: Throwable? = null): Exception(message, cause)
 
 val Sheet.rows: Sequence<Row>
     get() = rowIterator().asSequence()

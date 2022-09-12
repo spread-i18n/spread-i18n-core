@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.excel
 
-internal class ColumnNotFound : ImportException("")
+internal class ColumnNotFound : TransferException("")
 
 internal data class KeyCell(val rowIndex: RowIndex, val columnIndex: ColumnIndex, val keyType: TranslationKeyType)
 

@@ -1,9 +1,9 @@
 package com.andro.spreadi18ncore.localization
 
-import com.andro.spreadi18ncore.excel.ImportException
+import com.andro.spreadi18ncore.excel.TransferException
 import java.nio.file.Path
 
-class LanguageTagExtractionError(name: String) : ImportException("Can not extract language tag from: $name")
+class LanguageTagExtractionError(name: String) : TransferException("Can not extract language tag from: $name")
 
 internal data class LanguageTag private constructor(val canonical: String) {
 

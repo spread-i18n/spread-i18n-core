@@ -5,7 +5,7 @@ import java.io.FileInputStream
 import java.nio.file.Path
 
 
-internal class WorkbookOpeningError(exc: Exception) : ImportException(cause = exc)
+internal class WorkbookOpeningError(exc: Exception) : TransferException(cause = exc)
 
 internal val XSSFWorkbook.firstSheet get() = this.getSheetAt(0)
 
