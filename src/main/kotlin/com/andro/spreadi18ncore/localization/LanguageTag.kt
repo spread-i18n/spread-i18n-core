@@ -11,7 +11,7 @@ internal data class LanguageTag private constructor(val canonical: String) {
         fun extractFromPath(path: Path):LanguageTag {
             val name = path.toFile().name
             if (name == "values" || name == "Base.lproj") {
-                return LanguageTag("en")
+                return LanguageTag("default")
             } else if (name.startsWith("values-")) {
                 return extractFromString(name.removePrefix("values-"))
             } else if (name.endsWith(".lproj")) {
@@ -23,6 +23,9 @@ internal data class LanguageTag private constructor(val canonical: String) {
         private val languageTagRegex = Regex("""^([a-z]{2})-?r?([A-Z]{2})?$""")
 
         fun extractFromString(tagCandidate: String): LanguageTag {
+            if (tagCandidate == "default") {
+                return LanguageTag("default")
+            }
             fun extract(tagCandidate: String): String? {
                 return languageTagRegex.matchEntire(tagCandidate)?.groups?.filterNotNull()?.let { group ->
                     when(group.size) {

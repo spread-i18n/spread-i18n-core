@@ -38,7 +38,7 @@ internal class iOSLocalizationFileFinder :
     private fun languageTag(localizationDirectoryName: String): LanguageTag {
         with(localizationDirectoryName) {
             if (this == "Base.lproj") {
-                return LanguageTag.extractFromString("en")
+                return LanguageTag.extractFromString("default")
             } else if (endsWith(".lproj")) {
                 return LanguageTag.extractFromString(removeSuffix(".lproj"))
             }
@@ -58,7 +58,7 @@ internal class AndroidLocalizationFileFinder :
     private fun languageTag(localizationDirectoryName: String): LanguageTag {
         with(localizationDirectoryName) {
             if (this == "values") {
-                return LanguageTag.extractFromString("en")
+                return LanguageTag.extractFromString("default")
             } else if (startsWith("values-")) {
                 return LanguageTag.extractFromString(removePrefix("values-"))
             }

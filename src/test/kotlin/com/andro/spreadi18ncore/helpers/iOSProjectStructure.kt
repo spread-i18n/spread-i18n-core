@@ -24,7 +24,7 @@ internal class iOSProjectStructure(private val projectPath: Path) {
 
         localisationFiles.forEach { fileContent ->
             val directoryName = with(fileContent.languageTag) {
-                ifEmpty { "Base" }
+                if (this == "default") "Base" else this
             }
             val localeDirPath = Path.of(projectPath.toString(), "proj/$directoryName.lproj")
             localeDirPath.toFile().mkdirs()

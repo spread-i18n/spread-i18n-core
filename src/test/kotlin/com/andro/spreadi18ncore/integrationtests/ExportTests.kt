@@ -25,7 +25,7 @@ class ExportTests {
     fun `Export of translations from an iOS project translations to an excel file`() = iOSFixture("proj-e1") {
 
         with(structure) {
-            withLocalizationFile("en") {
+            withLocalizationFile("default") {
                 withTranslations {
                     ("message_hello" to "Hello") + ("NSBluetoothPeripheralUsageDescription" to "Bluetooth needed")
                 }
@@ -40,7 +40,7 @@ class ExportTests {
         Project.onPath(projectPath).export(to = excelFilePath)
 
         ExistingExcelFile.onPath(excelFilePath).use { excelFile ->
-            assert(excelFile.containsInRow("key", "en", "fr"))
+            assert(excelFile.containsInRow("key", "default", "fr"))
             assert(excelFile.containsInRow("message_hello", "Hello", "Bonjour"))
             assert(
                 excelFile.containsInRow(
@@ -55,7 +55,7 @@ class ExportTests {
         androidFixture("proj-e2") {
 
             with(structure) {
-                withLocalizationFile("en") {
+                withLocalizationFile("default") {
                     withTranslations { ("message_hello" to "Hello") + ("message_bye" to "Bye") }
                 }.withLocalizationFile("fr") {
                     withTranslations { ("message_hello" to "Bonjour") + ("message_bye" to "Adieu") }
@@ -65,7 +65,7 @@ class ExportTests {
             Project.onPath(projectPath).export(to = excelFilePath)
 
             ExistingExcelFile.onPath(excelFilePath).use { excelFile ->
-                assert(excelFile.containsInRow("key", "en", "fr"))
+                assert(excelFile.containsInRow("key", "default", "fr"))
                 assert(excelFile.containsInRow("message_hello", "Hello", "Bonjour"))
                 assert(excelFile.containsInRow("message_bye", "Bye", "Adieu"))
             }
@@ -96,8 +96,7 @@ class ExportTests {
         androidFixture("proj-e4") {
 
             with(structure) {
-                val defaultLanguageTag =
-                    ""//Default language tag for english translations. It refers to the "resources" directory.
+                val defaultLanguageTag = "default"
                 withLocalizationFile(defaultLanguageTag) {
                     withTranslations { ("message_hello" to "Hello") + ("message_bye" to "Bye") }
                 }
@@ -106,7 +105,7 @@ class ExportTests {
             Project.onPath(projectPath).export(to = excelFilePath)
 
             ExistingExcelFile.onPath(excelFilePath).use { excelFile ->
-                assert(excelFile.containsInRow("key", "en"))
+                assert(excelFile.containsInRow("key", "default"))
                 assert(excelFile.containsInRow("message_hello", "Hello"))
                 assert(excelFile.containsInRow("message_bye", "Bye"))
             }
@@ -118,7 +117,7 @@ internal class CommentsExportTests {
     @Test
     fun `Comments are exported from Android translations to an excel file`() = androidFixture("proj-e5") {
         with(structure) {
-            withLocalizationFile("en") {
+            withLocalizationFile("default") {
                 withTranslations { ("//Polite phrases" to "") + ("message_hello" to "Hello") + ("message_bye" to "bye") }
             }
         }.create()
@@ -133,7 +132,7 @@ internal class CommentsExportTests {
     @Test
     fun `Comments are exported from iOS translations to an excel file`() = iOSFixture("proj-e6") {
         with(structure) {
-            withLocalizationFile("en") {
+            withLocalizationFile("default") {
                 withTranslations { ("//Polite phrases" to "") + ("message_hello" to "Hello") + ("message_bye" to "bye") }
             }
         }.create()
@@ -150,7 +149,7 @@ internal class NonTranslatableExportTest {
     @Test
     fun `Export non translatables from an Android project to an excel file`() = androidFixture("proj-e7") {
         with(structure) {
-            withLocalizationFile("en") {
+            withLocalizationFile("default") {
                 withTranslations { ("celsius_symbol".withNonTranslatableIndicator to "°C") +
                         ("fahrenheit_symbol".withNonTranslatableIndicator to "°F") }
             }

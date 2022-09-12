@@ -8,16 +8,16 @@ import java.nio.file.Path
 class LanguageTagTests {
 
     @Test
-    fun `Base directory is treated as location of english localization`() {
+    fun `Base directory is treated as location of default localization`() {
         with(LanguageTag.extractFromPath(Path.of("project/Base.lproj"))) {
-            assertThat(this).isEqualTo(LanguageTag.extractFromString("en"))
+            assertThat(this).isEqualTo(LanguageTag.extractFromString("default"))
         }
     }
 
     @Test
-    fun `values directory is treated as location of english localization`() {
+    fun `values directory is treated as location of default localization`() {
         with(LanguageTag.extractFromPath(Path.of("app/src/main/res/values"))) {
-            assertThat(this).isEqualTo(LanguageTag.extractFromString("en"))
+            assertThat(this).isEqualTo(LanguageTag.extractFromString("default"))
         }
     }
 
