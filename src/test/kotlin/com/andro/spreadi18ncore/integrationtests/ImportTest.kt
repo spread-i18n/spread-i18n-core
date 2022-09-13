@@ -13,7 +13,7 @@ class ImportTest {
     fun `Import of translations from an excel file to an iOS project`() = iOSFixture("proj-i1") {
         //arrange
         with(structure) {
-            withLocalizationFile("default") {}
+            withLocalizationFile("en") {}
             withLocalizationFile("fr") {}
         }.create()
 
@@ -33,7 +33,7 @@ class ImportTest {
         Project.onPath(projectPath).import(excelFilePath)
 
         //assert
-        with(Project.onPath(projectPath).localeFile("default")) {
+        with(Project.onPath(projectPath).localeFile("en")) {
             assert(contains(KeyValue("btn_cancel_text", "Cancel")))
             assert(contains(KeyValue("btn_apply_text", "Apply")))
         }
@@ -117,7 +117,7 @@ internal class CommentsImportTests {
     fun `Comments are imported to iOS translations from an excel file`() = iOSFixture("proj-i4") {
         //arrange
         with(structure) {
-            withLocalizationFile("default") {}
+            withLocalizationFile("en") {}
             withLocalizationFile("pl") {}
         }.create()
 
@@ -137,7 +137,7 @@ internal class CommentsImportTests {
         Project.onPath(projectPath).import(from = excelFilePath)
 
         //assert
-        with(Project.onPath(projectPath).localeFile("default")) {
+        with(Project.onPath(projectPath).localeFile("en")) {
             assert(contains(Comment("Polite phrases")))
         }
 
@@ -180,7 +180,7 @@ internal class NonTranslatableImportTest {
 }
 
 //https://developer.android.com/guide/topics/resources/string-resource#FormattingAndStyling
-class HtmlMarkupSupportTest {
+internal class HtmlMarkupSupportTest {
 
     @Test
     fun `Html markup is preserved after translations import to an Android project`() = androidFixture("proj-i6") {
@@ -245,4 +245,44 @@ internal class CharacterEscapingTest {
     }
 
     //To test iOS escaping
+}
+
+@Suppress("ClassName")
+internal class iOSDefaultTranslationImportTests {
+
+    @Test
+    fun `Default translations are imported to 'development language' from an excel file`()
+            = iOSFixture(name = "proj-i8", developmentLanguage = "pl") {
+        //arrange
+        with(structure) {
+            withLocalizationFile("en") {}
+            withLocalizationFile("pl") {}
+        }.create()
+
+        NewExcelFile.onPath(excelFilePath).load(
+            """
+            ┌──────────────────────────────────┐
+            │Key              │en      │default│
+            ├──────────────────────────────────┤
+            │message_bye      │Bye     │Żegnaj │
+            ├──────────────────────────────────┤
+            │message_hello    │Hello   │Cześć  │
+            └──────────────────────────────────┘
+            """
+        ).save()
+
+        //act
+        Project.onPath(projectPath).import(from = excelFilePath)
+
+        //assert
+        with(Project.onPath(projectPath).localeFile("pl")) {
+            assert(contains(KeyValue("message_bye", "Żegnaj")))
+            assert(contains(KeyValue("message_hello", "Cześć")))
+        }
+
+        with(Project.onPath(projectPath).localeFile("en")) {
+            assert(contains(KeyValue("message_bye", "Bye")))
+            assert(contains(KeyValue("message_hello", "Hello")))
+        }
+    }
 }

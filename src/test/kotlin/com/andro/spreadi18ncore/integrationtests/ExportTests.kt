@@ -25,7 +25,7 @@ class ExportTests {
     fun `Export of translations from an iOS project translations to an excel file`() = iOSFixture("proj-e1") {
 
         with(structure) {
-            withLocalizationFile("default") {
+            withLocalizationFile("en") {
                 withTranslations {
                     ("message_hello" to "Hello") + ("NSBluetoothPeripheralUsageDescription" to "Bluetooth needed")
                 }

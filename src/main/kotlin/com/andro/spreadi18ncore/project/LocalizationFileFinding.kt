@@ -1,9 +1,11 @@
 package com.andro.spreadi18ncore.project
 
-import com.andro.spreadi18ncore.localization.LanguageTag
-import com.andro.spreadi18ncore.localization.LanguageTagExtractionError
+import com.andro.spreadi18ncore.localization.*
 import com.andro.spreadi18ncore.localization.LocalizationFile
+import com.andro.spreadi18ncore.localization.iOSLocalizationFile
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 val File.dirs: Array<File>
     get() = this.listFiles { file -> file.isDirectory } as Array<File>
@@ -25,45 +27,68 @@ fun allDirsRecursively(parentFile: File): List<File> {
 }
 
 @Suppress("ClassName")
-internal class iOSLocalizationFileFinder :
-    LocalizationFileFinder {
-    override fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile> {
-        
+internal object iOSLocalizationPathFinder {
+    fun findLocalizationsDirIn(rootFile: File): List<Path> {
         return allDirsRecursively(rootFile)
-            .filter { dir -> dir.name.endsWith(".lproj") }
+            .filter { dir -> dir.name.endsWith(".lproj") && (dir.name != "Base.lproj") }
             .map {
-                LocalizationFile(it.toPath(), languageTag(it.name))
+                it.toPath()
             }
     }
+}
 
-    private fun languageTag(localizationDirectoryName: String): LanguageTag {
-        with(localizationDirectoryName) {
-            if (this == "Base.lproj") {
-                return LanguageTag.extractFromString("default")
-            } else if (endsWith(".lproj")) {
-                return LanguageTag.extractFromString(removeSuffix(".lproj"))
+    @Suppress("ClassName")
+internal object iOSLocalizationFileFinder : LocalizationFileFinder {
+    override fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile> {
+        val developmentLanguage = extractDevelopmentLanguageFromProject(rootFile) ?: LanguageTag.extractFromString("en")
+        return iOSLocalizationPathFinder.findLocalizationsDirIn(rootFile).map {
+            val languageTag = LanguageTag.extractFromPath(it)
+            iOSLocalizationFile(it, developmentLanguage == languageTag)
+        }
+    }
+
+    private fun extractDevelopmentLanguageFromProject(rootFile: File): LanguageTag? {
+        return pbxprojFile.findPathIn(rootFile.toPath())?.let { pbxprojFilePath ->
+            Files.newBufferedReader(pbxprojFilePath).use { reader ->
+                var line = reader.readLine()
+                while (line != null) {
+                    iOSDevelopmentLanguageExtractor.extract(line)?.let {
+                        return it
+                    }
+                    line = reader.readLine()
+                }
             }
-            throw LanguageTagExtractionError(localizationDirectoryName)
+            null
         }
     }
 }
 
-internal class AndroidLocalizationFileFinder :
+@Suppress("ClassName")
+internal object iOSDevelopmentLanguageExtractor {
+
+    private val regex = Regex("""\s*developmentRegion\s*=\s*([a-z-A-Z]+);?""")
+    fun extract(developmentLanguageLineCandidate: String): LanguageTag? {
+        return if (developmentLanguageLineCandidate.contains("developmentRegion")) {
+            regex.matchEntire(developmentLanguageLineCandidate)?.groups?.filterNotNull()?.let { group ->
+                if (group.size == 2) {
+                    try {
+                        LanguageTag.extractFromString(group[1].value)
+                    } catch (exc: Exception) {
+                        null
+                    }
+                } else null
+            }
+        } else {
+            null
+        }
+    }
+}
+
+internal object AndroidLocalizationFileFinder :
     LocalizationFileFinder {
     override fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile> {
         return allDirsRecursively(rootFile)
             .filter { dir -> dir.name.startsWith("values") && dir.files.any { it.name == "strings.xml" } }
-            .map { LocalizationFile(it.toPath(), languageTag(it.name)) }
-    }
-
-    private fun languageTag(localizationDirectoryName: String): LanguageTag {
-        with(localizationDirectoryName) {
-            if (this == "values") {
-                return LanguageTag.extractFromString("default")
-            } else if (startsWith("values-")) {
-                return LanguageTag.extractFromString(removePrefix("values-"))
-            }
-            throw LanguageTagExtractionError(localizationDirectoryName)
-        }
+            .map { AndroidLocalizationFile(it.toPath()) }
     }
 }

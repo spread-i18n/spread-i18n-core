@@ -1,8 +1,10 @@
 package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.helpers.dir
+import com.andro.spreadi18ncore.localization.LanguageTag
 import com.andro.spreadi18ncore.project.AndroidLocalizationFileFinder
 import com.andro.spreadi18ncore.project.iOSLocalizationFileFinder
+import com.andro.spreadi18ncore.project.iOSLocalizationPathFinder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -15,12 +17,13 @@ class LocalizationDirectoriesFinderTests {
                 dir("AppIcon.appiconset") { file("Contents.json") }
             }
             dir("Base.lproj") { file("Localizable.strings") }
+            dir("en.lproj") { file("Localizable.strings") }
             dir("Resources") {
                 dir("fr.lproj") { file("Localizable.strings") }
             }
         }
-        val res = iOSLocalizationFileFinder().findLocalizationsFileIn(rootDir)
-        assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("Base.lproj", "fr.lproj"))
+        val res = iOSLocalizationPathFinder.findLocalizationsDirIn(rootDir)
+        assertThat(res.map { it.toString() }).hasSameElementsAs(listOf("en.lproj", "fr.lproj"))
     }
 
     @Test
@@ -49,7 +52,7 @@ class LocalizationDirectoriesFinderTests {
                 }
             }
         }
-        val res = AndroidLocalizationFileFinder().findLocalizationsFileIn(rootDir)
+        val res = AndroidLocalizationFileFinder.findLocalizationsFileIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("values", "values-pl"))
     }
 }

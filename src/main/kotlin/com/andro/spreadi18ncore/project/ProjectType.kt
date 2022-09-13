@@ -24,9 +24,9 @@ internal enum class ProjectType {
 
         override val translationKeyType = TranslationKeyType.iOS
 
-        override fun existsIn(path: Path) = xcodeprojDirectory.existsIn(path)
+        override fun existsIn(path: Path) = pbxprojFile.existsIn(path)
 
-        override val localizationFileFinder = iOSLocalizationFileFinder()
+        override val localizationFileFinder = iOSLocalizationFileFinder
     },
     Android {
 
@@ -40,7 +40,7 @@ internal enum class ProjectType {
 
         override fun existsIn(path: Path) = AndroidManifest.existsIn(path)
 
-        override val localizationFileFinder = AndroidLocalizationFileFinder()
+        override val localizationFileFinder = AndroidLocalizationFileFinder
     };
 
     abstract val localizationFileFinder: LocalizationFileFinder

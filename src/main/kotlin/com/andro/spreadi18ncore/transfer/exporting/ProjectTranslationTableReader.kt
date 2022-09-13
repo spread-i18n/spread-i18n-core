@@ -2,9 +2,10 @@ package com.andro.spreadi18ncore.transfer.exporting
 
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.excel.ValueTransformations
+import com.andro.spreadi18ncore.localization.LanguageTag
+import com.andro.spreadi18ncore.localization.LocalizationFile
 import com.andro.spreadi18ncore.transfer.translation.TranslationTable
 import com.andro.spreadi18ncore.transfer.base.TranslationTableReader
-import com.andro.spreadi18ncore.transfer.translation.languageTags
 import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
 
@@ -22,16 +23,25 @@ internal class ProjectTranslationTableReader(
     }
 
     override fun read(): TranslationTable {
-        val translationTable = TranslationTable(project.languageTags)
+        val translationTable = TranslationTable(project.tableLanguageTags)
         project.localizationFiles.forEach { localizationFile ->
             project.keyValueReader(localizationFile).use { reader ->
                 var keyValue = reader.read(valueTransformation)
                 while (keyValue != null) {
-                    translationTable.setValue(localizationFile.languageTag, keyValue)
+                    translationTable.setValue(localizationFile.tableTag, keyValue)
                     keyValue = reader.read(valueTransformation)
                 }
             }
         }
         return translationTable
     }
+
+    private val LocalizationFile.tableTag: LanguageTag
+        get() {
+            return if (isDefault) {
+                LanguageTag.default
+            } else languageTag
+        }
+
+    private val Project.tableLanguageTags: List<LanguageTag> get() = localizationFiles.map { it.tableTag }
 }

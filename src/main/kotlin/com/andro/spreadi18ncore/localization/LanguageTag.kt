@@ -7,10 +7,19 @@ class LanguageTagExtractionError(name: String) : TransferException("Can not extr
 
 internal data class LanguageTag private constructor(val canonical: String) {
 
+    val isDefault: Boolean by lazy {
+        canonical == "default"
+    }
+
     companion object {
+
+        val default: LanguageTag get() {
+            return LanguageTag("default")
+        }
+
         fun extractFromPath(path: Path):LanguageTag {
             val name = path.toFile().name
-            if (name == "values" || name == "Base.lproj") {
+            if (name == "values") {
                 return LanguageTag("default")
             } else if (name.startsWith("values-")) {
                 return extractFromString(name.removePrefix("values-"))
