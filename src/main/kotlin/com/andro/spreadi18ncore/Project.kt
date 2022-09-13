@@ -31,7 +31,7 @@ class Project private constructor(private val projectPath: Path) {
         ProjectType.values().firstOrNull { it.existsIn(projectPath) } ?: throw SupportedProjectTypeNotFound(projectPath)
 
     internal val localizationFiles: List<LocalizationFile> by lazy {
-        type.localizationFileFinder.findLocalizationFileIn(projectPath.toFile())
+        type.localizationFileFinder.findLocalizationsFileIn(projectPath.toFile())
     }
 
     fun export(to: Path, valueTransformations: ValueTransformations? = null) = tryBlock {

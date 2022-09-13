@@ -13,7 +13,7 @@ val File.files: Array<File>
 
 
 internal interface LocalizationFileFinder {
-    fun findLocalizationFileIn(rootFile: File): List<LocalizationFile>
+    fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile>
 }
 
 fun allDirsRecursively(parentFile: File): List<File> {
@@ -27,7 +27,8 @@ fun allDirsRecursively(parentFile: File): List<File> {
 @Suppress("ClassName")
 internal class iOSLocalizationFileFinder :
     LocalizationFileFinder {
-    override fun findLocalizationFileIn(rootFile: File): List<LocalizationFile> {
+    override fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile> {
+        
         return allDirsRecursively(rootFile)
             .filter { dir -> dir.name.endsWith(".lproj") }
             .map {
@@ -49,7 +50,7 @@ internal class iOSLocalizationFileFinder :
 
 internal class AndroidLocalizationFileFinder :
     LocalizationFileFinder {
-    override fun findLocalizationFileIn(rootFile: File): List<LocalizationFile> {
+    override fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile> {
         return allDirsRecursively(rootFile)
             .filter { dir -> dir.name.startsWith("values") && dir.files.any { it.name == "strings.xml" } }
             .map { LocalizationFile(it.toPath(), languageTag(it.name)) }

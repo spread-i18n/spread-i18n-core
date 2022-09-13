@@ -19,7 +19,7 @@ class LocalizationDirectoriesFinderTests {
                 dir("fr.lproj") { file("Localizable.strings") }
             }
         }
-        val res = iOSLocalizationFileFinder().findLocalizationFileIn(rootDir)
+        val res = iOSLocalizationFileFinder().findLocalizationsFileIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("Base.lproj", "fr.lproj"))
     }
 
@@ -49,7 +49,7 @@ class LocalizationDirectoriesFinderTests {
                 }
             }
         }
-        val res = AndroidLocalizationFileFinder().findLocalizationFileIn(rootDir)
+        val res = AndroidLocalizationFileFinder().findLocalizationsFileIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("values", "values-pl"))
     }
 }
