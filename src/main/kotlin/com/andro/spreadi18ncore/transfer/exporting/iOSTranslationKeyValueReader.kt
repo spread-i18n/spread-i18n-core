@@ -2,8 +2,10 @@ package com.andro.spreadi18ncore.transfer.exporting
 
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.indicatesComment
+import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
-import com.andro.spreadi18ncore.transfer.transformation.transform
+import com.andro.spreadi18ncore.transfer.transformation.escape
+import com.andro.spreadi18ncore.transfer.transformation.iOSEscaping
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import java.io.BufferedReader
 import java.nio.file.Files
@@ -57,10 +59,16 @@ internal class iOSTranslationKeyValueReader(pathOfLocalizationFile: Path) : Tran
         }
         return iOSKeyValueRegex.matchEntire(from)?.groups?.filterNotNull()?.let { groups ->
             if (groups.size == 3) {
-                KeyValue(groups[1].value, groups[2].value.transform(valueTransformation))
+                makeKeyValue(groups[1].value, groups[2].value, valueTransformation)
             } else null
         }
     }
+
+    private fun makeKeyValue(key: String, value: String, valueTransformation: ValueTransformation?): KeyValue {
+        return KeyValue(key, value.unescaped.escape(valueTransformation))
+    }
+
+    private val String.unescaped: String get() = iOSEscaping.unescape(this)
 
     private fun BufferedReader.readKeyValue(valueTransformation: ValueTransformation?): KeyValue? {
         var line = readLine()

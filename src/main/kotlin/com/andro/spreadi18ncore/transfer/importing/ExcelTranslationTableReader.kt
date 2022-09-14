@@ -8,7 +8,7 @@ import com.andro.spreadi18ncore.transfer.translation.TranslationTable
 import com.andro.spreadi18ncore.transfer.base.TranslationTableReader
 import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
-import com.andro.spreadi18ncore.transfer.transformation.transform
+import com.andro.spreadi18ncore.transfer.transformation.escape
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFSheet
@@ -46,7 +46,7 @@ internal class ExcelTranslationTableReader(
                 row.getNotBlank(keyColumnIndex)?.let { key ->
                     headerRow.localeCells.forEach { localeCell ->
                         row.getNotNull(localeCell.columnIndex)?.let { value ->
-                            val keyValue = KeyValue(key.trim(), value.trim().transform(valueTransformation))
+                            val keyValue = KeyValue(key.trim(), value.trim().escape(valueTransformation))
                             table.setValue(localeCell.languageTag, keyValue)
                         }
                     }

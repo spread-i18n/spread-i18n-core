@@ -1,21 +1,10 @@
 package com.andro.spreadi18ncore.transfer.transformation
 
-import java.util.AbstractMap
-internal fun <K, V> Map.Entry<K, V>.swapKeyWithValue(): Map.Entry<V, K> {
-    return AbstractMap.SimpleEntry(value, key)
-}
-internal object AndroidEscaping {
+@Suppress("ClassName")
+object iOSEscaping {
 
     private val escapingMap = mapOf(
-            "\"" to "\\\"",
-            "\'" to "\\\'",
-            "&" to "&amp;",
-            "\n" to "\\n",
-            "\t" to "\\t",
-            "@" to "\\@",
-            "?" to "\\?",
-        //"<" to "&lt;",
-            //">" to "&gt;"
+        "\"" to "\\\"",
     )
 
     private val unescapingEntries: List<Map.Entry<String, String>> by lazy {

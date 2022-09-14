@@ -4,7 +4,7 @@ import com.andro.spreadi18ncore.transfer.importing.InvalidAndroidTranslationFile
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
-import com.andro.spreadi18ncore.transfer.transformation.transform
+import com.andro.spreadi18ncore.transfer.transformation.escape
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.transfer.withCommentIndicator
 import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
@@ -95,7 +95,7 @@ internal class XmlAndroidTranslationKeyValueReader(private val bufferedReader: B
                         key = key.withNonTranslatableIndicator
                     }
                 }
-                val value = element.textContent.transform(valueTransformation)
+                val value = element.textContent.escape(valueTransformation)
                 KeyValue(key, value)
             }
             COMMENT_NODE -> {
@@ -137,7 +137,7 @@ internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader:
         }
 
     private fun makeKeyValue(key: String, value: String, valueTransformation: ValueTransformation?): KeyValue {
-        return KeyValue(key, value.unescaped.transform(valueTransformation))
+        return KeyValue(key, value.unescaped.escape(valueTransformation))
     }
 
     private fun String.extractKeyValueFromComment(): KeyValue? {
