@@ -40,7 +40,7 @@ internal object iOSLocalizationPathFinder {
     @Suppress("ClassName")
 internal object iOSLocalizationFileFinder : LocalizationFileFinder {
     override fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile> {
-        val developmentLanguage = extractDevelopmentLanguageFromProject(rootFile) ?: LanguageTag.extractFromString("en")
+        val developmentLanguage = extractDevelopmentLanguageFromProject(rootFile) ?: LanguageTag.english
         return iOSLocalizationPathFinder.findLocalizationsDirIn(rootFile).map {
             val languageTag = LanguageTag.extractFromPath(it)
             iOSLocalizationFile(it, developmentLanguage == languageTag)
@@ -71,11 +71,7 @@ internal object iOSDevelopmentLanguageExtractor {
         return if (developmentLanguageLineCandidate.contains("developmentRegion")) {
             regex.matchEntire(developmentLanguageLineCandidate)?.groups?.filterNotNull()?.let { group ->
                 if (group.size == 2) {
-                    try {
-                        LanguageTag.extractFromString(group[1].value)
-                    } catch (exc: Exception) {
-                        null
-                    }
+                    LanguageTag.extractFromStringOrNull(group[1].value)
                 } else null
             }
         } else {
