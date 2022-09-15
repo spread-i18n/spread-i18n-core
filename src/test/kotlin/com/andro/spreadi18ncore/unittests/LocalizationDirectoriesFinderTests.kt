@@ -1,9 +1,7 @@
 package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.helpers.dir
-import com.andro.spreadi18ncore.localization.LanguageTag
 import com.andro.spreadi18ncore.project.AndroidLocalizationFileFinder
-import com.andro.spreadi18ncore.project.iOSLocalizationFileFinder
 import com.andro.spreadi18ncore.project.iOSLocalizationPathFinder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -52,7 +50,7 @@ class LocalizationDirectoriesFinderTests {
                 }
             }
         }
-        val res = AndroidLocalizationFileFinder.findLocalizationsFileIn(rootDir)
+        val res = AndroidLocalizationFileFinder.findLocalizationFilesIn(rootDir)
         assertThat(res.map { it.path.toString() }).hasSameElementsAs(listOf("values", "values-pl"))
     }
 }

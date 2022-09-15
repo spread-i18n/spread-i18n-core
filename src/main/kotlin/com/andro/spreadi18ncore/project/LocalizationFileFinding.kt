@@ -15,7 +15,7 @@ val File.files: Array<File>
 
 
 internal interface LocalizationFileFinder {
-    fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile>
+    fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile>
 }
 
 fun allDirsRecursively(parentFile: File): List<File> {
@@ -39,7 +39,7 @@ internal object iOSLocalizationPathFinder {
 
     @Suppress("ClassName")
 internal object iOSLocalizationFileFinder : LocalizationFileFinder {
-    override fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile> {
+    override fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile> {
         val developmentLanguage = extractDevelopmentLanguageFromProject(rootFile) ?: LanguageTag.extractFromString("en")
         return iOSLocalizationPathFinder.findLocalizationsDirIn(rootFile).map {
             val languageTag = LanguageTag.extractFromPath(it)
@@ -86,7 +86,7 @@ internal object iOSDevelopmentLanguageExtractor {
 
 internal object AndroidLocalizationFileFinder :
     LocalizationFileFinder {
-    override fun findLocalizationsFileIn(rootFile: File): List<LocalizationFile> {
+    override fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile> {
         return allDirsRecursively(rootFile)
             .filter { dir -> dir.name.startsWith("values") && dir.files.any { it.name == "strings.xml" } }
             .map { AndroidLocalizationFile(it.toPath()) }
