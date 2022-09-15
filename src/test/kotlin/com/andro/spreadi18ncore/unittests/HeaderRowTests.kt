@@ -2,9 +2,9 @@ package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.helpers.mockSheet
 import com.andro.spreadi18ncore.excel.HeaderRow
-import com.andro.spreadi18ncore.excel.TransferException
 import com.andro.spreadi18ncore.localization.LanguageTag
 import com.andro.spreadi18ncore.project.ProjectType
+import com.andro.spreadi18ncore.transfer.TransferException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test

@@ -3,24 +3,19 @@ package com.andro.spreadi18ncore.excel
 import com.andro.spreadi18ncore.localization.LanguageTag
 import com.andro.spreadi18ncore.localization.LanguageTagExtractionError
 import com.andro.spreadi18ncore.project.ProjectType
+import com.andro.spreadi18ncore.transfer.TransferException
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 
-internal class HeaderRowNotFound(): TransferException("A header row not found in the excel file. " +
-        "Visit 'https://github.com/rojarand/spread-i18n-core#spread-sheet-format-requirements' to see how to format the header row.")
+internal class HeaderRowNotFound() : TransferException(
+    "A header row not found in the excel file. " +
+            "Visit 'https://github.com/rojarand/spread-i18n-core#spread-sheet-format-requirements' to see how to format the header row."
+)
 
-open class TransferException(message: String? = null, cause: Throwable? = null): Exception(message, cause)
-
-val Sheet.rows: Sequence<Row>
-    get() = rowIterator().asSequence()
-
-fun <T> Sequence<T>.skipTo(n: Int): Sequence<T> = drop(n)
-
-
-typealias ValueTransformations = Map<String, String>
-internal data class HeaderRow(val rowInDocument: Int, val localeCells: LocaleCells,
-                              private val keyCells: KeyCells
+internal data class HeaderRow(
+    val rowInDocument: Int, val localeCells: LocaleCells,
+    private val keyCells: KeyCells
 ) {
 
     fun columnIndexForProjectType(projectType: ProjectType): ColumnIndex {
@@ -30,7 +25,7 @@ internal data class HeaderRow(val rowInDocument: Int, val localeCells: LocaleCel
         return keyCells.getKeyCell(TranslationKeyType.General).columnIndex
     }
 
-    val rowWithFirstTranslation = rowInDocument+1
+    val rowWithFirstTranslation = rowInDocument + 1
 
     companion object {
 
@@ -59,14 +54,14 @@ internal object RowAnalyser {
                 true
             } ?: false
         }
-        
+
         fun saveKeyCell(localeCellCandidate: IndexedValue<Cell>): Boolean {
             return toKeyCell(localeCellCandidate, indexedRow.index)?.let {
                 keyCells.add(it)
                 true
             } ?: false
         }
-        
+
         indexedRow.value.cellIterator().withIndex().forEach { indexedCell ->
             saveLocaleCell(indexedCell) or saveKeyCell(indexedCell)
         }
@@ -93,7 +88,7 @@ internal object RowAnalyser {
 
     private fun toKeyCell(keyCellCandidate: IndexedValue<Cell>, rowIndex: Int): KeyCell? {
         val tokens = keyCellCandidate.value.stringCellValue.trim()
-                .split(" ").filter { it.isNotBlank() }.map { it.toLowerCase() }
+            .split(" ").filter { it.isNotBlank() }.map { it.toLowerCase() }
         if (tokens.isEmpty()) {
             return null
         }

@@ -4,6 +4,8 @@ import java.util.AbstractMap
 internal fun <K, V> Map.Entry<K, V>.swapKeyWithValue(): Map.Entry<V, K> {
     return AbstractMap.SimpleEntry(value, key)
 }
+
+//https://developer.android.com/guide/topics/resources/string-resource#escaping_quotes
 internal object AndroidEscaping {
 
     private val escapingMap = mapOf(

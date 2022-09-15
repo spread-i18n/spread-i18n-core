@@ -1,12 +1,8 @@
 package com.andro.spreadi18ncore.transfer.importing
 
-import com.andro.spreadi18ncore.excel.TransferException
+import com.andro.spreadi18ncore.transfer.*
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
-import com.andro.spreadi18ncore.transfer.commentText
-import com.andro.spreadi18ncore.transfer.indicatesComment
-import com.andro.spreadi18ncore.transfer.indicatesNonTranslatable
 import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
-import com.andro.spreadi18ncore.transfer.translatable
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.Document

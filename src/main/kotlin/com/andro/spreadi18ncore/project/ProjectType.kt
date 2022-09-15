@@ -5,8 +5,8 @@ import com.andro.spreadi18ncore.transfer.exporting.iOSTranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.importing.AndroidTranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.importing.iOSTranslationKeyValueWriter
-import com.andro.spreadi18ncore.excel.TransferException
 import com.andro.spreadi18ncore.excel.TranslationKeyType
+import com.andro.spreadi18ncore.transfer.TransferException
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import java.nio.file.Path
 

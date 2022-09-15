@@ -1,9 +1,9 @@
 package com.andro.spreadi18ncore.transfer
 
-import com.andro.spreadi18ncore.excel.TransferException
 import com.andro.spreadi18ncore.transfer.translation.TranslationsDestination
 import com.andro.spreadi18ncore.transfer.translation.TranslationsSource
 
+open class TransferException(message: String? = null, cause: Throwable? = null): Exception(message, cause)
 internal object Transfer {
     fun from(source: TranslationsSource): TransferPerformer {
         return TransferPerformer(source)

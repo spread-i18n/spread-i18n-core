@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.transfer.base
 
+import com.andro.spreadi18ncore.transfer.TransferException
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
-import com.andro.spreadi18ncore.excel.TransferException
 import java.io.Closeable
 import java.io.IOException
 

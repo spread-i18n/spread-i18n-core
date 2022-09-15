@@ -1,8 +1,8 @@
 package com.andro.spreadi18ncore.helpers
 
-import com.andro.spreadi18ncore.excel.skipTo
 import com.andro.spreadi18ncore.project.dirs
 import com.andro.spreadi18ncore.project.files
+import com.andro.spreadi18ncore.skipTo
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
