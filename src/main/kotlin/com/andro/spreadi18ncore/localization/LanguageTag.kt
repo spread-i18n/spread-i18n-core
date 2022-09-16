@@ -49,9 +49,9 @@ internal data class LanguageTag private constructor(val canonical: String) {
                     }
                 }
             }
-            extract(tagCandidate)?.let { tag ->
-                return LanguageTag(tag)
-            } ?: throw LanguageTagExtractionError(tagCandidate)
+            return extract(tagCandidate)?.let { tag ->
+                LanguageTag(tag)
+            }
         }
         fun extractFromString(tagCandidate: String): LanguageTag {
             return extractFromStringOrNull(tagCandidate) ?: throw LanguageTagExtractionError(tagCandidate)
