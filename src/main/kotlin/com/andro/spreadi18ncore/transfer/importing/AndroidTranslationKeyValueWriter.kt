@@ -61,10 +61,10 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
                 key.indicatesComment -> {
                     bufferedWriter.write("    <!-- ${key.commentText} -->\n")
                 }
-                key.indicatesNonTranslatable -> {
+                key.indicatesNonTranslatable && value.isNotBlank() -> {
                     bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
                 }
-                key.isNotBlank() -> {
+                key.isNotBlank() && value.isNotBlank() -> {
                     bufferedWriter.write("    <string name=\"$key\">${value.escaped}</string>\n")
                 }
             }

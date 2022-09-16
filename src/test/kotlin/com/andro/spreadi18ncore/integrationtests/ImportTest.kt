@@ -3,6 +3,8 @@ package com.andro.spreadi18ncore.integrationtests
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.helpers.*
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
@@ -149,7 +151,7 @@ internal class CommentsImportTests {
 
 internal class NonTranslatableImportTest {
     @Test
-    fun `Import non translatables from an excel file to an Android project`() = androidFixture("proj-i5") {
+    fun `Import non translatables from an excel file to an Android project`() = androidFixture("proj-i40") {
         //arrange
         with(structure) {
             withLocalizationFile("default") {}
@@ -177,13 +179,48 @@ internal class NonTranslatableImportTest {
             assert(contains(KeyValue("*fahrenheit_symbol", "°F")))
         }
     }
+
+    @Test
+    fun `Non translatable strings are not present in non default language after import`() = androidFixture("proj-i41") {
+        //arrange
+        with(structure) {
+            withLocalizationFile("default") {}
+            withLocalizationFile("pl") {}
+        }.create()
+
+        NewExcelFile.onPath(excelFilePath).load(
+            """
+            ┌────────────────────────────────────┐
+            │Key                │default │pl     │
+            ├────────────────────────────────────┤
+            │*celsius_symbol    │°C      │       │
+            ├────────────────────────────────────┤
+            │hello_message      │Hello   │Cześć  │
+            └────────────────────────────────────┘
+            """
+        ).save()
+
+        //act
+        Project.onPath(projectPath).import(from = excelFilePath)
+
+        //assert
+        with(Project.onPath(projectPath).rawLocaleFile("default")) {
+            assert(containsInLine("celsius_symbol", "°C"))
+            assert(containsInLine("hello_message", "Hello"))
+        }
+
+        with(Project.onPath(projectPath).rawLocaleFile("pl")) {
+            assertFalse(containsInLine("celsius_symbol"))
+            assert(containsInLine("hello_message", "Cześć"))
+        }
+    }
 }
 
 //https://developer.android.com/guide/topics/resources/string-resource#FormattingAndStyling
 internal class HtmlMarkupSupportTest {
 
     @Test
-    fun `Html markup is preserved after translations import to an Android project`() = androidFixture("proj-i6") {
+    fun `Html markup is preserved after translations import to an Android project`() = androidFixture("proj-i50") {
         //arrange
         with(structure) {
             withLocalizationFile("default") {}
@@ -213,7 +250,7 @@ internal class CharacterEscapingTest {
 
     //https://developer.android.com/guide/topics/resources/string-resource#escaping_quotes
     @Test
-    fun `Special characters are escaped after import to an Android project`() = androidFixture("proj-i7") {
+    fun `Special characters are escaped after import to an Android project`() = androidFixture("proj-i60") {
         //arrange
         with(structure) {
             withLocalizationFile("default") {}
@@ -252,7 +289,7 @@ internal class iOSDefaultTranslationImportTests {
 
     @Test
     fun `Default translations are imported to 'development language' from an excel file`()
-            = iOSFixture(name = "proj-i8", developmentLanguage = "pl") {
+            = iOSFixture(name = "proj-i70", developmentLanguage = "pl") {
         //arrange
         with(structure) {
             withLocalizationFile("en") {}
