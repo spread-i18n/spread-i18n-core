@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.project
 
-import com.andro.spreadi18ncore.firstOrNullMapped
+import com.andro.spreadi18ncore.mappedFirstOrNull
 import com.andro.spreadi18ncore.localization.*
 import com.andro.spreadi18ncore.localization.LocalizationFile
 import com.andro.spreadi18ncore.localization.iOSLocalizationFile
@@ -37,7 +37,6 @@ internal object iOSLocalizationPathFinder {
             }
     }
 }
-
     @Suppress("ClassName")
 internal object iOSLocalizationFileFinder : LocalizationFileFinder {
     override fun findLocalizationFilesIn(rootFile: File): List<LocalizationFile> {
@@ -51,7 +50,7 @@ internal object iOSLocalizationFileFinder : LocalizationFileFinder {
     private fun extractDevelopmentLanguageFromProject(rootFile: File): LanguageTag? {
         return pbxprojFile.findPathIn(rootFile.toPath())?.let { pbxprojFilePath ->
             return Files.newBufferedReader(pbxprojFilePath).use { reader ->
-                reader.lineSequence().firstOrNullMapped { line ->
+                reader.lineSequence().mappedFirstOrNull { line ->
                     iOSDevelopmentLanguageExtractor.extract(line)
                 }
             }
