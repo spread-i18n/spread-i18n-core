@@ -1,27 +1,33 @@
 package com.andro.spreadi18ncore.unittests
 
-import com.andro.spreadi18ncore.transfer.importing.iOSValueTransformation
 import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
+import com.andro.spreadi18ncore.transfer.transformation.iOSEscaping
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class ValueTransformationTests {
 
     @Test
-    fun default_iOS_transformation() {
-        assertThat(iOSValueTransformation.transform(""" "Be or not to be: %s" """))
-                                                .isEqualTo("""\"Be or not to be: %@\"""")
+    fun `iOS escaping`() {
+        assertThat(iOSEscaping.escape(""""Be or not to be: %@"""")).isEqualTo("""\"Be or not to be: %@\"""")
     }
 
     @Test
-    fun default_Android_transformation() {
+    fun `Android escaping`() {
         assertThat(AndroidEscaping.escape(""""Me & you" are better than 'they'"""))
                 .isEqualTo("""\"Me &amp; you\" are better than \'they\'""")
     }
+
+    @Test
+    fun `Android escaping does not replace special html escaping characters`() {
+        val html = """&lt;src=&quot;Hello.img&quot; /&gt;"""
+        assertThat(AndroidEscaping.escape(html))
+            .isEqualTo(html)
+    }
     
     @Test
-    fun custom_transformation() {
+    fun `Replaces characters given in map`() {
         val transformationMap = mapOf(
                 "a" to "A",
                 "b" to "B",

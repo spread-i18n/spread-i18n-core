@@ -10,7 +10,7 @@ internal class ProjectTranslationTableWriter(private val project: Project) : Tra
 
     override fun write(translationTable: TranslationTable) {
         translationTable.languageTags.forEach { languageTag ->
-            project.findLocalizationFileFor(languageTag)?.let { localizationFile ->
+            project.findLocalizationFileIdentifiedBy(languageTag)?.let { localizationFile ->
                 project.keyValueWriter(localizationFile).use { writer ->
                     translationTable.keyValues(languageTag).forEach { keyValue ->
                         writer.write(keyValue)
@@ -20,6 +20,6 @@ internal class ProjectTranslationTableWriter(private val project: Project) : Tra
         }
     }
 
-    private fun Project.findLocalizationFileFor(languageTag: LanguageTag): LocalizationFile? =
-        localizationFiles.firstOrNull { it.languageTag == languageTag }
+    private fun Project.findLocalizationFileIdentifiedBy(languageTag: LanguageTag): LocalizationFile? =
+        localizationFiles.firstOrNull { it.containsTranslationIdentifiedBy(languageTag) }
 }

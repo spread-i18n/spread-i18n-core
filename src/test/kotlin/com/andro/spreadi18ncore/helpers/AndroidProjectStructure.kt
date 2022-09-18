@@ -25,7 +25,7 @@ internal class AndroidProjectStructure(private val projectPath: Path) {
 
         localizationFiles.forEach { fileContent ->
             val directoryName = with(fileContent.languageTag) {
-                if(isEmpty()) "values"
+                if(this == "default") "values"
                 else "values-$this"
             }
             val localeDirPath = Path.of(projectPath.toString(), "src/main/res/$directoryName")

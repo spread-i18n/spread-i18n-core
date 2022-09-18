@@ -1,12 +1,8 @@
 package com.andro.spreadi18ncore.transfer.importing
 
-import com.andro.spreadi18ncore.excel.ImportException
+import com.andro.spreadi18ncore.transfer.*
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
-import com.andro.spreadi18ncore.transfer.commentText
-import com.andro.spreadi18ncore.transfer.indicatesComment
-import com.andro.spreadi18ncore.transfer.indicatesNonTranslatable
 import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
-import com.andro.spreadi18ncore.transfer.translatable
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.Document
@@ -65,10 +61,10 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
                 key.indicatesComment -> {
                     bufferedWriter.write("    <!-- ${key.commentText} -->\n")
                 }
-                key.indicatesNonTranslatable -> {
+                key.indicatesNonTranslatable && value.isNotBlank() -> {
                     bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
                 }
-                key.isNotBlank() -> {
+                key.isNotBlank() && value.isNotBlank() -> {
                     bufferedWriter.write("    <string name=\"$key\">${value.escaped}</string>\n")
                 }
             }
@@ -93,7 +89,7 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
     }
 }
 
-internal class InvalidAndroidTranslationFile(message: String) : ImportException(message = message)
+internal class InvalidAndroidTranslationFile(message: String) : TransferException(message = message)
 internal class XmlAndroidTranslationKeyValueWriter(
     private val bufferedReader: BufferedReader,
     private val bufferedWriter: BufferedWriter

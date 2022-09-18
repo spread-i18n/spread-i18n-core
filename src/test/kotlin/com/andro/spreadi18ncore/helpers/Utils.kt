@@ -75,14 +75,14 @@ internal class RawLocaleFile(private val filePath: Path) {
 
 internal fun Project.localeFile(tagCandidate: String): LocaleFile {
     val languageTag = LanguageTag.extractFromString(tagCandidate)
-    return localizationFiles.firstOrNull { it.languageTag == languageTag }?.let {
+    return localizationFiles.firstOrNull { it.containsTranslationIdentifiedBy(languageTag) }?.let {
         LocaleFile { keyValueReader(it) }
     } ?: throw IllegalArgumentException(tagCandidate)
 }
 
 internal fun Project.rawLocaleFile(tagCandidate: String): RawLocaleFile {
     val languageTag = LanguageTag.extractFromString(tagCandidate)
-    return localizationFiles.firstOrNull { it.languageTag == languageTag }?.let {
+    return localizationFiles.firstOrNull { it.containsTranslationIdentifiedBy(languageTag) }?.let {
         RawLocaleFile(it.path)
     } ?: throw IllegalArgumentException(tagCandidate)
 }

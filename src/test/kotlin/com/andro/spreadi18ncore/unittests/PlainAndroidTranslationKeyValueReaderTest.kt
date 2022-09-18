@@ -91,7 +91,7 @@ class PlainAndroidTranslationKeyValueReaderTest {
     }
 
     @Test
-    fun `Android escaping is removed`() {
+    fun `Android 'keyValue' reader reverses Android escaping`() {
 
         val androidTranslationContent = """
             <?xml version="1.0"?>
@@ -103,6 +103,62 @@ class PlainAndroidTranslationKeyValueReaderTest {
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
         with(reader.readAll().values) {
             Assertions.assertThat(this).containsExactly( "Hello '%s'" )
+        }
+    }
+
+    @Test
+    fun `Android 'keyValue' reader reads multiline xml strings`() {
+
+        val html = """
+                <html>
+                    <head></head>
+                    <body>
+                       Hello people
+                    </body>
+                </html>
+            """.trimIndent()
+
+        val androidTranslationContent = """
+            <?xml version="1.0"?>
+            <resources>
+                <string name="app_intro_html">
+                   $html 
+                </string>
+            </resources>
+        """.trimIndent()
+        val stringReader = StringReader(androidTranslationContent)
+        val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
+
+        with(reader.readAll().values) {
+            Assertions.assertThat(this).containsExactly(html)
+        }
+    }
+
+    @Test
+    fun `Android 'keyValue' reader reads multiline escaped xml strings`() {
+
+        val html = """
+                &lt;html&gt;
+                    &lt;head&gt;&lt;/head&gt;
+                    &lt;body&gt;
+                        &lt;src=&quotHello.img&quot /&gt;
+                    &lt;/body&gt;
+                &lt;/html&gt;
+            """.trimIndent()
+
+        val androidTranslationContent = """
+            <?xml version="1.0"?>
+            <resources>
+                <string name="app_intro_html">
+                   $html 
+                </string>
+            </resources>
+        """.trimIndent()
+        val stringReader = StringReader(androidTranslationContent)
+        val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
+
+        with(reader.readAll().values) {
+            Assertions.assertThat(this).containsExactly(html)
         }
     }
 }

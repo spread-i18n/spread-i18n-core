@@ -39,7 +39,3 @@ internal class TranslationTable(val languageTags: List<LanguageTag>) {
         } ?: emptyList()
     }
 }
-
-
-
-internal val Project.languageTags: List<LanguageTag> get() = localizationFiles.map { it.languageTag }

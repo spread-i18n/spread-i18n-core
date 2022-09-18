@@ -3,8 +3,11 @@ package com.andro.spreadi18ncore.integrationtests
 import com.andro.spreadi18ncore.Project
 import com.andro.spreadi18ncore.helpers.*
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
 
 class ImportTest {
 
@@ -19,7 +22,7 @@ class ImportTest {
         NewExcelFile.onPath(excelFilePath).load(
             """
             ┌─────────────────────────────────────┐
-            │Key              │en      │fr        │
+            │Key              │default │fr        │
             ├─────────────────────────────────────┤
             │btn_cancel_text  │Cancel  │Annuler   │
             ├─────────────────────────────────────┤
@@ -48,14 +51,14 @@ class ImportTest {
         androidFixture("proj-i2") {
             //arrange
             with(structure) {
-                withLocalizationFile("en") {}
+                withLocalizationFile("default") {}
                 withLocalizationFile("pl") {}
             }.create()
 
             NewExcelFile.onPath(excelFilePath).load(
                 """
             ┌────────────────────────────────────┐
-            │Key              │en        │pl     │
+            │Key              │default   │pl     │
             ├────────────────────────────────────┤
             │x_times_text     │"%d times"│%d razy│
             └────────────────────────────────────┘
@@ -67,7 +70,7 @@ class ImportTest {
                 .import(from = excelFilePath, valueTransformations = mapOf("%d" to "%s", "\"" to "'"))
 
             //assert
-            with(Project.onPath(projectPath).localeFile("en")) {
+            with(Project.onPath(projectPath).localeFile("default")) {
                 assert(contains(KeyValue("x_times_text", "'%s times'")))
             }
 
@@ -83,14 +86,14 @@ internal class CommentsImportTests {
     fun `Comments are imported to Android translations from an excel file`() = androidFixture("proj-i3") {
         //arrange
         with(structure) {
-            withLocalizationFile("en") {}
+            withLocalizationFile("default") {}
             withLocalizationFile("pl") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
             """
             ┌──────────────────────────────────┐
-            │Key              │en      │pl     │
+            │Key              │default │pl     │
             ├──────────────────────────────────┤
             │//Polite phrases │        │       │
             ├──────────────────────────────────┤
@@ -103,7 +106,7 @@ internal class CommentsImportTests {
         Project.onPath(projectPath).import(from = excelFilePath)
 
         //assert
-        with(Project.onPath(projectPath).localeFile("en")) {
+        with(Project.onPath(projectPath).localeFile("default")) {
             assert(contains(Comment("Polite phrases")))
         }
 
@@ -123,7 +126,7 @@ internal class CommentsImportTests {
         NewExcelFile.onPath(excelFilePath).load(
             """
             ┌──────────────────────────────────┐
-            │Key              │en      │pl     │
+            │Key              │default │pl     │
             ├──────────────────────────────────┤
             │//Polite phrases │        │       │
             ├──────────────────────────────────┤
@@ -148,17 +151,17 @@ internal class CommentsImportTests {
 
 internal class NonTranslatableImportTest {
     @Test
-    fun `Import non translatables from an excel file to an Android project`() = androidFixture("proj-i5") {
+    fun `Import non translatables from an excel file to an Android project`() = androidFixture("proj-i40") {
         //arrange
         with(structure) {
-            withLocalizationFile("en") {}
+            withLocalizationFile("default") {}
             withLocalizationFile("pl") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
             """
             ┌────────────────────────────────────┐
-            │Key                │en      │pl     │
+            │Key                │default │pl     │
             ├────────────────────────────────────┤
             │*celsius_symbol    │°C      │       │
             ├────────────────────────────────────┤
@@ -171,27 +174,62 @@ internal class NonTranslatableImportTest {
         Project.onPath(projectPath).import(from = excelFilePath)
 
         //assert
-        with(Project.onPath(projectPath).localeFile("en")) {
+        with(Project.onPath(projectPath).localeFile("default")) {
             assert(contains(KeyValue("*celsius_symbol", "°C")))
             assert(contains(KeyValue("*fahrenheit_symbol", "°F")))
+        }
+    }
+
+    @Test
+    fun `Non translatable strings are not present in non default language after import`() = androidFixture("proj-i41") {
+        //arrange
+        with(structure) {
+            withLocalizationFile("default") {}
+            withLocalizationFile("pl") {}
+        }.create()
+
+        NewExcelFile.onPath(excelFilePath).load(
+            """
+            ┌────────────────────────────────────┐
+            │Key                │default │pl     │
+            ├────────────────────────────────────┤
+            │*celsius_symbol    │°C      │       │
+            ├────────────────────────────────────┤
+            │hello_message      │Hello   │Cześć  │
+            └────────────────────────────────────┘
+            """
+        ).save()
+
+        //act
+        Project.onPath(projectPath).import(from = excelFilePath)
+
+        //assert
+        with(Project.onPath(projectPath).rawLocaleFile("default")) {
+            assert(containsInLine("celsius_symbol", "°C"))
+            assert(containsInLine("hello_message", "Hello"))
+        }
+
+        with(Project.onPath(projectPath).rawLocaleFile("pl")) {
+            assertFalse(containsInLine("celsius_symbol"))
+            assert(containsInLine("hello_message", "Cześć"))
         }
     }
 }
 
 //https://developer.android.com/guide/topics/resources/string-resource#FormattingAndStyling
-class HtmlMarkupSupportTest {
+internal class HtmlMarkupSupportTest {
 
     @Test
-    fun `Html markup is preserved after translations import to an Android project`() = androidFixture("proj-i6") {
+    fun `Html markup is preserved after translations import to an Android project`() = androidFixture("proj-i50") {
         //arrange
         with(structure) {
-            withLocalizationFile("en") {}
+            withLocalizationFile("default") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
             """
             ┌─────────────────────────────┐
-            │Key      │en                 │
+            │Key      │default            │
             ├─────────────────────────────┤
             │hello    │hello <b>World</b> │
             └─────────────────────────────┘
@@ -202,7 +240,7 @@ class HtmlMarkupSupportTest {
         Project.onPath(projectPath).import(from = excelFilePath)
 
         //assert
-        with(Project.onPath(projectPath).localeFile("en")) {
+        with(Project.onPath(projectPath).localeFile("default")) {
             assert(contains(KeyValue("hello", "hello <b>World</b>")))
         }
     }
@@ -212,14 +250,14 @@ internal class CharacterEscapingTest {
 
     //https://developer.android.com/guide/topics/resources/string-resource#escaping_quotes
     @Test
-    fun `Special characters are escaped after import to an Android project`() = androidFixture("proj-i7") {
+    fun `Special characters are escaped after import to an Android project`() = androidFixture("proj-i60") {
         //arrange
         with(structure) {
-            withLocalizationFile("en") {}
+            withLocalizationFile("default") {}
         }.create()
 
         with(NewExcelFile.onPath(excelFilePath)) {
-            writeRow("key", "en")
+            writeRow("key", "default")
             writeRow("new_line", "new\nline")
             writeRow("tabulation", "tab\ttab")
             writeRow("question", "wtf?")
@@ -233,7 +271,7 @@ internal class CharacterEscapingTest {
         Project.onPath(projectPath).import(from = excelFilePath)
 
         //assert
-        with(Project.onPath(projectPath).rawLocaleFile("en")) {
+        with(Project.onPath(projectPath).rawLocaleFile("default")) {
             assert(containsInLine("new_line", """new\nline"""))
             assert(containsInLine("tabulation", """tab\ttab"""))
             assert(containsInLine("question", """wtf\?"""))
@@ -244,4 +282,44 @@ internal class CharacterEscapingTest {
     }
 
     //To test iOS escaping
+}
+
+@Suppress("ClassName")
+internal class iOSDefaultTranslationImportTests {
+
+    @Test
+    fun `Default translations are imported to 'development language' from an excel file`()
+            = iOSFixture(name = "proj-i70", developmentLanguage = "pl") {
+        //arrange
+        with(structure) {
+            withLocalizationFile("en") {}
+            withLocalizationFile("pl") {}
+        }.create()
+
+        NewExcelFile.onPath(excelFilePath).load(
+            """
+            ┌──────────────────────────────────┐
+            │Key              │en      │default│
+            ├──────────────────────────────────┤
+            │message_bye      │Bye     │Żegnaj │
+            ├──────────────────────────────────┤
+            │message_hello    │Hello   │Cześć  │
+            └──────────────────────────────────┘
+            """
+        ).save()
+
+        //act
+        Project.onPath(projectPath).import(from = excelFilePath)
+
+        //assert
+        with(Project.onPath(projectPath).localeFile("pl")) {
+            assert(contains(KeyValue("message_bye", "Żegnaj")))
+            assert(contains(KeyValue("message_hello", "Cześć")))
+        }
+
+        with(Project.onPath(projectPath).localeFile("en")) {
+            assert(contains(KeyValue("message_bye", "Bye")))
+            assert(contains(KeyValue("message_hello", "Hello")))
+        }
+    }
 }

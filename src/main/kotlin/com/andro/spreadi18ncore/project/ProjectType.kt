@@ -5,13 +5,13 @@ import com.andro.spreadi18ncore.transfer.exporting.iOSTranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.importing.AndroidTranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.importing.iOSTranslationKeyValueWriter
-import com.andro.spreadi18ncore.excel.ImportException
 import com.andro.spreadi18ncore.excel.TranslationKeyType
+import com.andro.spreadi18ncore.transfer.TransferException
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import java.nio.file.Path
 
 internal class SupportedProjectTypeNotFound(projectPath: Path) :
-    ImportException("Any supported project type not found in: ${projectPath}.")
+    TransferException("Any supported project type not found in: ${projectPath}.")
 
 internal enum class ProjectType {
     @Suppress("EnumEntryName")
@@ -24,9 +24,9 @@ internal enum class ProjectType {
 
         override val translationKeyType = TranslationKeyType.iOS
 
-        override fun existsIn(path: Path) = xcodeprojDirectory.existsIn(path)
+        override fun existsIn(path: Path) = pbxprojFile.existsIn(path)
 
-        override val localizationFileFinder = iOSLocalizationFileFinder()
+        override val localizationFileFinder = iOSLocalizationFileFinder
     },
     Android {
 
@@ -40,7 +40,7 @@ internal enum class ProjectType {
 
         override fun existsIn(path: Path) = AndroidManifest.existsIn(path)
 
-        override val localizationFileFinder = AndroidLocalizationFileFinder()
+        override val localizationFileFinder = AndroidLocalizationFileFinder
     };
 
     abstract val localizationFileFinder: LocalizationFileFinder

@@ -2,10 +2,11 @@ package com.andro.spreadi18ncore.helpers
 
 import com.andro.spreadi18ncore.transfer.importing.iOSTranslationKeyValueWriter
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 
 @Suppress("ClassName")
-internal class iOSProjectStructure(private val projectPath: Path) {
+internal class iOSProjectStructure(private val projectPath: Path, private val developmentLanguage: String) {
 
     private val localisationFiles = mutableListOf<LocalizationFileContent>()
 
@@ -20,11 +21,17 @@ internal class iOSProjectStructure(private val projectPath: Path) {
         val projectDir = File(projectPath.toString())
         projectDir.mkdirs()
 
-        Path.of(projectPath.toString(), "proj.xcodeproj").toFile().mkdirs()
+        val xcodeProjectPath = Path.of(projectPath.toString(), "proj.xcodeproj")
+        xcodeProjectPath.toFile().mkdirs()
+
+        val pbxprojFilePath = Path.of(xcodeProjectPath.toString(),"project.pbxproj")
+        Files.newBufferedWriter(pbxprojFilePath).use { writer ->
+            writer.write("\tdevelopmentRegion = $developmentLanguage")
+        }
 
         localisationFiles.forEach { fileContent ->
             val directoryName = with(fileContent.languageTag) {
-                ifEmpty { "Base" }
+                if (this == "default") developmentLanguage else this
             }
             val localeDirPath = Path.of(projectPath.toString(), "proj/$directoryName.lproj")
             localeDirPath.toFile().mkdirs()

@@ -1,13 +1,16 @@
 package com.andro.spreadi18ncore.transfer.transformation
 
 import java.util.AbstractMap
+internal fun <K, V> Map.Entry<K, V>.swapKeyWithValue(): Map.Entry<V, K> {
+    return AbstractMap.SimpleEntry(value, key)
+}
 
+//https://developer.android.com/guide/topics/resources/string-resource#escaping_quotes
 internal object AndroidEscaping {
 
     private val escapingMap = mapOf(
             "\"" to "\\\"",
             "\'" to "\\\'",
-            "&" to "&amp;",
             "\n" to "\\n",
             "\t" to "\\t",
             "@" to "\\@",
@@ -21,15 +24,11 @@ internal object AndroidEscaping {
     }
 
     fun escape(value: String): String {
-        return escapingMap.entries.escape(value)
+        return escapingMap.entries.escape(value).replace(Regex("(?!&lt;|&gt;|&quot;)&"), "&amp;")
     }
 
     fun unescape(value: String): String {
-        return unescapingEntries.escape(value)
-    }
-
-    private fun <K, V> Map.Entry<K, V>.swapKeyWithValue(): Map.Entry<V, K> {
-        return AbstractMap.SimpleEntry(value, key)
+        return unescapingEntries.escape(value).replace("&amp;","&")
     }
 
     private fun Collection<Map.Entry<String, String>>.escape(value: String): String {

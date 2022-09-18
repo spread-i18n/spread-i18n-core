@@ -4,6 +4,7 @@ import com.andro.spreadi18ncore.transfer.base.CanNotAccessLocalizationFile
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.commentText
 import com.andro.spreadi18ncore.transfer.indicatesComment
+import com.andro.spreadi18ncore.transfer.transformation.iOSEscaping
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import java.io.BufferedWriter
 import java.io.IOException
@@ -11,15 +12,6 @@ import java.lang.StringBuilder
 import java.nio.file.Files
 import java.nio.file.Path
 
-@Suppress("ClassName")
-object iOSValueTransformation {
-    fun transform(value: String): String {
-        return value
-            .replace("%s", "%@")
-            .replace("\"", "\\\"")
-            .trim()
-    }
-}
 
 @Suppress("ClassName")
 internal class iOSHeaderCopying {
@@ -118,6 +110,6 @@ internal class iOSTranslationKeyValueWriter(private val pathOfLocalizationFile: 
         infoPlistWriter.flush()
         infoPlistWriter.close()
     }
-    private fun transform(value: String) = iOSValueTransformation.transform(value)
+    private fun transform(value: String) = iOSEscaping.escape(value)
 }
 

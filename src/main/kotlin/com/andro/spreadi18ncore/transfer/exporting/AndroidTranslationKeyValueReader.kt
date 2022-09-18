@@ -4,7 +4,7 @@ import com.andro.spreadi18ncore.transfer.importing.InvalidAndroidTranslationFile
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
-import com.andro.spreadi18ncore.transfer.transformation.transform
+import com.andro.spreadi18ncore.transfer.transformation.transformed
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.transfer.withCommentIndicator
 import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
@@ -95,7 +95,7 @@ internal class XmlAndroidTranslationKeyValueReader(private val bufferedReader: B
                         key = key.withNonTranslatableIndicator
                     }
                 }
-                val value = element.textContent.transform(valueTransformation)
+                val value = element.textContent.transformed(valueTransformation)
                 KeyValue(key, value)
             }
             COMMENT_NODE -> {
@@ -111,8 +111,14 @@ internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader:
     TranslationKeyValueReader {
     override fun read(valueTransformation: ValueTransformation?): KeyValue? {
         var line = bufferedReader.readLine()
+        var keyValueCandidate = ""
         while (line != null) {
-            val keyValue = line.asKeyValue(valueTransformation)
+            keyValueCandidate += if (keyValueCandidate.isNotBlank()) {
+                "\n$line"
+            } else {
+                line
+            }
+            val keyValue = keyValueCandidate.asKeyValue(valueTransformation)
             if (keyValue != null) {
                 return keyValue
             }
@@ -122,22 +128,11 @@ internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader:
     }
 
     private fun String.asKeyValue(valueTransformation: ValueTransformation?): KeyValue? {
-        return extractKeyValueFromStringResource(valueTransformation) ?: extractKeyValueFromComment()
-    }
-
-    private val xmlKeyValueRegex = Regex(""".*<string name="(\w+)"(\W+translatable="false")?[^>]*>(.+)</string>""")
-    private fun String.extractKeyValueFromStringResource(valueTransformation: ValueTransformation?): KeyValue? {
-            return xmlKeyValueRegex.matchEntire(this)?.groups?.filterNotNull()?.let { group ->
-                when (group.size) {
-                    3 -> makeKeyValue(group[1].value, group[2].value, valueTransformation)
-                    4 -> makeKeyValue(group[1].value.withNonTranslatableIndicator, group[3].value, valueTransformation)
-                    else -> null
-                }
-            }
+        return XmlKeyValueExtractor.extract(this)?.let {
+            KeyValue(it.key, it.value.trim().unescaped.transformed(by = valueTransformation))
+        } ?: XmlCommentExtractor.extractComment(this)?.let {
+            KeyValue(it.withCommentIndicator, "")
         }
-
-    private fun makeKeyValue(key: String, value: String, valueTransformation: ValueTransformation?): KeyValue {
-        return KeyValue(key, value.unescaped.transform(valueTransformation))
     }
 
     private fun String.extractKeyValueFromComment(): KeyValue? {
@@ -152,14 +147,28 @@ internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader:
     }
 }
 
-object XmlCommentExtractor {
+
+internal object XmlKeyValueExtractor {
+    private val regex = Regex("""[\s\S]*<string name="(\w+)"(\W+translatable="false")?[^>]*>([\s\S]+)</string>""")
+
+    fun extract(xmlCommentCandidate: String):KeyValue? {
+        return regex.matchEntire(xmlCommentCandidate)?.groups?.filterNotNull()?.let { group ->
+            when (group.size) {
+                3 -> KeyValue(group[1].value, group[2].value)
+                4 -> KeyValue(group[1].value.withNonTranslatableIndicator, group[3].value)
+                else -> null
+            }
+        }
+    }
+}
+internal object XmlCommentExtractor {
 
     //+? matches the previous token between one and unlimited times, as few times as possible, expanding as needed (lazy)
     //\s matches any whitespace character (equivalent to [\r\n\t\f\v ])
-    private val xmlCommentRegex = Regex(""".*<!--\s*(.+?)\s*-->""")
+    private val regex = Regex("""[\s\S]*<!--\s*(.+?)\s*-->[\s\S]*""")
 
     fun extractComment(xmlCommentCandidate: String):String? {
-        return xmlCommentRegex.matchEntire(xmlCommentCandidate)?.groups?.filterNotNull()?.let { group ->
+        return regex.matchEntire(xmlCommentCandidate)?.groups?.filterNotNull()?.let { group ->
             when (group.size) {
                 2 -> group[1].value
                 else -> null

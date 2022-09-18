@@ -3,18 +3,32 @@ package com.andro.spreadi18ncore.unittests
 import com.andro.spreadi18ncore.helpers.dir
 import com.andro.spreadi18ncore.helpers.mockkedPath
 import com.andro.spreadi18ncore.project.AndroidManifest
-import com.andro.spreadi18ncore.project.xcodeprojDirectory
+import com.andro.spreadi18ncore.project.pbxprojFile
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class TargetProjectTests {
+class ProjectTests {
 
     @Test
-    fun `xcodeproj is discovered in an iOS project structure`() {
+    fun `Project pbxproj file is discovered in an iOS project structure`() {
         val iOSProjRootDir = dir("ProjectA") {
-            dir("ProjectA.xcodeproj") {}
+            dir("ProjectA.xcodeproj") {
+                file("project.pbxproj")
+            }
         }
-        assertThat(xcodeprojDirectory.existsIn(iOSProjRootDir.mockkedPath)).isTrue
+        assertThat(pbxprojFile.existsIn(iOSProjRootDir.mockkedPath)).isTrue
+    }
+
+    @Test
+    fun `Project pbxproj file is not discovered when only Pods dir contains pbxproj file`() {
+        val iOSProjRootDir = dir("ProjectA") {
+            dir("ProjectA.xcodeproj") {
+            }
+            dir("Pods.xcodeproj") {
+                file("project.pbxproj")
+            }
+        }
+        assertThat(pbxprojFile.existsIn(iOSProjRootDir.mockkedPath)).isFalse
     }
 
     @Test

@@ -2,9 +2,9 @@ package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.helpers.mockSheet
 import com.andro.spreadi18ncore.excel.HeaderRow
-import com.andro.spreadi18ncore.excel.ImportException
 import com.andro.spreadi18ncore.localization.LanguageTag
 import com.andro.spreadi18ncore.project.ProjectType
+import com.andro.spreadi18ncore.transfer.TransferException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ class HeaderRowTests {
     fun `A headerRow is not found when any row does not have localization and project column`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
-            │           │          │en       │pl       │
+            │           │          │default  │pl       │
             ├──────────────────────────────────────────┤
             │Android Key│iOS Key   │         │         │
             └──────────────────────────────────────────┘
@@ -31,7 +31,7 @@ class HeaderRowTests {
             ┌──────────────────────────────────────────┐
             │           │          │         │         │
             ├──────────────────────────────────────────┤
-            │Android Key│iOS Key   │en       │pl       │
+            │Android Key│iOS Key   │default  │pl       │
             ├──────────────────────────────────────────┤
             │           │          │         │         │
             └──────────────────────────────────────────┘
@@ -40,14 +40,14 @@ class HeaderRowTests {
         val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
         assertThat(headerRow.rowInDocument).isEqualTo(1)
         assertThat(headerRow.localeCells.map { it.languageTag }).
-            hasSameElementsAs(listOf("en".tag, "pl".tag))
+            hasSameElementsAs(listOf("default".tag, "pl".tag))
     }
 
     @Test
     fun `Finding a key column when platform keys are specified explicitly`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
-            │Android Key│iOS Key   │en       │pl       │
+            │Android Key│iOS Key   │default  │pl       │
             ├──────────────────────────────────────────┤
             │           │          │         │         │
             └──────────────────────────────────────────┘
@@ -63,7 +63,7 @@ class HeaderRowTests {
     fun `Finding key column when key is specified generally by Identifier word`() {
         val sheetContent = """
             ┌───────────────────────────────┐
-            │Identifier │en       │pl       │
+            │Identifier │default  │pl       │
             ├───────────────────────────────┤
             │           │         │         │
             └───────────────────────────────┘
@@ -79,12 +79,12 @@ class HeaderRowTests {
     fun `Throwing exception when getting key column does not exist for a platform`() {
         val sheetContent = """
             ┌────────────────────────────┐
-            │iOS Key │en       │pl       │
+            │iOS Key │default  │pl       │
             ├────────────────────────────┤
             │        │         │         │
             └────────────────────────────┘
         """
-        assertThatExceptionOfType(ImportException::class.java)
+        assertThatExceptionOfType(TransferException::class.java)
                 .isThrownBy{
                     val headerRow = HeaderRow.findIn(mockSheet(sheetContent))!!
                     headerRow.columnIndexForProjectType(ProjectType.Android)
