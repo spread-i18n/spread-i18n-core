@@ -18,9 +18,16 @@ class ValueTransformationTests {
         assertThat(AndroidEscaping.escape(""""Me & you" are better than 'they'"""))
                 .isEqualTo("""\"Me &amp; you\" are better than \'they\'""")
     }
+
+    @Test
+    fun `Android escaping does not replace special html escaping characters`() {
+        val html = """&lt;src=&quot;Hello.img&quot; /&gt;"""
+        assertThat(AndroidEscaping.escape(html))
+            .isEqualTo(html)
+    }
     
     @Test
-    fun custom_transformation() {
+    fun `Replaces characters given in map`() {
         val transformationMap = mapOf(
                 "a" to "A",
                 "b" to "B",

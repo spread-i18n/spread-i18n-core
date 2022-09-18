@@ -11,7 +11,6 @@ internal object AndroidEscaping {
     private val escapingMap = mapOf(
             "\"" to "\\\"",
             "\'" to "\\\'",
-            "&" to "&amp;",
             "\n" to "\\n",
             "\t" to "\\t",
             "@" to "\\@",
@@ -25,11 +24,11 @@ internal object AndroidEscaping {
     }
 
     fun escape(value: String): String {
-        return escapingMap.entries.escape(value)
+        return escapingMap.entries.escape(value).replace(Regex("(?!&lt;|&gt;|&quot;)&"), "&amp;")
     }
 
     fun unescape(value: String): String {
-        return unescapingEntries.escape(value)
+        return unescapingEntries.escape(value).replace("&amp;","&")
     }
 
     private fun Collection<Map.Entry<String, String>>.escape(value: String): String {

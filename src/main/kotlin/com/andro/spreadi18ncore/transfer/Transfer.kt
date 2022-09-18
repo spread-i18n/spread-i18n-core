@@ -18,8 +18,8 @@ internal object Transfer {
 
 internal class UnknownTransferError(exc: Exception) : TransferException(cause = exc)
 
-internal inline fun <T, R> rename(obj: T, to: (T) -> R): R {
-    return to(obj)
+internal inline fun <T, R> rename(from: T, to: (T) -> R): R {
+    return to(from)
 }
 
 internal inline fun <R> tryBlock(block: () -> R): R =
