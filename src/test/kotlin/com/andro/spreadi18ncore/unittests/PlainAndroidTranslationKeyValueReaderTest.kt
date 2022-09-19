@@ -161,4 +161,30 @@ class PlainAndroidTranslationKeyValueReaderTest {
             Assertions.assertThat(this).containsExactly(html)
         }
     }
+
+    @Test
+    fun `Android reader reads array values`() {
+
+        val androidTranslationContent = """
+            <?xml version="1.0"?>
+            <resources>
+                <string-array name="weekdays">
+                    <item>Monday</item>
+                    <item>Tuesday</item>
+                    <item>Wednesday</item>
+                    <item>Saturday &amp; Sunday</item>
+                </string-array>
+                <string name="hello">Hello</string>
+            </resources>
+        """.trimIndent()
+        val stringReader = StringReader(androidTranslationContent)
+        val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
+
+        with(reader.readAll()) {
+            Assertions.assertThat(this).containsExactly(
+                KeyValue("weekdays-array", "Monday\nTuesday\nWednesday\nSaturday & Sunday"),
+                KeyValue("hello", "Hello"),
+            )
+        }
+    }
 }

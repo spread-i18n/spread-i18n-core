@@ -4,6 +4,7 @@ import com.andro.spreadi18ncore.transfer.*
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.withNewLineIfNotBlank
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -62,7 +63,21 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
                     bufferedWriter.write("    <!-- ${key.commentText} -->\n")
                 }
                 key.indicatesNonTranslatable && value.isNotBlank() -> {
-                    bufferedWriter.write("    <string name=\"${key.translatable}\" translatable=\"false\">${value.escaped}</string>\n")
+                    val newKey = key.withoutNonTranslatableIndicator
+                    if (key.indicatesArray) {
+                        bufferedWriter.write(
+                            "    <string-array name=\"${newKey.withoutArrayIndicator}\" translatable=\"false\">${value.escaped.xmlItems}"
+                                    + "    </string-array>\n"
+                        )
+                    } else {
+                        bufferedWriter.write("    <string name=\"$newKey\" translatable=\"false\">${value.escaped}</string>\n")
+                    }
+                }
+                key.indicatesArray && value.isNotBlank() -> {
+                    bufferedWriter.write(
+                        "    <string-array name=\"${key.withoutArrayIndicator}\">${value.escaped.xmlItems}"
+                                + "    </string-array>\n"
+                    )
                 }
                 key.isNotBlank() && value.isNotBlank() -> {
                     bufferedWriter.write("    <string name=\"$key\">${value.escaped}</string>\n")
@@ -87,6 +102,11 @@ internal class PlainAndroidTranslationKeyValueWriter(private val bufferedWriter:
     private fun BufferedWriter.attachXmlClosingTag() {
         this.write("</resources>\n")
     }
+
+    private val String.xmlItems: String
+        get() {
+            return split("\\n").fold("\n") { items, itemValue -> "$items        <item>$itemValue</item>\n" }
+        }
 }
 
 internal class InvalidAndroidTranslationFile(message: String) : TransferException(message = message)
@@ -132,7 +152,7 @@ internal class XmlAndroidTranslationKeyValueWriter(
                 resourceNode.appendChild(comment)
             } else if (key.indicatesNonTranslatable) {
                 val string = document.createElement("string")
-                string.setAttribute("name", key.translatable)
+                string.setAttribute("name", key.withoutNonTranslatableIndicator)
                 string.setAttribute("translatable", "false")
                 string.appendChild(document.createTextNode(value))
                 resourceNode.appendChild(string)
