@@ -6,8 +6,10 @@ import com.andro.spreadi18ncore.transfer.transformation.AndroidEscaping
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
 import com.andro.spreadi18ncore.transfer.transformation.transformed
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
+import com.andro.spreadi18ncore.transfer.withArrayIndicator
 import com.andro.spreadi18ncore.transfer.withCommentIndicator
 import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
+import com.andro.spreadi18ncore.withNewLineIfNotBlank
 import org.apache.commons.io.input.ReaderInputStream
 import org.w3c.dom.*
 import org.w3c.dom.Node.COMMENT_NODE
@@ -149,15 +151,43 @@ internal class PlainAndroidTranslationKeyValueReader(private val bufferedReader:
 
 
 internal object XmlKeyValueExtractor {
-    private val regex = Regex("""[\s\S]*<string name="(\w+)"(\W+translatable="false")?[^>]*>([\s\S]+)</string>""")
 
-    fun extract(xmlCommentCandidate: String):KeyValue? {
-        return regex.matchEntire(xmlCommentCandidate)?.groups?.filterNotNull()?.let { group ->
-            when (group.size) {
-                3 -> KeyValue(group[1].value, group[2].value)
-                4 -> KeyValue(group[1].value.withNonTranslatableIndicator, group[3].value)
-                else -> null
+    fun extract(xmlValueCandidate: String): KeyValue? {
+        return SingleValueExtractor.extract(xmlValueCandidate) ?: ArrayValueExtractor.extract(xmlValueCandidate)
+    }
+    private object SingleValueExtractor {
+        private val regex = Regex("""[\s\S]*<string name="(\w+)"(\W+translatable="false")?[^>]*>([\s\S]+)</string>""")
+
+        fun extract(singleXmlValueCandidate: String): KeyValue? {
+            return regex.matchEntire(singleXmlValueCandidate)?.groups?.filterNotNull()?.let { group ->
+                when (group.size) {
+                    3 -> KeyValue(group[1].value, group[2].value)
+                    4 -> KeyValue(group[1].value.withNonTranslatableIndicator, group[3].value)
+                    else -> null
+                }
             }
+        }
+    }
+
+    private object ArrayValueExtractor {
+        private val regex = Regex("""[\s\S]*<string-array name="(\w+)"(\W+translatable="false")?[^>]*>([\s\S]+)</string-array>""")
+
+        fun extract(singleXmlValueCandidate: String): KeyValue? {
+            return regex.matchEntire(singleXmlValueCandidate)?.groups?.filterNotNull()?.let { group ->
+                when (group.size) {
+                    3 -> KeyValue(group[1].value.withArrayIndicator,
+                        itemsToMultilineString(group[2].value))
+
+                    4 -> KeyValue(group[1].value.withNonTranslatableIndicator.withArrayIndicator,
+                        itemsToMultilineString(group[3].value))
+                    else -> null
+                }
+            }
+        }
+        private fun itemsToMultilineString(itemsXml: String): String {
+            return itemsXml.split("<item>")
+                .map { it.replace(Regex("""</item>[\s\S]*"""), "") }
+                .fold(""){ multilineString, value -> multilineString.withNewLineIfNotBlank + value}
         }
     }
 }
