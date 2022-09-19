@@ -27,7 +27,7 @@ class ExportTests {
         with(structure) {
             withLocalizationFile("en") {
                 withTranslations {
-                    ("message_hello" to "Hello") + ("NSBluetoothPeripheralUsageDescription" to "Bluetooth needed")
+                    ("message_hello" to "Hello \"World\"") + ("NSBluetoothPeripheralUsageDescription" to "Bluetooth needed")
                 }
             }
             withLocalizationFile("fr") {
@@ -41,7 +41,7 @@ class ExportTests {
 
         ExistingExcelFile.onPath(excelFilePath).use { excelFile ->
             assert(excelFile.containsInRow("key", "default", "fr"))
-            assert(excelFile.containsInRow("message_hello", "Hello", "Bonjour"))
+            assert(excelFile.containsInRow("message_hello", "Hello \"World\"", "Bonjour"))
             assert(
                 excelFile.containsInRow(
                     "NSBluetoothPeripheralUsageDescription", "Bluetooth needed", "Autoriser le Bluetooth"

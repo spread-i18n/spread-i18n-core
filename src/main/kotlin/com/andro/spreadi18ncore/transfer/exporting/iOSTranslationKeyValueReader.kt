@@ -51,7 +51,7 @@ internal class iOSTranslationKeyValueReader(pathOfLocalizationFile: Path) : Tran
         } else null
     }
 
-    private val iOSKeyValueRegex = Regex("""^"(.*)".*=.*"(.*)";.*""")
+    private val iOSKeyValueRegex = Regex("""^"(\S+)"\s?=\s?"(.*)";""")
     private fun extractKeyValue(from: String, valueTransformation: ValueTransformation?): KeyValue? {
         if (from.indicatesComment) {
             return KeyValue(from, "")
