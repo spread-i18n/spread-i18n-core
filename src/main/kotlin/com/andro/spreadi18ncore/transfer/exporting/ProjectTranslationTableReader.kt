@@ -43,5 +43,13 @@ internal class ProjectTranslationTableReader(
             } else languageTag
         }
 
-    private val Project.tableLanguageTags: List<LanguageTag> get() = localizationFiles.map { it.tableTag }
+    private val LanguageTag.orderTag: String
+        get() {
+            return if (isDefault) { "a" /*make 'default' to be first */} else canonical.toLowerCase()
+        }
+
+    private val Project.tableLanguageTags: List<LanguageTag> get() =
+        localizationFiles
+            .map { it.tableTag }
+            .sortedBy { it.orderTag }
 }
