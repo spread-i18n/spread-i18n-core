@@ -4,6 +4,7 @@ import com.andro.spreadi18ncore.localization.LocalizationFile
 import com.andro.spreadi18ncore.project.ProjectType
 import com.andro.spreadi18ncore.project.SupportedProjectTypeNotFound
 import com.andro.spreadi18ncore.transfer.Transfer
+import com.andro.spreadi18ncore.transfer.TransferException
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.rename
@@ -15,13 +16,18 @@ import com.andro.spreadi18ncore.transfer.translation.ProjectTranslationsSource
 import com.andro.spreadi18ncore.transfer.tryBlock
 import java.nio.file.Path
 
+@Suppress("unused")
 class Project private constructor(private val projectPath: Path) {
 
     companion object {
+        @JvmStatic
+        @Throws(TransferException::class)
         fun onPath(projectPath: Path): Project {
             return Project(projectPath)
         }
 
+        @JvmStatic
+        @Throws(TransferException::class)
         fun onPath(projectPath: String): Project {
             return onPath(Path.of(projectPath))
         }
@@ -34,6 +40,20 @@ class Project private constructor(private val projectPath: Path) {
         type.localizationFileFinder.findLocalizationFilesIn(projectPath.toFile())
     }
 
+
+    @Throws(TransferException::class)
+    fun exportTo(destinationFilePath: String, valueTransformations: ValueTransformations? = null) =
+        export(to = Path.of(destinationFilePath), valueTransformations)
+
+    @Throws(TransferException::class)
+    fun exportTo(destinationFilePath: Path, valueTransformations: ValueTransformations? = null) =
+        export(to = destinationFilePath, valueTransformations)
+
+    @Throws(TransferException::class)
+    fun export(destinationFilePath: String, valueTransformations: ValueTransformations? = null) =
+        export(to = Path.of(destinationFilePath), valueTransformations)
+
+    @Throws(TransferException::class)
     fun export(to: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
         rename(to, to = { destinationFilePath ->
             val projectTranslations = ProjectTranslationsSource(this, valueTransformations)
@@ -42,6 +62,20 @@ class Project private constructor(private val projectPath: Path) {
         })
     }
 
+
+    @Throws(TransferException::class)
+    fun importFrom(sourceFilePath: String, valueTransformations: ValueTransformations? = null) =
+        importFrom(Path.of(sourceFilePath), valueTransformations)
+
+    @Throws(TransferException::class)
+    fun importFrom(sourceFilePath: Path, valueTransformations: ValueTransformations? = null) =
+        import(sourceFilePath, valueTransformations)
+
+    @Throws(TransferException::class)
+    fun import(sourceFilePath: String, valueTransformations: ValueTransformations? = null) =
+        import(from = Path.of(sourceFilePath), valueTransformations)
+
+    @Throws(TransferException::class)
     fun import(from: Path, valueTransformations: ValueTransformations? = null) = tryBlock {
         rename(from, to = { sourceFilePath ->
             val excelFile = ExcelFileSource(sourceFilePath, type, valueTransformations)
