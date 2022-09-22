@@ -34,3 +34,8 @@ tasks.test {
     // Use the built-in JUnit support of Gradle.
     useJUnitPlatform()
 }
+
+val jar by tasks.getting(org.gradle.jvm.tasks.Jar::class) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
