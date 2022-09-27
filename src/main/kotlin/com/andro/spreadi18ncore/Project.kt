@@ -3,8 +3,7 @@ package com.andro.spreadi18ncore
 import com.andro.spreadi18ncore.localization.LocalizationFile
 import com.andro.spreadi18ncore.project.ProjectType
 import com.andro.spreadi18ncore.project.SupportedProjectTypeNotFound
-import com.andro.spreadi18ncore.transfer.Transfer
-import com.andro.spreadi18ncore.transfer.TransferException
+import com.andro.spreadi18ncore.transfer.*
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueWriter
 import com.andro.spreadi18ncore.transfer.rename
@@ -58,7 +57,7 @@ class Project private constructor(private val projectPath: Path) {
         rename(to, to = { destinationFilePath ->
             val projectTranslations = ProjectTranslationsSource(this, valueTransformations)
             val excelFile = ExcelFileDestination(destinationFilePath, type)
-            Transfer.from(projectTranslations).to(excelFile)
+            transfer(from = projectTranslations, to = excelFile)
         })
     }
 
@@ -80,7 +79,7 @@ class Project private constructor(private val projectPath: Path) {
         rename(from, to = { sourceFilePath ->
             val excelFile = ExcelFileSource(sourceFilePath, type, valueTransformations)
             val projectTranslations = ProjectTranslationsDestination(this)
-            Transfer.from(excelFile).to(projectTranslations)
+            transfer(from = excelFile, to = projectTranslations)
         })
     }
 
