@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.unittests
 
-import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.transfer.importing.PlainAndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.transfer.withArrayIndicator
 import com.andro.spreadi18ncore.transfer.withCommentIndicator
 import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator

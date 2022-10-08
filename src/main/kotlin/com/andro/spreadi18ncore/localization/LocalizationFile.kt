@@ -9,7 +9,8 @@ internal interface LocalizationFile {
     val isDefault: Boolean
     fun containsTranslationIdentifiedBy(otherLanguageTag: LanguageTag): Boolean
 }
-internal data class AndroidLocalizationFile(override val path: Path):
+
+internal data class AndroidLocalizationFile(override val path: Path) :
     LocalizationFile {
 
     override val languageTag: LanguageTag by lazy {
@@ -19,6 +20,7 @@ internal data class AndroidLocalizationFile(override val path: Path):
     override val isDefault: Boolean by lazy {
         languageTag.isDefault
     }
+
     override fun containsTranslationIdentifiedBy(otherLanguageTag: LanguageTag): Boolean {
         return if (otherLanguageTag.isDefault && isDefault) {
             true
@@ -26,24 +28,20 @@ internal data class AndroidLocalizationFile(override val path: Path):
     }
 
     private fun extractLanguageTagFromPath(): LanguageTag {
-        with(path.toFile().name) {
-            if (this == "values") {
-                return LanguageTag.default
-            } else if (startsWith("values-")) {
-                return LanguageTag.extractFromString(removePrefix("values-"))
-            }
-            throw LanguageTagExtractionError(this)
+        return with(path.toFile()) {
+            AndroidTagExtractor.extract(this) ?: throw LanguageTagExtractionError(this.name)
         }
     }
 }
 
 
 @Suppress("ClassName")
-internal data class iOSLocalizationFile(override val path: Path, override val isDefault: Boolean): LocalizationFile {
+internal data class iOSLocalizationFile(override val path: Path, override val isDefault: Boolean) : LocalizationFile {
 
     override val languageTag: LanguageTag by lazy {
         extractLanguageTagFromPath()
     }
+
     override fun containsTranslationIdentifiedBy(otherLanguageTag: LanguageTag): Boolean {
         return if (otherLanguageTag.isDefault && isDefault) {
             true
@@ -51,12 +49,8 @@ internal data class iOSLocalizationFile(override val path: Path, override val is
     }
 
     private fun extractLanguageTagFromPath(): LanguageTag {
-        with(path.toFile().name) {
-            if (endsWith(".lproj")) {
-                val languageTag = removeSuffix(".lproj")
-                return LanguageTag.extractFromString(languageTag)
-            }
-            throw LanguageTagExtractionError(this)
+        return with(path.toFile()) {
+            iOSTagExtractor.extract(this) ?: throw LanguageTagExtractionError(this.name)
         }
     }
 }

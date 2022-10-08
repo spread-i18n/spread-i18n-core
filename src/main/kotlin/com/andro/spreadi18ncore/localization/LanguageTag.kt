@@ -1,9 +1,10 @@
 package com.andro.spreadi18ncore.localization
 
+import com.andro.spreadi18ncore.mappedFirstOrNull
 import com.andro.spreadi18ncore.transfer.TransferException
 import java.nio.file.Path
 
-class LanguageTagExtractionError(name: String) : TransferException("Can not extract language tag from: $name")
+class LanguageTagExtractionError(tagNameCandidate: String) : TransferException("Can not extract language tag from: $tagNameCandidate")
 
 internal data class LanguageTag private constructor(val canonical: String) {
 
@@ -23,15 +24,10 @@ internal data class LanguageTag private constructor(val canonical: String) {
         }
 
         fun extractFromPath(path: Path): LanguageTag {
-            val name = path.toFile().name
-            if (name == "values") {
-                return default
-            } else if (name.startsWith("values-")) {
-                return extractFromString(name.removePrefix("values-"))
-            } else if (name.endsWith(".lproj")) {
-                return extractFromString(name.removeSuffix(".lproj"))
+            return with(path.toFile()) {
+                TagExtractors.asSequence().mappedFirstOrNull { it.extract(this) }
+                    ?: throw LanguageTagExtractionError(name)
             }
-            throw LanguageTagExtractionError(name)
         }
 
         private val languageTagRegex = Regex("""^([a-z]{2})-?r?([A-Z]{2})?$""")

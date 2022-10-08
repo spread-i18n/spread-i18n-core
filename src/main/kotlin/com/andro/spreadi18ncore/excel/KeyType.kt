@@ -1,6 +1,6 @@
 package com.andro.spreadi18ncore.excel
 
-internal enum class TranslationKeyType {
+internal enum class KeyType {
     @Suppress("EnumEntryName")
     iOS {
         override val cellText: List<String>

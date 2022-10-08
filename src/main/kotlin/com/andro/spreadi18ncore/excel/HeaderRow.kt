@@ -19,10 +19,10 @@ internal data class HeaderRow(
 ) {
 
     fun columnIndexForProjectType(projectType: ProjectType): ColumnIndex {
-        if (keyCells.containsKeyCellFor(projectType.translationKeyType)) {
-            return keyCells.getKeyCell(projectType.translationKeyType).columnIndex
+        if (keyCells.containsKeyCellFor(projectType.keyType)) {
+            return keyCells.getKeyCell(projectType.keyType).columnIndex
         }
-        return keyCells.getKeyCell(TranslationKeyType.General).columnIndex
+        return keyCells.getKeyCell(KeyType.General).columnIndex
     }
 
     val rowWithFirstTranslation = rowInDocument + 1
@@ -92,7 +92,7 @@ internal object RowAnalyser {
         if (tokens.isEmpty()) {
             return null
         }
-        for (translationKeyType in TranslationKeyType.values()) {
+        for (translationKeyType in KeyType.values()) {
             translationKeyType.cellText.find { tokens.contains(it) }?.let {
                 return KeyCell(RowIndex(rowIndex), ColumnIndex(keyCellCandidate.index), translationKeyType)
             }
