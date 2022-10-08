@@ -1,10 +1,10 @@
 package com.andro.spreadi18ncore.integrationtests
 
 import com.andro.spreadi18ncore.Project
-import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.helpers.ExistingExcelFile
 import com.andro.spreadi18ncore.helpers.androidFixture
 import com.andro.spreadi18ncore.helpers.iOSFixture
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.transfer.withNonTranslatableIndicator
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

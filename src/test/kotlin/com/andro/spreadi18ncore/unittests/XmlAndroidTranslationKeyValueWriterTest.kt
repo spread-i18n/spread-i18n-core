@@ -1,7 +1,7 @@
 package com.andro.spreadi18ncore.unittests
 
-import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.transfer.importing.XmlAndroidTranslationKeyValueWriter
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.BufferedReader

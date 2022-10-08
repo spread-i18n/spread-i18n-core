@@ -1,11 +1,11 @@
 package com.andro.spreadi18ncore.unittests
 
 import com.andro.spreadi18ncore.transfer.base.TranslationKeyValueReader
-import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import com.andro.spreadi18ncore.transfer.exporting.PlainAndroidTranslationKeyValueReader
 import com.andro.spreadi18ncore.transfer.indicatesNonTranslatable
 import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
+import com.andro.spreadi18ncore.transfer.translation.KeyValue
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.BufferedReader
