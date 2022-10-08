@@ -14,7 +14,8 @@ internal fun transfer(from: TranslationsSource, to: TranslationsDestination) {
     })
 }
 
-internal class UnknownTransferError(exc: Exception) : TransferException(cause = exc)
+internal class UnknownTransferError(exc: Exception)
+    : TransferException(message = exc.message ?: "Unknown transfer error", cause = exc)
 
 internal inline fun <T, R> rename(from: T, to: (T) -> R): R {
     return to(from)
