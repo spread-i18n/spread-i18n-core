@@ -25,7 +25,7 @@ class PlainAndroidTranslationKeyValueWriterTest {
     }
 
     @Test
-    fun `Creates non translatable attribute in an Android string resource`() {
+    fun `Creates a non translatable attribute in an Android string resource`() {
 
         val stringWriter = StringWriter()
         val writer = PlainAndroidTranslationKeyValueWriter(BufferedWriter(stringWriter))
@@ -51,7 +51,7 @@ class PlainAndroidTranslationKeyValueWriterTest {
     }
 
     @Test
-    fun `Android writer writes array values`() {
+    fun `An Android writer writes array values`() {
 
         val weekdays = "Monday\nTuesday\nSaturday & Sunday"
 

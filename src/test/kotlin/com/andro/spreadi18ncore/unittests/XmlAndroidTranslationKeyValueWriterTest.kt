@@ -12,7 +12,7 @@ import java.io.StringWriter
 
 class XmlAndroidTranslationKeyValueWriterTest {
     @Test
-    fun `Replaces values in Android string resource`() {
+    fun `Replaces values in an Android string resource`() {
 
         val inXml = """<?xml version="1.0" encoding="UTF-8"?>
                 <resources>
@@ -51,7 +51,7 @@ class XmlAndroidTranslationKeyValueWriterTest {
     }
 
     @Test
-    fun `Creates non translatable attribute in an Android string resource`() {
+    fun `Creates a non translatable attribute in an Android string resource`() {
 
         val inXml = ""
         val stringWriter = StringWriter()

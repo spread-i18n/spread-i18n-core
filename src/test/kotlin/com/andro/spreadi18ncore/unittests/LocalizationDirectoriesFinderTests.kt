@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 class LocalizationDirectoriesFinderTests {
 
     @Test
-    fun `Finding localization directories in iOS project`() {
+    fun `Finds localization directories in an iOS project`() {
         val rootDir = dir("ProjectRoot") {
             dir("Assets.xcassets") {
                 dir("AppIcon.appiconset") { file("Contents.json") }
@@ -25,7 +25,7 @@ class LocalizationDirectoriesFinderTests {
     }
 
     @Test
-    fun `Finding localization directories in Android project`() {
+    fun `Finds localization directories in an Android project`() {
         val rootDir = dir("app") {
             dir("src") {
                 dir("main") {

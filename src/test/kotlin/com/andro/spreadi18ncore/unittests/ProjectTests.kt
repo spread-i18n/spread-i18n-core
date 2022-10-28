@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class ProjectTests {
 
     @Test
-    fun `Project pbxproj file is discovered in an iOS project structure`() {
+    fun `A project pbxproj file is discovered in an iOS project structure`() {
         val iOSProjRootDir = dir("ProjectA") {
             dir("ProjectA.xcodeproj") {
                 file("project.pbxproj")
@@ -20,7 +20,7 @@ class ProjectTests {
     }
 
     @Test
-    fun `Project pbxproj file is not discovered when only Pods dir contains pbxproj file`() {
+    fun `A project pbxproj file is not discovered when only Pods dir contains pbxproj file`() {
         val iOSProjRootDir = dir("ProjectA") {
             dir("ProjectA.xcodeproj") {
             }
@@ -32,7 +32,7 @@ class ProjectTests {
     }
 
     @Test
-    fun `AndroidManifest is discovered in an Android project structure`() {
+    fun `Am AndroidManifest file is discovered in an Android project structure`() {
         val androidProjRootDir = dir("app") {
             dir("src") {
                 dir("main") {
@@ -46,7 +46,7 @@ class ProjectTests {
     }
 
     @Test
-    fun `AndroidManifest is not discovered in incomplete Android project structure`() {
+    fun `An AndroidManifest file is not discovered in incomplete Android project structure`() {
         val androidProjRootDir = dir("app") {
             dir("src") {
                 dir("main") {

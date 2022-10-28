@@ -22,16 +22,16 @@ internal operator fun List<KeyValue>.plus(other: Pair<String, String>): List<Key
 class ExportTests {
 
     @Test
-    fun `Export of translations from an iOS project translations to an excel file`() = iOSFixture("proj-e1") {
+    fun `Exports translations from an iOS project translations to an excel file`() = iOSFixture("proj-e1") {
 
         with(structure) {
             withLocalizationFile("en") {
-                withTranslations {
+                translations {
                     ("message_hello" to "Hello \"World\"") + ("NSBluetoothPeripheralUsageDescription" to "Bluetooth needed")
                 }
             }
             withLocalizationFile("fr") {
-                withTranslations {
+                translations {
                     ("message_hello" to "Bonjour") + ("NSBluetoothPeripheralUsageDescription" to "Autoriser le Bluetooth")
                 }
             }
@@ -51,14 +51,14 @@ class ExportTests {
     }
 
     @Test
-    fun `Export of translations from an Android project translations to an excel file`() =
+    fun `Exports translations from an Android project translations to an excel file`() =
         androidFixture("proj-e2") {
 
             with(structure) {
                 withLocalizationFile("default") {
-                    withTranslations { ("message_hello" to "Hello") + ("message_bye" to "Bye") }
+                    translations { ("message_hello" to "Hello") + ("message_bye" to "Bye") }
                 }.withLocalizationFile("fr") {
-                    withTranslations { ("message_hello" to "Bonjour") + ("message_bye" to "Adieu") }
+                    translations { ("message_hello" to "Bonjour") + ("message_bye" to "Adieu") }
                 }
             }.create()
 
@@ -72,12 +72,12 @@ class ExportTests {
         }
 
     @Test
-    fun `Transformation and export of translations from an Android project translations to an excel file`() =
+    fun `Transforms and exports translations from an Android project translations to an excel file`() =
         androidFixture("proj-e3") {
 
             with(structure) {
                 withLocalizationFile("pl") {
-                    withTranslations { ("message_hello" to "Hello %@ & %s") + ("message_bye" to "\"Bye %@\"") }
+                    translations { ("message_hello" to "Hello %@ & %s") + ("message_bye" to "\"Bye %@\"") }
                 }
             }.create()
 
@@ -92,13 +92,13 @@ class ExportTests {
         }
 
     @Test
-    fun `Export of Android translations from default values directory to an excel file`() =
+    fun `Exports Android translations from the 'default' values directory to an excel file`() =
         androidFixture("proj-e4") {
 
             with(structure) {
                 val defaultLanguageTag = "default"
                 withLocalizationFile(defaultLanguageTag) {
-                    withTranslations { ("message_hello" to "Hello") + ("message_bye" to "Bye") }
+                    translations { ("message_hello" to "Hello") + ("message_bye" to "Bye") }
                 }
             }.create()
 
@@ -118,7 +118,7 @@ internal class CommentsExportTests {
     fun `Comments are exported from Android translations to an excel file`() = androidFixture("proj-e5") {
         with(structure) {
             withLocalizationFile("default") {
-                withTranslations { ("//Polite phrases" to "") + ("message_hello" to "Hello") + ("message_bye" to "bye") }
+                translations { ("//Polite phrases" to "") + ("message_hello" to "Hello") + ("message_bye" to "bye") }
             }
         }.create()
 
@@ -133,7 +133,7 @@ internal class CommentsExportTests {
     fun `Comments are exported from iOS translations to an excel file`() = iOSFixture("proj-e6") {
         with(structure) {
             withLocalizationFile("default") {
-                withTranslations { ("//Polite phrases" to "") + ("message_hello" to "Hello") + ("message_bye" to "bye") }
+                translations { ("//Polite phrases" to "") + ("message_hello" to "Hello") + ("message_bye" to "bye") }
             }
         }.create()
 
@@ -147,10 +147,10 @@ internal class CommentsExportTests {
 
 internal class NonTranslatableExportTest {
     @Test
-    fun `Export non translatables from an Android project to an excel file`() = androidFixture("proj-e7") {
+    fun `Exports non translatables from an Android project to an excel file`() = androidFixture("proj-e7") {
         with(structure) {
             withLocalizationFile("default") {
-                withTranslations { ("celsius_symbol".withNonTranslatableIndicator to "°C") +
+                translations { ("celsius_symbol".withNonTranslatableIndicator to "°C") +
                         ("fahrenheit_symbol".withNonTranslatableIndicator to "°F") }
             }
         }.create()

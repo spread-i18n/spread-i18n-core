@@ -8,31 +8,31 @@ import java.nio.file.Path
 class LanguageTagTests {
 
     @Test
-    fun `values directory is treated as location of default localization`() {
+    fun `The values directory is treated as the location of default localization`() {
         with(LanguageTag.extractFromPath(Path.of("app/src/main/res/values"))) {
-            assertThat(this).isEqualTo(LanguageTag.extractFromString("default"))
+            assertThat(this).isEqualTo(LanguageTag.fromString("default"))
         }
     }
 
     @Test
-    fun `Extraction of a tag from an iOS localization directory containing a region`() {
+    fun `Extracts a tag from an iOS localization directory containing a region`() {
         with(LanguageTag.extractFromPath(Path.of("project/pt-BR.lproj"))) {
-            assertThat(this).isEqualTo(LanguageTag.extractFromString("pt-BR"))
+            assertThat(this).isEqualTo(LanguageTag.fromString("pt-BR"))
         }
     }
 
     @Test
-    fun `Extraction of a tag from an Android localization directory containing a region`() {
+    fun `Extracts a tag from an Android localization directory containing a region`() {
         with(LanguageTag.extractFromPath(Path.of("app/src/main/res/values-pt-rBR"))) {
-            assertThat(this).isEqualTo(LanguageTag.extractFromString("pt-BR"))
+            assertThat(this).isEqualTo(LanguageTag.fromString("pt-BR"))
         }
     }
 
     @Test
 
-    fun `Extraction of a tag from an Android localization directory not containing a region`() {
+    fun `Extracts a tag from an Android localization directory not containing a region`() {
         with(LanguageTag.extractFromPath(Path.of("app/src/main/res/values-pl"))) {
-            assertThat(this).isEqualTo(LanguageTag.extractFromString("pl"))
+            assertThat(this).isEqualTo(LanguageTag.fromString("pl"))
         }
     }
 }

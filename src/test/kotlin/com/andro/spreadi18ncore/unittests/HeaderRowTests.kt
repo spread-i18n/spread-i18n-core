@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 class HeaderRowTests {
 
     @Test
-    fun `A headerRow is not found when any row does not have localization and project column`() {
+    fun `A header row is not found when any row does not have localization and project column`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │           │          │default  │pl       │
@@ -24,9 +24,9 @@ class HeaderRowTests {
         assertThat(headerRow).isNull()
     }
 
-    private val String.tag get() = LanguageTag.extractFromString(this)
+    private val String.tag get() = LanguageTag.fromString(this)
     @Test
-    fun `Finding a header row with expected language tags`() {
+    fun `Finds a header row with the expected language tags`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │           │          │         │         │
@@ -44,7 +44,7 @@ class HeaderRowTests {
     }
 
     @Test
-    fun `Finding a key column when platform keys are specified explicitly`() {
+    fun `Key column indices are found when platform keys are specified explicitly`() {
         val sheetContent = """
             ┌──────────────────────────────────────────┐
             │Android Key│iOS Key   │default  │pl       │
@@ -60,7 +60,7 @@ class HeaderRowTests {
     }
 
     @Test
-    fun `Finding key column when key is specified generally by Identifier word`() {
+    fun `A key column index is found when a key is specified generally by the Identifier special word`() {
         val sheetContent = """
             ┌───────────────────────────────┐
             │Identifier │default  │pl       │
@@ -76,7 +76,7 @@ class HeaderRowTests {
     }
 
     @Test
-    fun `Throwing exception when getting key column does not exist for a platform`() {
+    fun `An instance of the TransferException is thrown when getting a non existent key column`() {
         val sheetContent = """
             ┌────────────────────────────┐
             │iOS Key │default  │pl       │

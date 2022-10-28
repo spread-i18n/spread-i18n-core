@@ -6,7 +6,7 @@ import com.andro.spreadi18ncore.transfer.indicatesNonTranslatable
 import com.andro.spreadi18ncore.transfer.transformation.CustomValueTransformation
 import com.andro.spreadi18ncore.transfer.transformation.ValueTransformation
 import com.andro.spreadi18ncore.transfer.translation.KeyValue
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.BufferedReader
 import java.io.StringReader
@@ -39,7 +39,7 @@ class PlainAndroidTranslationKeyValueReaderTest {
         """.trimIndent()
         val stringReader = StringReader(androidTranslationContent)
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
-        Assertions.assertThat(reader.readAll()).containsExactly(KeyValue("one", "1"), KeyValue("two", "2"))
+        assertThat(reader.readAll()).containsExactly(KeyValue("one", "1"), KeyValue("two", "2"))
     }
 
     @Test
@@ -53,11 +53,11 @@ class PlainAndroidTranslationKeyValueReaderTest {
         """.trimIndent()
         val stringReader = StringReader(androidTranslationContent)
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
-        Assertions.assertThat(reader.readAll().keys).contains("//A comment")
+        assertThat(reader.readAll().keys).contains("//A comment")
     }
 
     @Test
-    fun `Reads non translatable from an Android string resource`() {
+    fun `Reads a non translatable tag from an Android string resource`() {
 
         val androidTranslationContent = """
             <?xml version="1.0"?>
@@ -68,8 +68,8 @@ class PlainAndroidTranslationKeyValueReaderTest {
         val stringReader = StringReader(androidTranslationContent)
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
         with(reader.readAll().keys) {
-            Assertions.assertThat(this.count()).isEqualTo(1)
-            Assertions.assertThat(this).allMatch { it.indicatesNonTranslatable }
+            assertThat(this.count()).isEqualTo(1)
+            assertThat(this).allMatch { it.indicatesNonTranslatable }
         }
     }
 
@@ -86,7 +86,7 @@ class PlainAndroidTranslationKeyValueReaderTest {
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
         val transformation = CustomValueTransformation("%s" to "@")
         with(reader.readAll(transformation).values) {
-            Assertions.assertThat(this).containsExactly( "Hello @" )
+            assertThat(this).containsExactly( "Hello @" )
         }
     }
 
@@ -102,7 +102,7 @@ class PlainAndroidTranslationKeyValueReaderTest {
         val stringReader = StringReader(androidTranslationContent)
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
         with(reader.readAll().values) {
-            Assertions.assertThat(this).containsExactly( "Hello '%s'" )
+            assertThat(this).containsExactly( "Hello '%s'" )
         }
     }
 
@@ -130,7 +130,7 @@ class PlainAndroidTranslationKeyValueReaderTest {
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
 
         with(reader.readAll().values) {
-            Assertions.assertThat(this).containsExactly(html)
+            assertThat(this).containsExactly(html)
         }
     }
 
@@ -158,7 +158,7 @@ class PlainAndroidTranslationKeyValueReaderTest {
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
 
         with(reader.readAll().values) {
-            Assertions.assertThat(this).containsExactly(html)
+            assertThat(this).containsExactly(html)
         }
     }
 
@@ -181,7 +181,7 @@ class PlainAndroidTranslationKeyValueReaderTest {
         val reader = PlainAndroidTranslationKeyValueReader(BufferedReader(stringReader))
 
         with(reader.readAll()) {
-            Assertions.assertThat(this).containsExactly(
+            assertThat(this).containsExactly(
                 KeyValue("weekdays-array", "Monday\nTuesday\nWednesday\nSaturday & Sunday"),
                 KeyValue("hello", "Hello"),
             )

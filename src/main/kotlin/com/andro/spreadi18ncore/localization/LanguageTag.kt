@@ -20,7 +20,7 @@ internal data class LanguageTag private constructor(val canonical: String) {
             }
 
         val english: LanguageTag get() {
-            return extractFromString("en")
+            return fromString("en")
         }
 
         fun extractFromPath(path: Path): LanguageTag {
@@ -32,7 +32,7 @@ internal data class LanguageTag private constructor(val canonical: String) {
 
         private val languageTagRegex = Regex("""^([a-z]{2})-?r?([A-Z]{2})?$""")
 
-        fun extractFromStringOrNull(tagCandidate: String): LanguageTag? {
+        fun fromStringOrNull(tagCandidate: String): LanguageTag? {
             if (tagCandidate == "default") {
                 return default
             }
@@ -49,8 +49,8 @@ internal data class LanguageTag private constructor(val canonical: String) {
                 LanguageTag(tag)
             }
         }
-        fun extractFromString(tagCandidate: String): LanguageTag {
-            return extractFromStringOrNull(tagCandidate) ?: throw LanguageTagExtractionError(tagCandidate)
+        fun fromString(tagCandidate: String): LanguageTag {
+            return fromStringOrNull(tagCandidate) ?: throw LanguageTagExtractionError(tagCandidate)
         }
     }
 }

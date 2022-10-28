@@ -11,7 +11,7 @@ internal class LocalizationFileContent(val languageTag: String) {
         _translations.add(translation)
     }
 
-    fun withTranslations(block: () -> List<KeyValue>) {
+    fun translations(block: () -> List<KeyValue>) {
         _translations.addAll(block())
     }
 }
