@@ -14,7 +14,7 @@ internal fun transfer(from: TranslationsSource, to: TranslationsDestination) {
     })
 }
 
-internal class UnknownTransferError(exc: Exception)
+internal class UnknownTransferError(exc: Throwable)
     : TransferException(message = exc.message ?: "Unknown transfer error", cause = exc)
 
 internal inline fun <T, R> rename(from: T, to: (T) -> R): R {
@@ -26,7 +26,7 @@ internal inline fun <R> tryBlock(block: () -> R): R =
         block()
     } catch (exc: TransferException) {
         throw exc
-    } catch (exc: Exception) {
+    } catch (exc: Throwable) {
         throw UnknownTransferError(exc)
     }
 
