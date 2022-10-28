@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class ValueExtractionTests {
 
     @Test
-    fun `Extract string value from single line xml`() {
+    fun `Extracts a string value from a single line xml`() {
         with(XmlKeyValueExtractor) {
             assertThat(extract("\t<string name=\"foo\">bar</string>"))
                 .isEqualTo(KeyValue("foo", "bar"))
@@ -16,7 +16,7 @@ class ValueExtractionTests {
     }
 
     @Test
-    fun `Extract string value from multiline xml`() {
+    fun `Extracts a string value from a multiline xml`() {
         with(XmlKeyValueExtractor) {
             assertThat(extract("\t<string name=\"key\">foo\nbar</string>"))
                 .isEqualTo(KeyValue("key", "foo\nbar"))
@@ -24,7 +24,7 @@ class ValueExtractionTests {
     }
 
     @Test
-    fun `Extract html value from multiline xml`() {
+    fun `Extract a html value from a multiline xml`() {
         with(XmlKeyValueExtractor) {
             assertThat(extract("\t<string name=\"key\"><html>\n\t<body>\t\n</body>\n</html></string>"))
                 .isEqualTo(KeyValue("key", "<html>\n\t<body>\t\n</body>\n</html>"))

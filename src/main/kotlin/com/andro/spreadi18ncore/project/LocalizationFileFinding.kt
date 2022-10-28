@@ -66,7 +66,7 @@ internal object iOSDevelopmentLanguageExtractor {
         return if (developmentLanguageLineCandidate.contains("developmentRegion")) {
             regex.matchEntire(developmentLanguageLineCandidate)?.groups?.filterNotNull()?.let { group ->
                 if (group.size == 2) {
-                    LanguageTag.extractFromStringOrNull(group[1].value)
+                    LanguageTag.fromStringOrNull(group[1].value)
                 } else null
             }
         } else {

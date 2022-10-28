@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class ImportTest {
 
     @Test
-    fun `Import of translations from an excel file to an iOS project`() = iOSFixture("proj-i1") {
+    fun `Imports translations from an excel file to an iOS project`() = iOSFixture("proj-i1") {
         //arrange
         with(structure) {
             withLocalizationFile("en") {}
@@ -45,7 +45,7 @@ class ImportTest {
     }
 
     @Test
-    fun `Transformation and import of translations from an excel file to an Android project`() =
+    fun `Transforms and imports translations from an excel file to an Android project`() =
         androidFixture("proj-i2") {
             //arrange
             with(structure) {
@@ -149,7 +149,7 @@ internal class CommentsImportTests {
 
 internal class NonTranslatableImportTest {
     @Test
-    fun `Import non translatables from an excel file to an Android project`() = androidFixture("proj-i40") {
+    fun `Imports non translatables from an excel file to an Android project`() = androidFixture("proj-i40") {
         //arrange
         with(structure) {
             withLocalizationFile("default") {}
@@ -179,7 +179,7 @@ internal class NonTranslatableImportTest {
     }
 
     @Test
-    fun `Non translatable strings are not present in non default language after import`() = androidFixture("proj-i41") {
+    fun `Non translatable strings are not present in non the default resource after import`() = androidFixture("proj-i41") {
         //arrange
         with(structure) {
             withLocalizationFile("default") {}
@@ -218,7 +218,7 @@ internal class NonTranslatableImportTest {
 internal class HtmlMarkupSupportTest {
 
     @Test
-    fun `Html markup is preserved after translations import to an Android project`() = androidFixture("proj-i50") {
+    fun `A html markup is preserved after import of translations to an Android project`() = androidFixture("proj-i50") {
         //arrange
         with(structure) {
             withLocalizationFile("default") {}

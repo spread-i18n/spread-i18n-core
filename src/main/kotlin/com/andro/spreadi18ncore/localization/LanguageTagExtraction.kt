@@ -12,7 +12,7 @@ internal object AndroidTagExtractor : LanguageTagExtractor {
         return if (fileName == "values") {
             LanguageTag.default
         } else if (fileName.startsWith("values-")) {
-            LanguageTag.extractFromString(fileName.removePrefix("values-"))
+            LanguageTag.fromString(fileName.removePrefix("values-"))
         } else {
             null
         }
@@ -24,7 +24,7 @@ internal object iOSTagExtractor : LanguageTagExtractor {
     override fun extract(file: File): LanguageTag? {
         val fileName = file.name
         return if (fileName.endsWith(".lproj")) {
-            LanguageTag.extractFromString(fileName.removeSuffix(".lproj"))
+            LanguageTag.fromString(fileName.removeSuffix(".lproj"))
         } else {
             null
         }

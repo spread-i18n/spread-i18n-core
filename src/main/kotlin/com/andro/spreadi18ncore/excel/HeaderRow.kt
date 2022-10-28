@@ -79,7 +79,7 @@ internal object RowAnalyser {
             return null
         }
         return try {
-            val tag = LanguageTag.extractFromString(localeCandidate)
+            val tag = LanguageTag.fromString(localeCandidate)
             LocaleCell(RowIndex(rowIndex), ColumnIndex(localeCellCandidate.index), tag)
         } catch (exc: LanguageTagExtractionError) {
             null
