@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.andro.spreadi18ncore"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
