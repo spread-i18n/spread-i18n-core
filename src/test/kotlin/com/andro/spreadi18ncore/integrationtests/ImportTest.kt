@@ -10,11 +10,12 @@ import org.junit.jupiter.api.Test
 class ImportTest {
 
     @Test
-    fun `Imports translations from an excel file to an iOS project`() = iOSFixture("proj-i1") {
+    fun `Imports translations from an excel file to an iOS project`()
+        = iOSFixture(projectName = "proj-i1") {
         //arrange
-        with(structure) {
-            withLocalizationFile("en") {}
-            withLocalizationFile("fr") {}
+        with(projectStructure) {
+            localizationFile("en") {}
+            localizationFile("fr") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
@@ -45,12 +46,12 @@ class ImportTest {
     }
 
     @Test
-    fun `Transforms and imports translations from an excel file to an Android project`() =
-        androidFixture("proj-i2") {
+    fun `Transforms and imports translations from an excel file to an Android project`()
+        = androidFixture(projectName = "proj-i2") {
             //arrange
-            with(structure) {
-                withLocalizationFile("default") {}
-                withLocalizationFile("pl") {}
+            with(projectStructure) {
+                localizationFile("default") {}
+                localizationFile("pl") {}
             }.create()
 
             NewExcelFile.onPath(excelFilePath).load(
@@ -81,11 +82,12 @@ class ImportTest {
 @DisplayName("Comments are present in an excel translation files")
 internal class CommentsImportTests {
     @Test
-    fun `Comments are imported to Android translations from an excel file`() = androidFixture("proj-i3") {
+    fun `Comments are imported to Android translations from an excel file`()
+        = androidFixture(projectName = "proj-i3") {
         //arrange
-        with(structure) {
-            withLocalizationFile("default") {}
-            withLocalizationFile("pl") {}
+        with(projectStructure) {
+            localizationFile("default") {}
+            localizationFile("pl") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
@@ -114,11 +116,12 @@ internal class CommentsImportTests {
     }
 
     @Test
-    fun `Comments are imported to iOS translations from an excel file`() = iOSFixture("proj-i4") {
+    fun `Comments are imported to iOS translations from an excel file`()
+        = iOSFixture(projectName = "proj-i4") {
         //arrange
-        with(structure) {
-            withLocalizationFile("en") {}
-            withLocalizationFile("pl") {}
+        with(projectStructure) {
+            localizationFile("en") {}
+            localizationFile("pl") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
@@ -149,11 +152,12 @@ internal class CommentsImportTests {
 
 internal class NonTranslatableImportTest {
     @Test
-    fun `Imports non translatables from an excel file to an Android project`() = androidFixture("proj-i40") {
+    fun `Imports non translatables from an excel file to an Android project`()
+        = androidFixture(projectName = "proj-i40") {
         //arrange
-        with(structure) {
-            withLocalizationFile("default") {}
-            withLocalizationFile("pl") {}
+        with(projectStructure) {
+            localizationFile("default") {}
+            localizationFile("pl") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
@@ -179,11 +183,12 @@ internal class NonTranslatableImportTest {
     }
 
     @Test
-    fun `Non translatable strings are not present in non the default resource after import`() = androidFixture("proj-i41") {
+    fun `Non translatable strings are not present in non the default resource after import`()
+        = androidFixture(projectName = "proj-i41") {
         //arrange
-        with(structure) {
-            withLocalizationFile("default") {}
-            withLocalizationFile("pl") {}
+        with(projectStructure) {
+            localizationFile("default") {}
+            localizationFile("pl") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
@@ -218,10 +223,11 @@ internal class NonTranslatableImportTest {
 internal class HtmlMarkupSupportTest {
 
     @Test
-    fun `A html markup is preserved after import of translations to an Android project`() = androidFixture("proj-i50") {
+    fun `A html markup is preserved after import of translations to an Android project`()
+        = androidFixture(projectName = "proj-i50") {
         //arrange
-        with(structure) {
-            withLocalizationFile("default") {}
+        with(projectStructure) {
+            localizationFile("default") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(
@@ -248,10 +254,11 @@ internal class CharacterEscapingTest {
 
     //https://developer.android.com/guide/topics/resources/string-resource#escaping_quotes
     @Test
-    fun `Special characters are escaped after import to an Android project`() = androidFixture("proj-i60") {
+    fun `Special characters are escaped after import to an Android project`()
+        = androidFixture(projectName = "proj-i60") {
         //arrange
-        with(structure) {
-            withLocalizationFile("default") {}
+        with(projectStructure) {
+            localizationFile("default") {}
         }.create()
 
         with(NewExcelFile.onPath(excelFilePath)) {
@@ -287,11 +294,11 @@ internal class iOSDefaultTranslationImportTests {
 
     @Test
     fun `Default translations are imported to 'development language' from an excel file`()
-            = iOSFixture(name = "proj-i70", developmentLanguage = "pl") {
+            = iOSFixture(projectName = "proj-i70", developmentLanguage = "pl") {
         //arrange
-        with(structure) {
-            withLocalizationFile("en") {}
-            withLocalizationFile("pl") {}
+        with(projectStructure) {
+            localizationFile("en") {}
+            localizationFile("pl") {}
         }.create()
 
         NewExcelFile.onPath(excelFilePath).load(

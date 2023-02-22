@@ -9,7 +9,7 @@ internal class AndroidProjectStructure(private val projectPath: Path) {
 
     private val localizationFiles = mutableListOf<LocalizationFileContent>()
 
-    fun withLocalizationFile(languageTag: String, block: LocalizationFileContent.() -> Unit): AndroidProjectStructure {
+    fun localizationFile(languageTag: String, block: LocalizationFileContent.() -> Unit): AndroidProjectStructure {
         val file = LocalizationFileContent(languageTag)
         file.block()
         localizationFiles.add(file)
