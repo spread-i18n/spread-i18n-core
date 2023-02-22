@@ -115,7 +115,7 @@ The *Header Row* describes content of translations stored in a file. Valid *Head
 
 **Key Cell**
 
-The purpose of the *Key Cell* or cells is to point column containing string keys. 
+The purpose of the *Key Cell* or cells is to point a column containing string keys. 
 ```xml
 <!-- message_hello key in Android-->
 <string name="message_hello">Bonjour</string>

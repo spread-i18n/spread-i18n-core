@@ -10,7 +10,7 @@ internal class iOSProjectStructure(private val projectPath: Path, private val de
 
     private val localisationFiles = mutableListOf<LocalizationFileContent>()
 
-    fun withLocalizationFile(tagCandidate: String, block: LocalizationFileContent.() -> Unit): iOSProjectStructure {
+    fun localizationFile(tagCandidate: String, block: LocalizationFileContent.() -> Unit): iOSProjectStructure {
         val file = LocalizationFileContent(tagCandidate)
         file.block()
         localisationFiles.add(file)
