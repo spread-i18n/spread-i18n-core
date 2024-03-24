@@ -11,7 +11,7 @@ The library is written in `kotlin` language and can be run in `jvm` environments
 * Supports Android and iOS projects,
 * Can be used in `jvm` supporting OSes such as: `Linux`, `macOS`, `Windows` and others,
 * Built on top of [Apache POI - the Java API for Microsoft Documents](https://poi.apache.org/),
-* Customisable string transformation,
+* Customizable string transformation,
 * Supports iOS `InfoPlist.strings`,
 * Supports Android `string-array`,
 * Simple API.
@@ -302,7 +302,7 @@ Once the jar file is generated add the file to the `classpath` of the destinatio
 
 The following instruction assumes that the destination project is based on `gradle` build tool. Setup examples are given in `Kotlin` language.
 
-- Add the library project path to `settings.gradle.kts` file of the destiantion project.
+- Add the library project path to `settings.gradle.kts` file of the destination project.
     ```kotlin
     includeBuild("../path/to/spread-i18n-core")
     ```
